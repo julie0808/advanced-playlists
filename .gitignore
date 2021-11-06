@@ -1,9 +1,7 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
 # Personal files
-/src/styles/_sass_modele/*
-/src/styles/_sass_modele/*/*
-/src/styles/_sass_modele/*/*/*
+src/styles/_sass_modele/*
 
 # compiled output
 /dist
