@@ -1,1 +1,26 @@
-@import "my-partial";
+@import "normalize";
+@import "variables";
+@import "extends";
+@import "mixins";
+@import "css-patterns";
+
+
+@import "main"; 
+
+@import "header";
+@import "tag";
+@import "video";
+@import "filter";
+
+@import "tingle";
+
+
+
+/* to do */
+/*
+- rename silly color names
+- em() for font-sizes
+- rename "main" for "common" or "shared"
+
+
+*/

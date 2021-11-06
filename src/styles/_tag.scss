@@ -1,0 +1,28 @@
+/* regler le probleme de display flex quand le code est "pollue" par les "app-tag" etc. */
+
+.tag-list {
+
+  a {
+    color: $cAccent1;
+  }
+
+  .tag-label, .tag-child {
+    display: inline-block;
+    width: 100%;
+    padding: 0 8px;
+  }
+  
+  .tag-label {
+    background: $cMain2;
+    padding: 8px;
+    
+  }
+
+  .tag-child {
+    padding-left: 30px;
+  }
+
+  .tag-list--child {
+    // display: none;
+  }
+}

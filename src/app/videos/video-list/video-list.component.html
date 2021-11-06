@@ -1,0 +1,37 @@
+<ul class="video-list">
+  <li class="video-list--item" *ngFor="let videoItem of videos" >
+    <ul class="video-action">
+      <li>
+        <svg class="icon icon-cog"><use xlink:href="./assets/icon-list.svg#icon-cog"></use></svg>
+      </li>
+    </ul>
+    <div class="video-image">
+      <div class="seo-bg">
+        <picture>
+          <source srcset="http://i3.ytimg.com/vi/{{ videoItem.youtubeId }}/maxresdefault.jpg" media="(max-width: 767px)">
+          <img src="http://i3.ytimg.com/vi/{{ videoItem.youtubeId }}/maxresdefault.jpg" alt="#">
+        </picture>	
+      </div>
+      <div class="video-image--info">
+        <p class="video-image--length">{{ videoItem.length }}</p>
+        <p class="video-image--new" *ngIf="videoItem.isNew">New</p>
+        <p class="video-image--new-border" *ngIf="videoItem.isNew"></p>
+      </div>
+    </div>
+    <div class="video-info">
+      <p class="video-info--title">{{ videoItem.title }}</p>
+      <p class="video-info--artist">{{ videoItem.artist }}</p>
+
+      <ul class="video-info--mood-list">
+        <li 
+          *ngFor="let moodItem of videoItem.moods"
+          class="video-mood"
+          [ngClass]="['video-mood--intensity-' + moodItem.intensity]" 
+          [ngStyle]="{backgroundColor: moodItem.color}"            
+          ><p>{{ moodItem.name }}</p></li>
+        <!---<li class="video-mood css-pattern-base css-pattern-2" style="background-color: #00aeff;"><p>Longer mood A</p></li>--->
+        <li class="video-mood video-mood--view-all">...</li>
+      </ul>
+    </div>
+  </li>
+</ul>

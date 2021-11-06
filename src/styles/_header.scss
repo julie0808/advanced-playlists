@@ -1,0 +1,20 @@
+.main-menu {
+  background: $cMain1;
+
+  .main-menu--item {
+    background: $cMain1;
+    border-right: 1px solid $cMain3;
+    border-left: 1px solid $cMain3;
+    display: inline-block;
+    padding: 12px 20px;
+
+    a {
+      color: #fff;
+    }
+  }
+
+  .item-active {
+    filter: brightness(1.5);
+  }
+}
+

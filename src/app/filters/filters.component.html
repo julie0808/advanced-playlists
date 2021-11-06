@@ -1,0 +1,27 @@
+<section class="filter-list">
+  <div class="boxed-container filter-group">
+    <ul>
+      <li>
+        + Tags
+      </li>
+      <li>
+        + Length
+      </li>
+      <li>
+        YT playlist
+      </li>
+    </ul>
+    <div class="filter-sort">
+      Sort
+    </div>
+  </div>
+</section>
+
+<section class="filter-active">
+  <ul class="boxed-container filter-active-list">
+    <li class="filter-active--label" *ngFor="let tempLoop of [1,2,3,4,5]">
+      <p>Tag name</p>
+      <span class="filter-active--remove" title="Remove">X</span>
+    </li>
+  </ul>
+</section>

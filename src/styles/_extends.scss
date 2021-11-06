@@ -1,0 +1,32 @@
+%fill {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+%btn-look, .btn-look {
+  background: linear-gradient( $cAccent1, $cAccent2);
+  border: 1px solid $cMain1;
+  display: inline-block;
+  padding: 10px 15px;
+  text-transform: uppercase;
+  border-radius: 5px;
+  color: #fff;
+  font-weight: bold;
+  font-size: 13px;
+
+  &:hover {
+    background: $cAccent2;
+  }
+
+  &.btn-warning {
+    background: linear-gradient( $cAlert1, $cAlert2);
+
+    &:hover {
+      background: $cAlert2;
+    }
+  }
+
+}
