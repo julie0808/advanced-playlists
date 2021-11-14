@@ -1,3 +1,19 @@
+.video-manager {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.video-list-container {
+  flex: 0 0 auto;
+  width: calc(60% - 14px);
+}
+
+.video-tag-container {
+  flex: 0 0 auto;
+  width: 40%;
+}
+
 .video-list--item {
   margin-bottom: 20px;
   border-bottom-left-radius: 6px;
@@ -86,11 +102,12 @@
   }
 }
 
-.video-info--mood-list {
+.video-info--tag-list {
   position: relative;
   display: flex;
 
-  .video-mood {
+  .video-tag {
+    background: $cAccent2;
     flex: 0 0 auto;
     white-space: nowrap;
     display: inline-block;
@@ -112,13 +129,13 @@
     }
   }
 
-  .video-mood--view-all {
+  .video-tag--view-all {
     background: $cMain3;
     line-height: 1;
     padding-top: 2px;
   }
 
-  [class*=video-mood--intensity] {
+  [class*=video-tag--intensity] {
     padding-right: 24px;
   
     &:before {
@@ -135,15 +152,15 @@
     }
   }
 
-  .video-mood--intensity-1:before {
+  .video-tag--intensity-1:before {
     background-image: linear-gradient(red, yellow 50%);
   }
 
-  .video-mood--intensity-2:before {
+  .video-tag--intensity-2:before {
     background-image: linear-gradient(red, yellow 80%);
   }
 
-  .video-mood--intensity-3:before {
+  .video-tag--intensity-3:before {
     background-image: linear-gradient(red 50%, yellow 100%);
   }
 

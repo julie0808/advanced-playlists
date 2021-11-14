@@ -1,9 +1,29 @@
 <section class="tag-edit">
   <div>
-    fieled for name
-    select for parent
+    <h2 *ngIf="editMode">Edit tag</h2>
+    <h2 *ngIf="!editMode">Add tag</h2>
+    <form [formGroup]="tagForm" (ngSubmit)="onSubmit()" class="form">
+      <fieldset>
+        <div class="form-field">
+          <label for="tagName">Tag name :</label>
+          <input
+            type="text"
+            id="tagName"
+            formControlName="tagName">
+            <span 
+              *ngIf="!tagForm.get('tagName').valid && tagForm.get('tagName').touched">
+              <span *ngIf="tagForm.get('tagName').errors['required']">This field is required</span>
+            </span>
+        </div>
+        <span 
+            *ngIf="!tagForm.valid && tagForm.touched"
+            >The form contains errors</span>
+      </fieldset>
+      <div class="form-action">
+        <button *ngIf="editMode" class="btn-look" type="submit">Save</button>
+        <button *ngIf="editMode" class="btn-look btn-warning" (click)="onDeleteTag(this.id)" type="button">Delete</button>
+        <button *ngIf="!editMode" class="btn-look" (click)="onAddTag()" type="button">Add</button>
+      </div>
+    </form>
   </div>
-  <button *ngIf="editMode" class="btn-look">Save</button>
-  <button *ngIf="editMode" class="btn-look btn-warning">Delete</button>
-  <button *ngIf="!editMode" class="btn-look">Add</button>
 </section>

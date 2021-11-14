@@ -4,15 +4,18 @@ import { RouterModule, Routes } from '@angular/router';
 import { TagsComponent } from './tags/tags.component';
 import { VideosComponent } from './videos/videos.component';
 import { TagEditComponent } from './tags/tag-edit/tag-edit.component';
+import { TagsResolverService } from './tags/tags-resolver-service';
+import { VideoTagComponent } from './videos/video-tag/video-tag.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/videos', pathMatch: 'full' }, 
-  { path: 'tags', component: TagsComponent, children: [
+  { path: '', redirectTo: '/videos', pathMatch: 'full' },
+  { path: 'tags', component: TagsComponent, resolve: [TagsResolverService], children: [
     { path: 'new', component: TagEditComponent },
-    //{ path: ':id', component: RecipeDetailComponent }, there aint no detail about tags?
     { path: ':id/edit', component: TagEditComponent }
   ] },
-  { path: 'videos', component: VideosComponent }
+  { path: 'videos', component: VideosComponent, resolve: [TagsResolverService], children: [
+    { path: ':id/edit-tag', component: VideoTagComponent }
+  ] }
 ];
 
 @NgModule({

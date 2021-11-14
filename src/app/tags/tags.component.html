@@ -1,10 +1,14 @@
 <section class="tags">
   <div class="boxed-container">
-    <button class="btn-look" (click)="onNewTag()">Add new</button>
+    <button class="btn-look tag-add" (click)="onNewTag()">Add new</button>
 
     <div class="tags-manager">
-      <app-tag-list></app-tag-list>
-      <router-outlet></router-outlet>
+      <div class="tags-list-container">
+        <app-tag-list></app-tag-list>
+      </div>
+      <div class="tags-edit-container">
+        <router-outlet></router-outlet>
+      </div>
     </div>
   </div>
 </section>

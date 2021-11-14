@@ -1,28 +1,49 @@
-/* regler le probleme de display flex quand le code est "pollue" par les "app-tag" etc. */
+.tags {
+  padding-top: 14px;
+}
+
+.tags-manager {
+  display: flex;
+  justify-content: space-between;
+}
+
+.tags-list-container {
+  flex: 0 0 auto;
+  width: calc(60% - 14px);
+}
+
+.tags-edit-container {
+  flex: 0 0 auto;
+  width: 40%;
+}
+
+.tag-edit {
+  background: $cMain2;
+  padding: 20px;
+
+  h2 {
+    margin-bottom: 20px;
+  }
+}
 
 .tag-list {
+  background: $cMain2;
 
   a {
     color: $cAccent1;
   }
 
-  .tag-label, .tag-child {
-    display: inline-block;
-    width: 100%;
-    padding: 0 8px;
-  }
-  
-  .tag-label {
-    background: $cMain2;
-    padding: 8px;
-    
+  .tag-parent {
+    border-bottom: 1px solid $cMain3;
+    padding: 12px 14px;
+
+    &:last-child {
+      border-bottom: none;
+    }
   }
 
-  .tag-child {
-    padding-left: 30px;
-  }
+}
 
-  .tag-list--child {
-    // display: none;
-  }
+.tag-add {
+  margin-bottom: 14px;
 }

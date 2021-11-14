@@ -1,0 +1,85 @@
+.form {
+  input, select, textarea {
+    @extend %baseInput;
+  }
+
+  label {
+    @extend %baseLabel;
+  }
+
+  abbr {
+    padding:0 2px;
+    border:0 none !important;
+    color: $cAlert1;
+    cursor:help;
+  }
+
+  .erreur {
+    border: 1px solid $cAlert1;
+  }
+
+}
+
+.form-field {
+  margin-bottom: 10px;
+}
+
+.form-action {
+
+  button {
+    margin-right: 8px;
+  }
+}
+
+%baseInput {
+  background: $cDarkBase1;
+  border: 1px solid $cMain3;
+  border-radius: 5px;
+  color: #fff; 
+  font-size: 14px;
+  height: 42px;
+  padding: 5px 10px;
+  
+  &:disabled {
+    background: #dedede;
+  }
+}
+
+%baseLabel {
+  font-size: 14px;
+	color: #fff;
+	padding: 16px 14px 0 0;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+  transition: all 0.3s ease;
+}
+
+
+%message {
+	font-weight: bold;
+	margin-bottom: 10px;
+	padding: 10px;
+	text-align: center;
+  color: #fff;
+}
+
+.messageInfo {
+	@extend %message;
+	background-color: rgb(11, 178, 255);
+}
+.messageSucces {
+	@extend %message;
+	background-color: #4b9b00;
+}
+.messageAvertissement {
+	@extend %message;
+	background-color: #b88700;
+}
+
+.messageErreur {
+	@extend %message;
+	background-color: $cAlert2;
+
+}
+

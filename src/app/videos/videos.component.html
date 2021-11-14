@@ -1,5 +1,13 @@
- <app-video-player></app-video-player>
+<!-- <app-filters></app-filters> -->
+<!-- <app-video-player></app-video-player> -->
 
 <section class="boxed-container">
-  <app-video-list></app-video-list>
+  <div class="video-manager">
+    <div class="video-list-container">
+      <app-video-list></app-video-list>
+    </div>
+    <div class="video-tag-container">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
 </section>
