@@ -1,10 +1,10 @@
 <ul class="video-list">
-  <li class="video-list--item" *ngFor="let videoItem of videos" >
-    <ul class="video-action">
+  <li class="video-list--item" *ngFor="let videoItem of videoList" >
+    <!--<ul class="video-action">
       <li>
         <svg class="icon icon-cog"><use xlink:href="./assets/icon-list.svg#icon-cog"></use></svg>
       </li>
-    </ul>
+    </ul>-->
     <div class="video-image">
       <div class="seo-bg">
         <picture>
@@ -28,7 +28,7 @@
           class="video-tag"           
           ><p>{{ tag.name }}</p></li>
         <!---<li class="video-tag css-pattern-base css-pattern-2" style="background-color: #00aeff;"><p>Longer tag A</p></li>--->
-        <!-- <li class="video-tag video-tag--view-all">...</li> -->
+        <li class="video-tag video-tag--view-all" (click)="onEditTags(videoItem.youtubeId)">...</li>
       </ul>
     </div>
   </li>

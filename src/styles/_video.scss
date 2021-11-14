@@ -14,6 +14,25 @@
   width: 40%;
 }
 
+.video-manager--tag-list {
+  background: $cMain2;
+
+  h3 {
+    padding: 12px 14px;
+  }
+
+  li {
+    padding: 12px 14px;
+    border-top: 1px solid $cMain3;
+  }
+
+  a {
+    color: $cAccent1;
+    text-transform: uppercase;
+    font-size: 12px;
+  }
+}
+
 .video-list--item {
   margin-bottom: 20px;
   border-bottom-left-radius: 6px;
@@ -133,6 +152,8 @@
     background: $cMain3;
     line-height: 1;
     padding-top: 2px;
+    cursor: pointer;
+    color: #fff;
   }
 
   [class*=video-tag--intensity] {

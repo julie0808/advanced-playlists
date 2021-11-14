@@ -6,6 +6,7 @@ import { VideosComponent } from './videos/videos.component';
 import { TagEditComponent } from './tags/tag-edit/tag-edit.component';
 import { TagsResolverService } from './tags/tags-resolver-service';
 import { VideoTagComponent } from './videos/video-tag/video-tag.component';
+import { VideosResolverService } from './videos/videos-resolver-service';
 
 const routes: Routes = [
   { path: '', redirectTo: '/videos', pathMatch: 'full' },
@@ -13,7 +14,7 @@ const routes: Routes = [
     { path: 'new', component: TagEditComponent },
     { path: ':id/edit', component: TagEditComponent }
   ] },
-  { path: 'videos', component: VideosComponent, resolve: [TagsResolverService], children: [
+  { path: 'videos', component: VideosComponent, resolve: [TagsResolverService, VideosResolverService], children: [
     { path: ':id/edit-tag', component: VideoTagComponent }
   ] }
 ];
