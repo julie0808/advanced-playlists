@@ -1,10 +1,17 @@
 <div class="video-manager--tag-list">
   <h3>Edit assigned tags</h3>
   <ul>
-    <li *ngFor="let tag of tagList">
+    <li *ngFor="let tag of tagList; let i = index">
       {{ tag.name }}
-      <a (click)="onAddTag(tag.objectId)" class="link-look">Add</a>
-      <a (click)="onRemoveTag(tag.objectId)" class="link-look">Remove</a>
+      <a 
+        *ngIf="!checkInTagsAssigned(tag.id)"  
+        (click)="onAddTag(tag.id)" 
+        class="link-look">Add</a>
+      <a 
+        *ngIf="checkInTagsAssigned(tag.id)" 
+        (click)="onRemoveTag(tag.id)" 
+        class="link-look">Remove</a>
     </li>
   </ul>
 </div>
+

@@ -13,26 +13,39 @@ export class TagService {
 
   fetchTagList() {
     const fetchAllTags = new Parse.Query(this.TagParse);
+    fetchAllTags.ascending('name');
+    
     return fetchAllTags
       .find()
       .then( result => {
         for (let i = 0; i < result.length; i++) {
           this.tagList.push({
             name: result[i].get('name'), 
-            objectId: result[i].id,
+            id: result[i].id,
             //parentId: result[i].get('parentId')
           });
         }
       })
       .catch( error => {
         console.log('An error occured :' + error.message)
-      }).finally( () => {
+      })
+      .finally( () => {
         return this.tagList;
       });
   }
 
   getTags() {
     return this.tagList.slice();
+  }
+
+  getTag(tagId){
+
+    return this.tagList.find( tag => {
+      if ( tag.id === tagId ){
+        return tag;
+      }
+    });
+
   }
 
   updateTag(newTagList) {

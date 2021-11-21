@@ -1,10 +1,10 @@
 export class Tag {
   public name: string;
-  public objectId: string;
+  public id: string;
   //public parentId: string; 
 
-  constructor(name: string, objectId: string) {
+  constructor(name: string, id: string) {
     this.name = name;
-    this.objectId = objectId;
+    this.id = id;
   }
 }

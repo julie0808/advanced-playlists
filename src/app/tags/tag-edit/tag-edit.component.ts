@@ -48,7 +48,7 @@ export class TagEditComponent implements OnInit {
     let tagName = '';
 
     if (this.editMode) {
-      tagName = this.tagList.find( tag => tag.objectId === this.id).name;
+      tagName = this.tagList.find( tag => tag.id === this.id).name;
     }
 
     this.tagForm = new FormGroup({
@@ -69,7 +69,7 @@ export class TagEditComponent implements OnInit {
           receivedTag.set('name', this.tagForm.value['tagName']);
           receivedTag.save()
           .then( tags => {             
-            const objIndex = this.tagList.findIndex(obj => obj.objectId === this.id);
+            const objIndex = this.tagList.findIndex(obj => obj.id === this.id);
             const updatedObj = { ...this.tagList[objIndex], name: this.tagForm.value['tagName']};
             
             this.tagList = [
@@ -106,7 +106,7 @@ export class TagEditComponent implements OnInit {
 
         this.tagList.push({
           name: this.tagForm.value['tagName'], 
-          objectId: tags.id,
+          id: tags.id,
         });
 
         this.tagService.updateTag(this.tagList);
@@ -128,7 +128,7 @@ export class TagEditComponent implements OnInit {
       .then( receivedTag => {
         if (receivedTag) {
           receivedTag.destroy().then( () => {
-            const objIndex = this.tagList.findIndex(obj => obj.objectId === this.id);
+            const objIndex = this.tagList.findIndex(obj => obj.id === this.id);
             this.tagList.splice(objIndex, 1);
 
             this.tagService.updateTag(this.tagList);
