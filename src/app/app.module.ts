@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { HttpClientModule } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -21,6 +22,7 @@ import { TagEditComponent } from './tags/tag-edit/tag-edit.component';
 import { TagService } from './tags/tag-service';
 import { VideoTagComponent } from './videos/video-tag/video-tag.component';
 
+
 Parse.initialize(environment.PARSE_APP_ID, environment.PARSE_JS_KEY);
 Parse.serverURL = environment.serverURL;
 
@@ -40,7 +42,8 @@ Parse.serverURL = environment.serverURL;
   imports: [
     BrowserModule,
     AppRoutingModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]

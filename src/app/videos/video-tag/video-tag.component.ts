@@ -39,7 +39,6 @@ export class VideoTagComponent implements OnInit, OnDestroy {
       );
 
     this.tagList = this.tagService.getTags();
-    console.log(this.tagList);
     this.tagsAssigned = this.videoService.getAssignedTags(this.id);
   }
 

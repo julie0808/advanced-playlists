@@ -9,7 +9,7 @@ export class Video {
   //public moods: {name: string, id: number, intensity: number, color: string}[];
   public tags: Tag[]; // example: Solo artist
   public artist: string; // original artist under what the song is published
-  public ytPlaylists: {name: string, id: string, dateAdded: string}[];
+  public ytPlaylists: {name: string, id: string, dateAdded: string}[]; // in which lists the video is in. might have duplicates
 
   constructor(title: string, youtubeId: string, length: string, dateModified: string, tags: Tag[], artist: string, ytPlaylists: {name: string, id: string, dateAdded: string}[] ) { 
     this.title = title;

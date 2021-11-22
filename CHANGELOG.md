@@ -1,3 +1,7 @@
+# Release 0.2.0
+
+- Branchement Initial à l'API youtube pour obtenir liste de lecture (hardcodé à 1 liste actuellement)
+
 # Release 0.1.0
 
 - Ajout, suppression et modification de tag
