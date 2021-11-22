@@ -3,7 +3,7 @@
     <li class="tag-parent" *ngFor="let tag of tagList; let i = index">
       <div class="tag-label">
         {{ tag.name }} | 
-        <a class="link-look" (click)="onEdit(tag.objectId)">Edit</a>
+        <a class="link-look" (click)="onEdit(tag.id)">Edit</a>
       </div>
       <!---<ul class="tag-list--child">
         <li class="tag-child">Child tag <a (click)="onEdit()">Edit</a></li>

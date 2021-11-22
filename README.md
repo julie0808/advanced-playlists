@@ -14,6 +14,14 @@ Créer un système de "tags". En associant ces tags aux videos de mes listes d'ori
 - Lecture à même l'application, selon les filtres choisis
 - Connexion à l'API de Youtube pour obtenir mes listes de lecture
 
+## Avancement actuel du projet
+
+Liste de vidéos + Édition des tags associés :
+![Video List](_doctech/videoList.jpg "Video list")
+
+Liste de tags + Édition des tags  :
+![Tag List](_doctech/tagList.jpg "Tag list")
+
 ### Fonctionnalités pour une release future
 
 - Enregistrement de filtres pour les réutiliser à une visite ultérieure
