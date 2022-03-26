@@ -2,6 +2,7 @@
 
 # Personal files
 src/styles/_sass_modele/*
+.env
 
 # compiled output
 /dist
@@ -12,6 +13,8 @@ src/styles/_sass_modele/*
 
 # dependencies
 /node_modules
+/client/node_modules
+/server/node_modules
 
 # profiling files
 chrome-profiler-events*.json

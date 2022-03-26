@@ -1,0 +1,29 @@
+//main: "../stylesheet.scss"
+
+
+.clearfix, %clearfix {
+    &:after {
+        visibility: hidden;
+        display: block;
+        font-size: 0;
+        content:'.';
+        clear:both;
+        height:0;
+    }
+}
+
+%puces {
+    padding-left: 16px;
+    position: relative;
+
+    &:before {
+        content: "\2022";
+        color: $couleur2;
+        font-size: 32px;
+        position: absolute;
+        top: -19px;
+        left: 0px;
+    }
+}
+
+

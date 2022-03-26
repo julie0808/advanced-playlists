@@ -1,0 +1,261 @@
+//main: "../stylesheet.scss"
+
+/*--------------------------------------------------------------------------------------- */
+/* Formulaires */
+/*--------------------------------------------------------------------------------------- */
+input, select { vertical-align: middle; }
+textarea { resize: vertical; }
+label{ display: block; }
+
+%baseInput {
+    background: #fff;
+    border: 1px solid $gris-pale;
+    border-radius: 5px;
+    color: $gris-fonce; 
+    font-size: 14px;
+    height: 50px;
+    padding: 5px 10px;
+    width: 100%;
+    
+    &:disabled {
+        background: #dedede;
+    }
+}
+
+%baseLabel {
+    font-size: 14px;
+	color: $gris-moyen;
+	position: absolute; 
+	top: 0;
+	left: 0;
+	right: 0;
+	padding: 16px 14px 0 14px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+    transition: all 0.3s ease;
+}
+
+%labelRempli {
+	padding-top: 7px;
+	font-size: 11px;
+	color: #99A1A6;
+}
+
+%inputStandard {
+    @extend %baseInput; 
+    padding: 20px 14px 5px;
+
+    &:focus,&.rempli{
+        & + label{
+            @extend %labelRempli;
+        }
+    }
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+label abbr, .note abbr, legend abbr{
+	padding:0 2px;
+	border:0 none !important;
+	color: #ee1616;
+	cursor:help;
+}
+
+.form legend{border: 1px #99A1A6 solid;}
+
+.form input:not([type=checkbox]):not([type=radio]) + label, .form textarea + label, .form select + label, .formRecherche input[name=champRech] + label {
+	@extend %baseLabel;
+}
+
+.form .boiteSelect, .form select, .form input[type=file] {
+	@extend %baseInput;
+}
+
+.form input:not([type=checkbox]):not([type=radio]):not([type=file]), .form textarea {
+    @extend %inputStandard;
+}
+
+.form .boiteSelect { position: relative;}
+.form select { background: transparent; position: absolute; top: 0; left: 0; z-index: 1; padding: 20px 30px 5px 14px; border: 0}
+
+.form {
+    
+    input[type=radio], input[type=checkbox] { display: none;}
+
+    .styleRadio p, .styleCheckbox p { display: inline-block; width: 100%; padding-bottom: 10px;}
+
+    .styleRadio label, .styleCheckbox label { 
+        display: inline-block; 
+        padding: 0; 
+        margin: 0; 
+        padding-left: 30px; 
+        position: relative; 
+        cursor: pointer; 
+        text-indent: 0; 
+        left: 0; 
+        line-height: 1.5; 
+        min-height: 20px;
+    }
+    .styleCheckbox label:before, .styleRadio label:before {
+        content: "";
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        margin-right: 10px;
+        position: absolute;
+        border: 1px solid #abaaba;
+        left: 0;
+        top: 50%;
+        margin-top: -10px; 
+        background-color: #fff;
+    }
+
+    .styleCheckbox label:before { border-radius: 3px; }
+
+    .styleRadio label { margin-right: 20px;}
+    .styleRadio label:before { border-radius: 100%; }
+    .styleRadio label:focus, .styleCheckbox label:focus { outline: 0;}
+    .styleRadio label:focus:before, .styleCheckbox label:focus:before { border-color: $couleur1; border-width: 3px;}
+    .styleRadio label:hover:before, .styleCheckbox label:hover:before { border-color: $couleur1; background-color: #e1e1e1; border-width: 2px;}
+
+    .styleRadio input[type=radio]:checked + label:before { border: 2px solid $couleur1; }
+    .styleRadio input[type=radio]:checked + label:after {
+        content: "";
+        background: $couleur1;
+        width: 10px;
+        height: 10px;
+        border-radius: 100%;
+        position: absolute;
+        top: 7px;
+        left: 5px;
+    }
+
+    .styleCheckbox input[type=checkbox]:checked + label:before {
+        content: "\e90a"; 
+        font-family: $font-icon;
+        border-width: 2px;
+        color: #fff;
+        font-size: 12px;
+        text-align: center;
+        line-height: 16px;
+        background: $couleur1;
+        padding-left: 0;
+        border-color: $couleur1;
+    }
+
+    .styleCheckbox input[type=checkbox]:disabled + label {
+        color: #939598;
+    }
+    .styleCheckbox input[type=checkbox]:disabled + label:before {
+        background: #f3f3f3;
+    }
+
+    .erreur .styleRadio, .erreur .styleCheckbox { 
+
+        label {
+            color: red;
+        }
+    }
+}
+
+.form input[type=file] {
+	padding: 13px 14px;
+	/* Correction pour Firefox */
+	height: auto;
+	text-transform: none;
+}
+
+.form textarea {
+    height: 140px;
+    resize: none;
+}
+
+.form .boiteSelect {
+	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAGCAYAAAD68A/GAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA4ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNS1jMDIxIDc5LjE1NDkxMSwgMjAxMy8xMC8yOS0xMTo0NzoxNiAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDpjM2NhMGIwNS1mNTU0LTFlNDktYjcxZS1jMmNlMjk2YWJkNzkiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6MTQ1QzNDQzcyNjhBMTFFNkE0MkVEOUFGQTQ3QkI0QzIiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6MTQ1QzNDQzYyNjhBMTFFNkE0MkVEOUFGQTQ3QkI0QzIiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTUgKE1hY2ludG9zaCkiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo3Y2VkZDZkMy0wMjc1LTQyMWMtYjY2OS02YmRlMWUyODUwNDgiIHN0UmVmOmRvY3VtZW50SUQ9ImFkb2JlOmRvY2lkOnBob3Rvc2hvcDo5MTk3YTc5ZS1hYzE5LTExNzgtODgwNy04ZmI2YjczOWVlOWMiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz43NMcZAAAAXElEQVR42mLU1dUVYGBgcADiDQzYQQAQH2ACEglAvB6IF2BRBJObwAIigNgAiOORJGH0fCC+CMQFLGiSMMUHkBSBnPWBBc0amOJ4ZEUgQRYsbmKAOgWuCAQAAgwAALYSth5bKOYAAAAASUVORK5CYII=);
+    background-repeat: no-repeat;
+    background-position: 95% 50%;
+    padding: 20px 30px 5px 14px;
+
+	select + label{
+		@extend %labelRempli;
+	}
+}
+
+/*.form input[type=checkbox] { display: inline; }*/
+
+.form input:not([type=checkbox]):not([type=radio]):focus, .form select:focus, .form textarea:focus{
+	outline: 0;
+	border: 1px solid $couleur1;
+}
+
+
+/* - - - Placeholders - - - */
+input::-webkit-input-placeholder, textarea::-webkit-input-placeholder { color: $gris-moyen; }
+input::-moz-placeholder, textarea::-moz-placeholder { opacity: 1; color: $gris-moyen; }
+input:-ms-input-placeholder, textarea:-ms-input-placeholder { color: $gris-moyen !important; }
+
+
+
+/* - - - Avertissements et erreurs - - - */
+%message {
+	font-weight: bold;
+	margin-bottom: em(10px);
+	padding: em(10px);
+	text-align: center;
+}
+
+.messageInfo {
+	@extend %message;
+	background-color: #c6edff;
+	border-color: #004868;
+	color: #004868;
+}
+.messageSucces {
+	@extend %message;
+	background-color: #dff2bf;
+	border-color: #005729;
+	color: #005729;
+}
+.messageAvertissement {
+	@extend %message;
+	background-color: #feefb3;
+	border-color: #790000;
+	color: #790000;
+}
+.messageErreur {
+	@extend %message;
+	background-color: #fdd;
+	border-color: #a9181c;
+	color: #a9181c;
+}
+
+.erreur, .erreur label, .erreur abbr { color: #c00 !important; }
+.erreur input, .erreur textarea, .erreur select, input.erreur, textarea.erreur, select.erreur{ border: 2px solid #c00 !important; }
+
+.form .erreur input:focus, .form .erreur textarea:focus, .form .erreur select:focus,
+.form input.erreur:focus, .form textarea.erreur:focus, .form select.erreur:focus{
+	-webkit-box-shadow:0 0 5px rgba(204,0,0,0.8);
+			    box-shadow:0 0 5px rgba(204,0,0,0.8);
+}
+
+.form .col1, .form .col2, .form .colFull { position: relative; margin-bottom: 1em;}
+
+.form .col1{ 
+	@include BP(tablette) { float: left; width: calc(50% - 10px); clear: left; }
+}
+.form .col2{
+	@include BP(tablette) { float: left; width: calc(50% - 10px); margin-left: 20px; }
+}
+.form .colFull {
+	@include BP(tablette) { clear:left; }
+}
+

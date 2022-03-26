@@ -1,0 +1,127 @@
+//main: "../stylesheet.scss"
+
+.finPage { height: 40px; display: inline-block; width: 100%;}
+
+.texteGlobal {
+
+    .intro {
+        font-weight: bold;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        line-height: 1.2;
+        color: $couleur1;
+    }
+
+    h1 {
+        font-size: 40px;
+
+        @include BP(tablette){
+            font-size: 50px;
+        }
+    }
+    h2 {
+        font-size: 36px;
+
+        @include BP(tablette){
+            font-size: 45px;
+        }
+    }
+    h3, .intro {
+        font-size: 20px;
+    }
+    h4 {
+        font-size: 16px;
+    }
+    h5, h6 {
+        font-size: 14px;
+    }
+    h6 {
+        color: $gris-moyen;
+    }
+
+    p {
+        margin-bottom: 20px;
+        display: inline-block;
+        width: 100%;
+    }
+
+    a {
+        text-decoration: underline;
+    }
+
+    abbr[title] {
+        border-bottom: 1px dotted;
+    }
+
+    a[href*=pdf] {
+        content: "";
+        display: inline-block;
+        width: 29px;
+        height: 31px;
+        margin-right: 6px;
+        background: url(../gx/m/icone-pdf.png) 0 0 no-repeat;
+        vertical-align: -10px;
+    }
+
+    ul, ol {
+        margin-bottom: 20px;
+        overflow: hidden;
+
+        li {
+            margin-bottom: 5px;
+            margin-top: 5px;
+        }
+    }
+
+    ul li {
+        @extend %puces;
+    }
+
+    ol {
+        counter-reset: bullet;
+
+        li {
+            margin-left: 20px;
+            position: relative;
+
+            &:before {
+                counter-increment: bullet;
+                content: counters(bullet,".") ".";
+                position: absolute;
+                top: 0;
+                left: -20px;
+                color: $couleur1;
+            }
+        }
+    }
+
+    iframe[src*=youtube] { max-width:100%;}
+
+    table {
+        margin-bottom: 20px;
+        border: 1px solid $gris-moyen;
+
+        th {
+            border: 1px solid $gris-moyen;
+            background: $gris-fonce;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        th, td {
+            min-width: 50px;
+            padding: 5px 10px;
+        }
+
+        tr:nth-child(even) {
+            background: #eee;
+        }
+    }
+
+
+}
+
+.videoConteneur { max-width:100%; }
+.video { position: relative; height: 0;	overflow: hidden; padding-bottom: 56.25%; padding-top: 30px; width: 100%;}
+.video iframe, .video object, .video embed { position: absolute; top: 0; left: 0; width: 100%; height: 100%;}

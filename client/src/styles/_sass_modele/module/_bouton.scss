@@ -1,0 +1,22 @@
+//main: "../stylesheet.scss"
+
+.bouton {
+    @include etats( $val: (background:$couleur2) );
+    display: inline-block;
+    font-weight: bold;
+    text-align: center;
+    padding: 7px 14px 7px;
+    color: #fff!important;
+    transition: all 0.3s;
+    font-size: 14px;
+    width: 100%;
+    text-transform: uppercase;
+    background: $couleur1;
+    cursor: pointer;
+    min-width: 120px;
+    text-decoration: none!important;
+
+    @include BP(mobileLarge) {
+        width: auto;
+    }
+}

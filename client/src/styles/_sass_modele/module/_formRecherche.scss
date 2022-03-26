@@ -1,0 +1,27 @@
+//main: "../stylesheet.scss"
+
+.formRecherche {
+    flex: 0 1 auto;
+    margin: em(10px) 0;
+}
+
+.formRecherche_field {
+    border: none;
+    margin: 0;
+    padding: 0;
+}
+
+.formRecherche_champ {
+    border: none;
+    font: 400 em(12px) $font;
+    height: 40px;
+    padding: 10px 12px 0; 
+    width: 100%;
+}
+
+.formRecherche input[name=champRech] {
+    @extend %inputStandard;
+}
+
+.conteneurChamp { position: relative; display: inline-block; vertical-align: middle; width: 58%;}
+.highlight{ background: yellow;}

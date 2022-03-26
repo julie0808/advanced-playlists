@@ -1,0 +1,32 @@
+//main: "../stylesheet.scss"
+
+/**************************************************************************************************
+*	  ATTENTION : Utiliser le breakpoint "print" sinon les styles seront appliqué à l'écran aussi.
+**************************************************************************************************/
+
+@page { margin: 1cm; }
+
+* {
+	@include BP(print) {
+		background: transparent !important;
+		color: #000 !important;
+		box-shadow: none !important;
+		text-shadow: none !important;
+	}
+}
+tr, img {
+	@include BP(print) { page-break-inside: avoid; }
+}
+
+.noPrint { 
+	@include BP(print){
+		display: none!important;
+	}
+}
+
+#vortexDebug {
+
+	@include BP(print){
+		display: none;
+	}
+}

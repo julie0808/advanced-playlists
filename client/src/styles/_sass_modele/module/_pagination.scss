@@ -1,0 +1,98 @@
+//main: "../stylesheet.scss"
+
+.module_pagination {
+  text-align: center;
+}
+
+[class~=module_pagination_page] {
+    @include etats( $val: (border:1px solid #000) );
+
+    display: inline-block;
+    height: 44px;
+    width: 44px;
+    vertical-align: middle;
+    font-size: 12px;
+    line-height: 44px;
+    border: 1px solid $gris-moyen;
+    color: #000;
+    background: #fff;
+
+    a {
+        @include etats( $val: (color:$couleur1) );
+
+        color: #000;
+        display: inline-block;
+        vertical-align: top;
+        width: 100%;
+        height: 100%;
+    }
+}
+
+.module_pagination_pagecourante {
+    border-color: $couleur1!important;
+    background: $couleur1;
+    color: #fff;
+}
+
+.module_pagination_pagesuivante a, .module_pagination_pageprecedente a, .module_pagination_pagederniere a, .module_pagination_pagepremiere a {
+    //font-family: $font-guifx;
+    content: ""!important;
+}
+
+.module_pagination_pagesuivante a:before {
+    content: ">";
+}
+.module_pagination_pageprecedente a:before {
+    content: "<";
+}
+
+.module_pagination_pagepremiere a:before {
+    content: "<<";
+}
+.module_pagination_pagederniere a:before {
+    content: ">>";
+}
+
+
+
+.paginationVariante {
+    text-align: center;
+    @extend %clearfix;
+
+    .lienPrecedent, .lienSuivant {
+        width: 100%;
+    }
+
+    .lienPrecedent {
+        float: right;
+        margin-top: 10px;
+        width: 100%;
+    }
+
+    .lienSuivant {
+        float: right;
+        margin-top: 10px;
+        margin-left: 10px;
+        width: 100%;
+    }
+
+    .nbPage {
+        display: inline-block;
+        width: 100%;
+
+        margin-bottom: 10px;
+    }
+
+    @include BP(phablet){
+
+        .nbPage {
+            float: left;
+            width: auto;
+            padding-top: 20px;
+        }
+
+        .lienSuivant, .lienPrecedent {
+            width: auto;
+        }
+    }
+}

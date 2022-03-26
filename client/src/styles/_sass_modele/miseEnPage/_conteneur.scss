@@ -1,0 +1,61 @@
+/*------------------------------------*\
+  #Mise en forme du site
+\*------------------------------------*/
+
+body {
+  background: #fff;
+  font: 400 100% /1.4 $font;
+  color: $gris-fonce;
+  text-rendering: optimizeLegibility;  // https://davidwalsh.name/font-smoothing
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.conteneur {
+  min-width: em(320px);
+}
+
+.contenu {
+  min-height: em(300px);
+  position: relative;
+
+  @include BP(tablette) { 
+    min-height: em(700px); 
+  }
+
+}
+
+.layout {
+  margin: 0 auto;
+  position: relative;
+  width: 90%;
+
+  @include BP(bureau) {
+    max-width: $taille-max;
+    width: 95%;
+  }
+
+}
+
+.colPrincipale {
+  margin-bottom: em(40px);
+  width: 100%;
+
+  @include BP(tablette) {
+    float: right;
+    width: 70%;
+  }
+
+}
+
+.colSecondaire {
+  padding: em(30px) 0;
+
+  @include BP(tablette) {
+    float: left;
+    margin-bottom: em(40px);
+    padding: 0;
+    width: 25%;
+  }
+  
+}

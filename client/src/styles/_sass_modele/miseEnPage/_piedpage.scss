@@ -1,0 +1,30 @@
+//main: "../stylesheet.scss"
+
+/*--------------------------------------------------------------------------------------- */
+/* Pied de page */
+/*--------------------------------------------------------------------------------------- */
+
+.piedPage {
+	background: #000;
+    text-align: center;
+    padding: 20px 0;
+
+	@include BP(tablette) {
+		text-align: left;
+	}
+}
+
+.copyrights {
+   a {
+        color: $gris-fonce;
+        &:hover { text-decoration: underline; }
+   }
+}
+
+.menuPied {
+    margin-bottom: 10px;
+    
+    li {
+        display: inline-block;
+    }
+}
