@@ -1,42 +1,37 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Parse } from 'parse';
-import { Subscription } from 'rxjs';
+import { EMPTY, Subject } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
-import { Tag } from '../../../models/tag-model';
+//import { Tag } from '../../../models/tag-model';
 import { TagService } from '../tag-service';
 
 @Component({
   selector: 'app-tag-list',
   templateUrl: './tag-list.component.html'
 })
-export class TagListComponent implements OnInit, OnDestroy {
-  TagParse = Parse.Object.extend("Tag");
-  tagList: Tag[];
-  tagListSub: Subscription;
+export class TagListComponent {
+
   isFetching = false;
+
+  private errorMessageSubject = new Subject<string>();
+  errorMessage$ = this.errorMessageSubject.asObservable();
+
+  tagList$ = this.tagService.tagList$
+    .pipe(
+      catchError(err => {
+        this.errorMessageSubject.next(err);
+        return EMPTY; 
+      })
+    );
 
   constructor(private route: ActivatedRoute,
               private tagService: TagService,
               private router: Router) { 
   }
 
-  ngOnInit() {
-    this.tagListSub = this.tagService.tagsChanged
-      .subscribe(
-        (tags: Tag[]) => {
-          this.tagList = tags;
-        }
-      );
-    this.tagList = this.tagService.getTags();
-  }
-
-  onEdit(objectId: string) {
+  onEdit(objectId: number) {
     this.router.navigate([objectId, 'edit'], {relativeTo: this.route, queryParamsHandling: 'preserve'});
-  }
-
-  ngOnDestroy() {
-    this.tagListSub.unsubscribe();
   }
 
 }

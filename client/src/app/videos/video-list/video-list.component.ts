@@ -11,7 +11,7 @@ import { Video } from '../../../models/video.model';
 })
 export class VideoListComponent implements OnInit {
 
-  videoList$ = this.videoService.videoPlaylist$;
+  videoList$ = this.videoService.videosFromPlaylist$;
 
   constructor(private route: ActivatedRoute,
               private router: Router,

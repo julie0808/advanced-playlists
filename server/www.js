@@ -1,11 +1,14 @@
 // TO START SERVER: npm run start:dev
 // Ref: https://medium.com/swlh/angular-node-and-postgresql-4a07d597be07
 
+// sql standard ref : https://towardsdatascience.com/10-sql-standards-to-make-your-code-more-readable-in-2021-4410dc50b909
+
 require("dotenv").config();
 
 const express = require('express');
 const bodyParser = require("body-parser");
 const app = express();
+const rootUrl = '/api/v1';
 
 // Postgres Configuration
 const { Pool } = require('pg');
@@ -24,60 +27,105 @@ pool.on('error', (err, client) => {
   process.exit(-1);
 });
 
-let tag = [];
-const rootUrl = '/api';
-
 app.use(bodyParser.json());
+
+
+app.post(`${rootUrl}/tags`, (req, res) => {
+  const { 
+    title 
+  } = JSON.parse(req.body.tag);
+ ;(async () => {
+   const client = await pool.connect();
+   try {
+     let results = await client.query(
+       `INSERT INTO tag (
+           title
+       ) VALUES ($1)
+       RETURNING tag_id`,
+       [title]);
+     if (results.rowCount === 0) { 
+       results = { 
+         title 
+       };
+     }
+     res.status(201).json(results);
+   } finally {
+     client.release();
+   }
+  })().catch(err => {
+    res.status(500).json({
+      "code": err.code,
+      "message": err.message
+    });
+   });
+ });
 
 app.get(`${rootUrl}/tags`, (req, res) => {
   ;(async () => {
-    const { rows } = await pool.query('SELECT * FROM tag')
+    const { rows } = await pool.query(`
+      SELECT tag_id as id, title 
+      FROM tag`
+      )
     res.json(rows);
   })().catch(err => {
     res.json(err.stack)
   })
 });
 
-/*app.post('${rootUrl}/tag', (req, res) => {
-  const reqTag = req.body.tag;
-  tag = [];
-  tag.push(reqTag);
-  res.json(tag);
-});*/
-
-
-app.post(`${rootUrl}/add-tag`, (req, res) => {
- const { 
-   title 
- } = JSON.parse(req.body.user);
-;(async () => {
-  const client = await pool.connect();
-  try {
+app.put(`${rootUrl}/tags`, (req, res) => {
+  const { 
+    title,
+    id
+  } = JSON.parse(req.body.tag);
+ ;(async () => {
+   const client = await pool.connect();
+   try {
     let results = await client.query(
-      `INSERT INTO tags (
-          title
-      ) VALUES ($1) 
-      ON CONFLICT DO NOTHING 
-      RETURNING title`,
-      [title]);
-    if (results.rowCount === 0) { 
-      results = { 
-        title 
-      };
-    }
-    res.status(201).json(results);
-  } finally {
-    // Make sure to release the client before any error handling,
-    // just in case the error handling itself throws an error.
-    client.release();
-  }
- })().catch(err => {
-   res.status(500).json({
-     "code": err.code,
-     "message": err.message
+       `UPDATE tag
+       SET title = ($1)
+       WHERE tag_id = ($2) `,
+       [title, id]);
+     if (results.rowCount === 0) { 
+       results = { 
+         title,
+         id 
+       };
+     }
+     res.status(201).json(results);
+   } finally {
+     client.release();
+   }
+  })().catch(err => {
+    res.status(500).json({
+      "code": err.code,
+      "message": err.message
+    });
    });
-  });
-});
+ });
+
+app.delete(`${rootUrl}/tags/:id`, (req, res) => {
+  const { id } = req.params;
+ ;(async () => {
+   const client = await pool.connect();
+   try {
+     let results = await client.query(
+       `DELETE FROM tag 
+        WHERE tag_id = ($1)`,
+        [id]);
+     if (results.rowCount === 0) { 
+      console.log('no results')
+     }
+     res.status(201).json(results);
+   } finally {
+     client.release();
+   }
+  })().catch(err => {
+    res.status(500).json({
+      "code": err.code,
+      "message": err.message
+    });
+   });
+ });
 
 
 app.get('/api/status', (req, res) => {

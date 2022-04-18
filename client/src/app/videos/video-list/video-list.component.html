@@ -14,8 +14,8 @@
       </div>
       <div class="video-image--info">
         <p class="video-image--length">{{ videoItem.length }}</p>
-        <p class="video-image--new" *ngIf="videoItem.isNew">New</p>
-        <p class="video-image--new-border" *ngIf="videoItem.isNew"></p>
+        <!--<p class="video-image--new" *ngIf="videoItem.isNew">New</p>
+        <p class="video-image--new-border" *ngIf="videoItem.isNew"></p>-->
       </div>
     </div>
     <div class="video-info">
@@ -26,7 +26,7 @@
         <li 
           *ngFor="let tag of videoItem.tags"
           class="video-tag"           
-          ><p>{{ tag.name }}</p></li>
+          ><p>{{ tag.title }}</p></li>
         <!---<li class="video-tag css-pattern-base css-pattern-2" style="background-color: #00aeff;"><p>Longer tag A</p></li>--->
         <li class="video-tag video-tag--view-all" (click)="onEditTags(videoItem.youtubeId)">...</li>
       </ul>

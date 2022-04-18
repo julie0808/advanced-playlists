@@ -1,15 +1,10 @@
 <section class="tag-list">
-  <ul>
-    <li class="tag-parent" *ngFor="let tag of tagList; let i = index">
+  <ul *ngIf="tagList$ | async as tagList">
+    <li class="tag-parent" *ngFor="let tag of tagList">
       <div class="tag-label">
-        {{ tag.name }} | 
+        {{ tag.title }} |
         <a class="link-look" (click)="onEdit(tag.id)">Edit</a>
       </div>
-      <!---<ul class="tag-list--child">
-        <li class="tag-child">Child tag <a (click)="onEdit()">Edit</a></li>
-        <li class="tag-child">Child tag <a (click)="onEdit()">Edit</a></li>
-        <li class="tag-child">Child tag <a (click)="onEdit()">Edit</a></li>
-      </ul>--->
     </li>
   </ul>
 </section>

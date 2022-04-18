@@ -1,5 +1,5 @@
 export interface Tag {
-  id: string;
+  id: number;
   title: string;
   //public parentId: string; 
 }

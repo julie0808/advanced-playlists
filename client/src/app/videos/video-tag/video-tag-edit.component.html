@@ -1,8 +1,8 @@
 <div class="video-manager--tag-list">
   <h3>Edit assigned tags</h3>
-  <ul>
+  <ul *ngIf="tagList$ | async as tagList">
     <li *ngFor="let tag of tagList; let i = index">
-      {{ tag.name }}
+      {{ tag.title }}
       <a 
         *ngIf="!checkInTagsAssigned(tag.id)"  
         (click)="onAddTag(tag.id)" 

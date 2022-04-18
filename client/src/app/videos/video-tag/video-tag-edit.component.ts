@@ -1,22 +1,44 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { Parse } from 'parse';
-import { Subscription } from 'rxjs';
+import { BehaviorSubject, EMPTY, Subject } from 'rxjs';
 
 import { Tag } from 'src/models/tag-model';
 import { TagService } from 'src/app/tags/tag-service';
 import { VideoService } from '../video-service';
+import { catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'app-video-tag-edit',
   templateUrl: './video-tag-edit.component.html'
 })
-export class VideoTagEditComponent implements OnInit, OnDestroy {
-  id: string;
-  tagList: Tag[];
-  tagsAssigned = [];
-  videoTagSub: Subscription; // to get changed in assigned tags
-  VideoTagParse = Parse.Object.extend("VideoTag");
+export class VideoTagEditComponent implements OnInit {
+
+  //tagsAssigned: Tag[] = [];
+  //videoTagSub: Subscription; // to get changed in assigned tags
+  //VideoTagParse = Parse.Object.extend("VideoTag");
+
+  private errorMessageSubject = new Subject<string>();
+  errorMessage$ = this.errorMessageSubject.asObservable();
+
+  private videoSelectedSubject = new BehaviorSubject<number>(0); 
+  videoSelectedAction$ = this.videoSelectedSubject.asObservable();
+
+  video$ = this.videoService.selectedVideo$
+    .pipe(
+      catchError(err => {
+        this.errorMessageSubject.next(err);
+        return EMPTY;
+      })
+    )
+    
+  // pour pouvoir choisir dans la liste les tags disponibles pour assignation
+  tagList$ = this.tagService.tagList$
+    .pipe(
+      catchError(err => {
+        this.errorMessageSubject.next(err);
+        return EMPTY; 
+      })
+    );
 
   constructor(private tagService: TagService,
               private videoService: VideoService,
@@ -24,87 +46,49 @@ export class VideoTagEditComponent implements OnInit, OnDestroy {
               private router: Router) { }
 
   ngOnInit() {
+
     this.route.params 
       .subscribe(
         (params: Params) => {
-          this.id = params['id'];
-          this.tagList = this.tagService.getTags();
+          this.videoSelectedSubject.next(+params['id']);
 
           /* latence a recevoir les données. pas toujours prêt */
           //this.tagsAssigned = this.videoService.getAssignedTags(this.id);
-          console.log(this.tagsAssigned);
+          //console.log(this.tagsAssigned);
         }
       )
 
-    this.videoTagSub = this.videoService.assignedTabsChanged
+   /* this.videoTagSub = this.videoService.assignedTabsChanged
       .subscribe(
         (tags: Tag[]) => {
           this.tagsAssigned = tags;
         }
-      );
+      );*/
 
   }
 
-  checkInTagsAssigned(id) {
+  checkInTagsAssigned(id: number) {
     let isAssigned = false;
 
-    if ( this.tagsAssigned.findIndex( obj => obj.id === id) > -1 ) {
+    /*if ( this.tagsAssigned.findIndex( obj => obj.id === id) > -1 ) {
       isAssigned = true;
-    }
+    }*/
 
     return isAssigned;
   }
 
-  onAddTag(id) {
-    let newVideoTag = new this.VideoTagParse();
-    newVideoTag.set("youtubeId", this.id);
-    newVideoTag.set("tagObjectId", id);
-    
-    newVideoTag
-      .save()
-      .then( () => {         
-
-        this.tagsAssigned.push({
-          id: id,
-          title: this.tagList.find(obj => obj.id === id).title
-        });
-
-        this.videoService.updateTagsAssigned(this.tagsAssigned, this.id);
-
-      }).catch( error => {
-        console.log('Error: ' + error.message);
-      }); 
+  onAddTag(id: number) {
+    // to redo without Parse   
+    //this.videoService.updateTagsAssigned(this.tagsAssigned, this.id);
   }
 
-  onRemoveTag(id) {
-    const removeVideoTag = new Parse.Query(this.VideoTagParse);
-    removeVideoTag.equalTo("tagObjectId", id);
-    removeVideoTag.equalTo("youtubeId", this.id);
-
-    removeVideoTag
-      .first()
-      .then( tag => {
-        if (tag) {
-          tag
-            .destroy()
-            .then( () => {
-              const objIndex = this.tagsAssigned.findIndex( obj => obj.id === id)
-              this.tagsAssigned.splice(objIndex, 1);
-              this.videoService.updateTagsAssigned(this.tagsAssigned, this.id);
-          })
-          .catch( error => {
-            console.log('Error: '+ error.message);
-          });
-        } else {
-          console.log("Nothing found, please try again");
-        }
-      }).catch(function (error) {
-        console.log("Error: " + error.code + " " + error.message);
-      });
+  onRemoveTag(id: number) {
+    /*
+    const objIndex = this.tagsAssigned.findIndex( obj => obj.id === id)
+    this.tagsAssigned.splice(objIndex, 1);
+    this.videoService.updateTagsAssigned(this.tagsAssigned, this.id);
+    */
   }
 
-  ngOnDestroy() {
-    this.videoTagSub.unsubscribe();
-  }
 
 }
