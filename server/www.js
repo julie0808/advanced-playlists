@@ -10,6 +10,9 @@ const bodyParser = require("body-parser");
 const app = express();
 const rootUrl = '/api/v1';
 
+const swaggerUi = require('swagger-ui-express')
+const swaggerDocument = require('./swagger.json');
+
 // Postgres Configuration
 const { Pool } = require('pg');
 const pool = new Pool({
@@ -30,11 +33,17 @@ pool.on('error', (err, client) => {
 app.use(bodyParser.json());
 
 
+
+
+
+///////////////////////////////////
+//// TAGS /////////////////////////
+///////////////////////////////////
+
 app.post(`${rootUrl}/tags`, (req, res) => {
-  const { 
-    title 
-  } = JSON.parse(req.body.tag);
+  const {id, title} = req.body;
  ;(async () => {
+   console.log(id, title);
    const client = await pool.connect();
    try {
      let results = await client.query(
@@ -73,10 +82,7 @@ app.get(`${rootUrl}/tags`, (req, res) => {
 });
 
 app.put(`${rootUrl}/tags`, (req, res) => {
-  const { 
-    title,
-    id
-  } = JSON.parse(req.body.tag);
+  const {id, title} = req.body;
  ;(async () => {
    const client = await pool.connect();
    try {
@@ -128,6 +134,37 @@ app.delete(`${rootUrl}/tags/:id`, (req, res) => {
  });
 
 
+
+
+
+///////////////////////////////////
+//// VIDEO ////////////////////////
+///////////////////////////////////
+
+app.get(`${rootUrl}/videotags/:id`, (req, res) => {
+  const { id } = req.params;
+  ;(async () => {
+    const { rows } = await pool.query(`
+      SELECT t.tag_id as id, t.title 
+      FROM video_tag vt
+      LEFT JOIN tag t ON t.tag_id = vt.tag_id
+      WHERE youtube_id = ($1)`,
+      [id])
+    res.json(rows);
+  })().catch(err => {
+    res.json(err.stack)
+  })
+});
+
+
+
+
+
+
+///////////////////////////////////
+//// DEBUG ////////////////////////
+///////////////////////////////////
+
 app.get('/api/status', (req, res) => {
   res.json({info: 'Node.js, Express, and Postgres API'});
 });
@@ -137,10 +174,16 @@ app.get('/', (req, res) => {
 });
 
 // Listen to the specified port, otherwise 3080
+app.use(
+  '/api-docs',
+  swaggerUi.serve, 
+  swaggerUi.setup(swaggerDocument)
+);
+
 const PORT = process.env.PORT || 3080;
 const server = app.listen(PORT, () => {
   console.log(`Server Running: http://localhost:${PORT}`);
-});
+}); 
 
 /**
  * The SIGTERM signal is a generic signal used to cause program 

@@ -1,0 +1,158 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "FancYT CRUD",
+    "description": "All operations for Videos and Tags",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "host": "localhost:4200",
+  "basePath": "/api/v1/",
+  "tags": [
+    {
+      "name": "Tags",
+      "description": "Tags API"
+    },
+    {
+      "name": "Videos",
+      "description": "Videos API"
+    }
+  ],
+  "schemes": ["http"],
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
+  "paths": {
+    "/tags": {
+      "get": {
+        "tags": ["Tags"],
+        "summary": "Get all tags",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Tags"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Tags"],
+        "summary": "Create new tag",
+        "description": "Create new tag",
+        "parameters": [
+          {
+            "name": "tag",
+            "in": "body",
+            "description": "Tag that we want to create",
+            "schema": {
+              "$ref": "#/definitions/Tag"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "New tag was created",
+            "schema": {
+              "$ref": "#/definitions/Tag"
+            }
+          },
+          "500": {
+            "description": "An server error occured"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update tag with given ID",
+        "tags": ["Tags"],
+        "parameters": [
+          {
+            "name": "tag",
+            "in": "body",
+            "description": "Tag with new values",
+            "schema": {
+              "$ref": "#/definitions/Tag"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tag was updated",
+            "schema": {
+              "$ref": "#/definitions/Tag"
+            }
+          }
+        }
+      }
+    },
+    "/tags/{id}": {
+      "delete": {
+        "summary": "Delete tag with given ID",
+        "tags": ["Tags"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The tag ID",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tag was deleted",
+            "schema": {
+              "$ref": "#/definitions/Tag"
+            }
+          }
+        }
+      }
+    },
+    "/videotags/{id}": {
+      "get": {
+        "tags": ["Videos"],
+        "summary": "Get video tags by video id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The video ID",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Tags"
+            }
+          }
+        }
+      }       
+    }    
+  },
+  "definitions": {
+    "Tag": {
+      "required": ["id", "title"],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "uniqueItems": true
+        },
+        "title": {
+          "type": "string"
+        }
+      }
+    },
+    "Tags": {
+      "type": "array",
+      "$ref": "#/definitions/Tag"
+    }
+  }
+}
+
