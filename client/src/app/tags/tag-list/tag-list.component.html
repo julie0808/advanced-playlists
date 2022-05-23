@@ -1,6 +1,6 @@
 <section class="tag-list">
-  <ul *ngIf="tagList$ | async as tagList">
-    <li class="tag-parent" *ngFor="let tag of tagList">
+  <ul *ngIf="tags$ | async as tags">
+    <li class="tag-parent" *ngFor="let tag of tags">
       <div class="tag-label">
         {{ tag.title }} |
         <a class="link-look" (click)="onEdit(tag.id)">Edit</a>

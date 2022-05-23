@@ -1,18 +1,18 @@
 <section class="tag-edit">
-  <div *ngIf="tag$ | async as tag">
+  <div>
     <h2 *ngIf="editMode">Edit tag</h2>
     <h2 *ngIf="!editMode">Add tag</h2>
-    <form [formGroup]="tagForm" (ngSubmit)="onSubmit()" class="form">
+    <form [formGroup]="tagForm" (ngSubmit)="onSubmit()" class="form" novalidate>
       <fieldset>
         <div class="form-field">
-          <label for="tagTitle">Tag title :</label>
+          <label for="title">Tag title :</label>
           <input
             type="text"
-            id="tagTitle"
-            formControlName="tagTitle">
+            id="title"
+            formControlName="title">
             <span 
-              *ngIf="!tagForm.get('tagTitle')?.valid && tagForm.get('tagTitle')?.touched">
-              <span *ngIf="tagForm.get('tagTitle')?.errors?.required">This field is required</span>
+              *ngIf="!tagForm.get('title')?.valid && tagForm.get('title')?.touched">
+              <span *ngIf="tagForm.get('title')?.errors?.required">This field is required</span>
             </span>
         </div>
         <span 
@@ -21,7 +21,7 @@
       </fieldset>
       <div class="form-action">
         <button *ngIf="editMode" class="btn-look" type="submit">Save</button>
-        <button *ngIf="editMode" class="btn-look btn-warning" (click)="onDeleteTag(tag.id)" type="button">Delete</button>
+        <!--<button *ngIf="editMode" class="btn-look btn-warning" (click)="onDeleteTag(tag.id)" type="button">Delete</button>-->
         <button *ngIf="!editMode" class="btn-look" (click)="onAddTag()" type="button">Add</button>
       </div>
     </form>

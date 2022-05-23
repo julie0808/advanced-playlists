@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject, EMPTY, Subject, Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
-import { Tag } from '../../../models/tag-model';
+import { ITag } from '../../../models/tag-model';
 import { TagService } from '../tag-service';
 import { catchError, map, tap } from 'rxjs/operators';
 
@@ -12,17 +12,19 @@ import { catchError, map, tap } from 'rxjs/operators';
   selector: 'app-tag-edit',
   templateUrl: './tag-edit.component.html'
 })
-export class TagEditComponent implements OnInit {
+export class TagEditComponent implements OnInit, OnDestroy {
 
   editMode = false;
   apiRootURL: string = '/api/v1';
 
+  private idSub!: Subscription;
+  tagForm!: FormGroup;
+  tag!: ITag;
+
   private errorMessageSubject = new Subject<string>();
   errorMessage$ = this.errorMessageSubject.asObservable();
 
-  //tagList$ = this.tagService.getTags();
-
-  tag$ = this.tagService.selectedTag$
+  selectedTag$ = this.tagService.selectedTag$
     .pipe(
       //tap(e => console.log(e, ' selected test')),
       catchError(err => {
@@ -31,84 +33,114 @@ export class TagEditComponent implements OnInit {
       })
     )
 
-  tagTitle$ = this.tag$
-    .pipe(
-      map(t => t ? t.title : ''),
-      catchError(err => {
-        this.errorMessageSubject.next(err);
-        return EMPTY;
-      })
-    )
-
-  tagForm: FormGroup = new FormGroup({
-    'tagTitle': new FormControl('this is to be dynamic', [Validators.required])
-  });
-
   constructor(private route: ActivatedRoute,
               private router: Router,
+              private fb: FormBuilder,
               private tagService: TagService,
               private http: HttpClient) { 
   }
 
   ngOnInit() {
+
+    this.tagForm = this.fb.group({
+      title: ['', Validators.required],
+      //tags: this.fb.array([])
+    });
+
+    this.selectedTag$.subscribe(tag => {
+      this.displayTag(tag);
+    })
     
-    this.route.params 
+    this.idSub = this.route.params 
       .subscribe(
         (params: Params) => {
-          this.tagService.selectedTagChanged(+params['id']);
-          this.editMode = params['id'] != null;
+          const id = +params['id'];
+          this.getTag(id);
+          this.editMode = id !== 0;
         }
       )
+
   }
 
-  async onSubmit() {
+  displayTag(tag: ITag){
 
-    const data: Tag = {
-      title: this.tagForm.value['tagTitle'], 
-      //id: this.tagSelectedSubject.getValue()
-      id: 0 // to fix
+    if (this.tagForm) {
+      this.tagForm.reset();
     }
 
-    const headers = { 'content-type': 'application/json'};
-    const body = JSON.stringify(data);
+    this.tag = tag;
 
-    await this.http.put<Tag>(this.apiRootURL + '/tags', { tag: body }, { headers }).toPromise()
+    this.tagForm.patchValue({
+      title: tag.title
+    })
+  }
+
+  getTag(id: number): void {
+    this.tagService.selectedTagChanged(id);
+  }
+
+  onSubmit() {
+
+    if (this.tagForm.valid){
+      const newData = {...this.tag, ...this.tagForm.value};
+      console.log(newData);
+      this.tagService.modifyTag(newData)
+        .subscribe({
+          next: () => {
+            this.resetForm();
+            this.router.navigate(['/tags']);
+          },
+          error: err => this.errorMessageSubject.next(err)
+        });
+              
+    }
+
+    /*const headers = { 'content-type': 'application/json'};
+    const body = JSON.stringify(data);*/
+
+    /*await this.http.put<ITag>(this.apiRootURL + '/tags', { tag: body }, { headers }).toPromise()
       .then((result) => {
-        /*const objIndex = this.tagList$.findIndex(obj => obj.id === this.id);
-        const updatedObj = { ...this.tagList$[objIndex], title: this.tagForm.value['tagTitle']};
+        /*const objIndex = this.tags$.findIndex(obj => obj.id === this.id);
+        const updatedObj = { ...this.tags$[objIndex], title: this.tagForm.value['title']};
 
-        this.tagList$ = [
-          ...this.tagList$.slice(0, objIndex),
+        this.tags$ = [
+          ...this.tags$.slice(0, objIndex),
           updatedObj,
-          ...this.tagList$.slice(objIndex + 1),
+          ...this.tags$.slice(objIndex + 1),
         ];*/
 
-        this.router.navigate(['/tags']);
-      }).catch( error => { console.log(error)});
+       /* this.router.navigate(['/tags']);
+      }).catch( error => { console.log(error)});*/
  
   }
 
-  async onAddTag() {
+  resetForm(){
+    this.tagForm.reset();
+  }
 
-    const data: Tag = {
-      title: this.tagForm.value['tagTitle'], 
+  onAddTag() {
+   
+    const data: ITag = {
+      title: this.tagForm.value['title'], 
       id: 0
     }
 
-    const headers = { 'content-type': 'application/json'};
-    const body = JSON.stringify(data);
+    this.tagService.modifyTag(data);
 
-    await this.http.post<Tag>(this.apiRootURL + '/tags', { tag: body }, { headers }).toPromise()
+    //const headers = { 'content-type': 'application/json'};
+    //const body = JSON.stringify(data);
+
+    /*await this.http.post<ITag>(this.apiRootURL + '/tags', { tag: body }, { headers }).toPromise()
     .then((result) => {
 
-      /*this.tagList$.push({
+      this.tags$.push({
         id: result.id,
         title: this.tagForm.value['tagTitle'], 
-      });*/
+      });
 
       this.router.navigate(['/tags']);
       
-    }).catch( error => { console.log(error)});
+    }).catch( error => { console.log(error)});*/
 
   }
 
@@ -118,13 +150,17 @@ export class TagEditComponent implements OnInit {
 
     await this.http.delete(this.apiRootURL + '/tags/' + tagObjectId, { headers }).toPromise()
     .then((result) => {
-      /*const objIndex = this.tagList$.findIndex(obj => obj.id === tagObjectId);
-      this.tagList$.splice(objIndex, 1);*/
+      /*const objIndex = this.tags$.findIndex(obj => obj.id === tagObjectId);
+      this.tags$.splice(objIndex, 1);*/
 
       this.router.navigate(['/tags']);
       
     }).catch( error => { console.log(error)});
 
+  }
+
+  ngOnDestroy(): void {
+    this.idSub.unsubscribe();
   }
 
 

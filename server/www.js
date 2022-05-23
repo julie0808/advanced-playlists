@@ -73,7 +73,8 @@ app.get(`${rootUrl}/tags`, (req, res) => {
   ;(async () => {
     const { rows } = await pool.query(`
       SELECT tag_id as id, title 
-      FROM tag`
+      FROM tag
+      ORDER BY title`
       )
     res.json(rows);
   })().catch(err => {

@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { VideoService } from '../video-service';
 
-import { Video } from '../../../models/video.model';
+import { IVideo } from '../../../models/video.model';
 
 @Component({
   selector: 'app-video-list',

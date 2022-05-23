@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { BehaviorSubject, EMPTY, Subject } from 'rxjs';
 
-import { Tag } from 'src/models/tag-model';
+import { ITag } from 'src/models/tag-model';
 import { TagService } from 'src/app/tags/tag-service';
 import { VideoService } from '../video-service';
 import { catchError } from 'rxjs/operators';
@@ -13,9 +13,7 @@ import { catchError } from 'rxjs/operators';
 })
 export class VideoTagEditComponent implements OnInit {
 
-  //tagsAssigned: Tag[] = [];
-  //videoTagSub: Subscription; // to get changed in assigned tags
-  //VideoTagParse = Parse.Object.extend("VideoTag");
+  //tagsAssigned: ITag[] = [];
 
   private errorMessageSubject = new Subject<string>();
   errorMessage$ = this.errorMessageSubject.asObservable();
@@ -32,7 +30,7 @@ export class VideoTagEditComponent implements OnInit {
     )
     
   // pour pouvoir choisir dans la liste les tags disponibles pour assignation
-  tagList$ = this.tagService.tagList$
+  tags$ = this.tagService.tags$
     .pipe(
       catchError(err => {
         this.errorMessageSubject.next(err);

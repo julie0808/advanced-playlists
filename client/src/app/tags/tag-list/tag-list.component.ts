@@ -3,7 +3,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { EMPTY, Subject } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
-//import { Tag } from '../../../models/tag-model';
 import { TagService } from '../tag-service';
 
 @Component({
@@ -17,7 +16,7 @@ export class TagListComponent {
   private errorMessageSubject = new Subject<string>();
   errorMessage$ = this.errorMessageSubject.asObservable();
 
-  tagList$ = this.tagService.tagList$
+  tags$ = this.tagService.tagsModified$
     .pipe(
       catchError(err => {
         this.errorMessageSubject.next(err);

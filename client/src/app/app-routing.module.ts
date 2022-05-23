@@ -9,7 +9,6 @@ import { VideoTagEditComponent } from './videos/video-tag/video-tag-edit.compone
 const routes: Routes = [
   { path: '', redirectTo: '/videos', pathMatch: 'full' },
   { path: 'tags', component: TagsComponent, children: [
-    { path: 'new', component: TagEditComponent },
     { path: ':id/edit', component: TagEditComponent }
   ] },
   { path: 'videos', component: VideosComponent, children: [
