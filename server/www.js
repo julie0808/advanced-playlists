@@ -57,7 +57,11 @@ app.post(`${rootUrl}/tags`, (req, res) => {
          title 
        };
      }
-     res.status(201).json(results);
+     const newTag = {
+       title: title,
+       id: results.rows[0].tag_id
+     };
+     res.status(201).json(newTag);
    } finally {
      client.release();
    }

@@ -2,7 +2,7 @@
   <div>
     <h2 *ngIf="editMode">Edit tag</h2>
     <h2 *ngIf="!editMode">Add tag</h2>
-    <form [formGroup]="tagForm" (ngSubmit)="onSubmit()" class="form" novalidate>
+    <form [formGroup]="tagForm" (ngSubmit)="updateTag()" class="form" novalidate>
       <fieldset>
         <div class="form-field">
           <label for="title">Tag title :</label>
@@ -21,8 +21,8 @@
       </fieldset>
       <div class="form-action">
         <button *ngIf="editMode" class="btn-look" type="submit">Save</button>
-        <!--<button *ngIf="editMode" class="btn-look btn-warning" (click)="onDeleteTag(tag.id)" type="button">Delete</button>-->
-        <button *ngIf="!editMode" class="btn-look" (click)="onAddTag()" type="button">Add</button>
+        <button *ngIf="editMode" class="btn-look btn-warning" (click)="deleteTag()" type="button">Delete</button>
+        <button *ngIf="!editMode" class="btn-look" (click)="addTag()" type="button">Add</button>
       </div>
     </form>
   </div>

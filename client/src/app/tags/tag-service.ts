@@ -1,33 +1,27 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, combineLatest, merge, Observable, Subject, throwError, of } from 'rxjs';
-import { catchError, concatMap, mergeMap, map, scan, shareReplay, tap, toArray } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, merge, Observable, Subject, of } from 'rxjs';
+import { catchError, concatMap, map, scan, shareReplay } from 'rxjs/operators';
 
-
-import { ITag } from '../../models/tag-model';
-
-interface myInterface {
-  id: number,
-  title: string
-}
+import { ITag, StatusCode } from '../../models/tag-model';
+import { ErrorService } from '../shared/error/error/error-service';
 
 @Injectable({providedIn: 'root'})
 export class TagService {
 
-  tagsChanged = new Subject<ITag[]>();
   apiRootURL: string = '/api/v1/tags';
-  headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+  
+  headers = new HttpHeaders()
+    .set('content-Type', 'application/json');
 
-  private tagList: ITag[] = [];
-
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient,
+              private errorService: ErrorService) {}
 
   tags$: Observable<ITag[]> = this.http.get<ITag[]>(this.apiRootURL)
     .pipe(
       shareReplay(1),
-      catchError(this.handleError)
+      catchError(err => this.errorService.handleError(err))
     );
-
 
   private tagModifiedSubject: Subject<ITag> = new Subject<ITag>();
   tagModifiedAction$: Observable<ITag> = this.tagModifiedSubject.asObservable();
@@ -35,57 +29,79 @@ export class TagService {
   tagsModified$ = merge(
     this.tags$,
     this.tagModifiedAction$
+      .pipe(
+        concatMap(tag => this.saveTagToBackend(tag)),
+        catchError(err => this.errorService.handleError(err))
+      )
   )
     .pipe(
-      
-      // @ts-ignore
-      //scan((acc: ITag[], value: ITag) => [...acc, value]), // if tag ADDED
-
-      scan((tags: ITag[], tag: ITag) => {
-        // spécifique pour action UPDATE
-        
-        return tags.map( (t: ITag)=> {
-          return t.id === tag.id ? { ...tag } : t as ITag;
-        }) as ITag[];
+      // @ts-ignore - typescript a une haine pour "scan"
+      scan((tags: ITag[], tag: ITag) => this.adjustTagList(tags, tag)),
+      map(tags => {
+        return tags.sort( (x: ITag, y: ITag) => {
+          return x.title.localeCompare(y.title);
+        });
       }),
-
-      //scan((products: Product[], product: Product) => this.modifyProducts(products, product)),
-      /*scan((acc: ITag[], value: ITag) => {
-        return acc.map(t => t.id === value.id ? {...value} : t); // if modified
-        //return [...acc, value] as ITag[];  ----if was added
-      }),*/
       shareReplay(1),
-      catchError(this.handleError)
+      catchError(err => this.errorService.handleError(err))
     );
 
-  modifyTag(tag: ITag): Observable<ITag> {
-    const body = JSON.stringify(tag);
-
-    return this.http.put<ITag>(this.apiRootURL, body, { headers: this.headers })
-      .pipe(
-        //tap(tag => console.log('Modified tag: ', JSON.stringify(tag))),
-        map(() => {
-          this.tagModifiedSubject.next(tag);
-          return tag;
-        }),
-        catchError(this.handleError)
-      );
-  }
-
-
-  async addNewTag({id, title}: ITag) {
-    const data: ITag = {
-      id, // will be 0 because we won't use it anyway for insertion
-      title
+    saveTagToBackend(tag: ITag): Observable<ITag> {
+      if (tag.status === StatusCode.added) {
+        const body = JSON.stringify(tag);
+        return this.http.post<ITag>(this.apiRootURL, body, { headers: this.headers })
+          .pipe(
+            map(tagReceived => {
+              tag.id = tagReceived.id;
+              return tag;
+            }),
+            catchError(err => this.errorService.handleError(err))
+          )
+      }
+      if (tag.status === StatusCode.deleted) {
+        return this.http.delete<ITag>(`${this.apiRootURL}/${tag.id}`, {headers: this.headers})
+          .pipe(
+            map(() => tag),
+            catchError(err => this.errorService.handleError(err))
+          );
+      }
+      if (tag.status === StatusCode.updated) {
+        const body = JSON.stringify(tag);
+        return this.http.put<ITag>(this.apiRootURL, body, { headers: this.headers })
+          .pipe(
+            map(() => tag),
+            catchError(err => this.errorService.handleError(err))
+          )
+      }
+      // fallback, return received tag
+      return of(tag);
     }
-    const body = JSON.stringify(data);
 
-    return await this.http.post<ITag>(this.apiRootURL + '/add-tag', { body }, { headers: this.headers }).toPromise()
-      .then((result) => {
-          return result;
-      });
-  }
+    adjustTagList(tags: ITag[], tag: ITag): ITag[] {
+      if (tag.status === StatusCode.added) {
+        return [
+          ...tags,
+          { ...tag, status: StatusCode.unchanged }
+        ];
+      }
+      if (tag.status === StatusCode.deleted) {
+        return tags.filter(t => t.id !== tag.id);
+      }
+      if (tag.status === StatusCode.updated) {
+        return tags.map(t => t.id === tag.id ?
+          { ...tag, status: StatusCode.unchanged } : t);
+      }
+      // fallback, return initial tag list
+      return tags;
+    }
+  
+    addTag(newTag: ITag): void {
+      this.tagModifiedSubject.next(newTag);
+    }
 
+    updateTag(updatedTag: ITag): void {
+      this.tagModifiedSubject.next(updatedTag);
+    }
 
 
   private tagSelectedSubject = new BehaviorSubject<number>(0);
@@ -97,52 +113,27 @@ export class TagService {
   ]).pipe(
     //tap(data => console.log('combine/selected : ' + JSON.stringify(data))),
     map( ([tags, selectedTagId]) => {
-      const tagFound = tags.find( tag => tag.id === selectedTagId);
-      
-      if (tagFound !== undefined){
-        return tagFound;
-      }
-      return this.initializeTag();
+      if ( selectedTagId !== 0 ){
+        const tagFound = tags.find( tag => tag.id === selectedTagId);
+        
+        if (tagFound !== undefined){
+          return tagFound;
+        } else {
+          //this.errorService.handleError("Tag inexistant")
+          // todo - handle error correctly. function is expecting a ITag...
+          // but we should redirect to homepage with correct error message
+          return { id: 0, title: '', status: StatusCode.unchanged};
+        }
+      } else {
+        // todo instanciate ITag correctly...
+        return { id: 0, title: '', status: StatusCode.unchanged};
+      }     
     }),
     shareReplay(1)
   );
 
   selectedTagChanged(selectedTagId: number): void {
-    this.tagSelectedSubject.next(selectedTagId); // emit to the subject the selectedProductId
-  }
-
-  initializeTag(): ITag{
-    return {
-      id: 0, 
-      title: ''
-    }
-  }
-
-
-
-  getTags() {
-    return this.tagList.slice();
-  }
-
-  getTag(tagId: number){
-
-    return this.tagList.find( tag => {
-      if ( tag.id === tagId ){
-        return tag;
-      }
-    });
-
-  }
-
-  private handleError(err: any): Observable<never> {
-    let errorMessage: string;
-    if (err.error instanceof ErrorEvent) {
-      errorMessage = `An error occurred: ${err.error.message}`;
-    } else {
-      errorMessage = `Backend returned code ${err.status}: ${err.body.error}`;
-    }
-    console.error(err);
-    return throwError(errorMessage);
+    this.tagSelectedSubject.next(selectedTagId);
   }
 
 }

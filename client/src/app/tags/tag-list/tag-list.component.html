@@ -3,7 +3,7 @@
     <li class="tag-parent" *ngFor="let tag of tags">
       <div class="tag-label">
         {{ tag.title }} |
-        <a class="link-look" (click)="onEdit(tag.id)">Edit</a>
+        <a class="link-look" (click)="editTag(tag.id)">Edit</a>
       </div>
     </li>
   </ul>

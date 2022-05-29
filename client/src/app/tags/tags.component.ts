@@ -12,7 +12,7 @@ export class TagsComponent {
               private route: ActivatedRoute) { 
   }
 
-  onNewTag() {
+  addNewTag() {
     this.router.navigate([0, 'edit'], {relativeTo: this.route})
   }
 

@@ -29,7 +29,7 @@ export class TagListComponent {
               private router: Router) { 
   }
 
-  onEdit(objectId: number) {
+  editTag(objectId: number) {
     this.router.navigate([objectId, 'edit'], {relativeTo: this.route, queryParamsHandling: 'preserve'});
   }
 
