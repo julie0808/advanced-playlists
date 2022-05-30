@@ -146,22 +146,45 @@ app.delete(`${rootUrl}/tags/:id`, (req, res) => {
 //// VIDEO ////////////////////////
 ///////////////////////////////////
 
-app.get(`${rootUrl}/videotags/:id`, (req, res) => {
+/*app.get(`${rootUrl}/videotags/:id`, (req, res) => {
   const { id } = req.params;
   ;(async () => {
     const { rows } = await pool.query(`
-      SELECT t.tag_id as id, t.title 
-      FROM video_tag vt
+      SELECT    t.tag_id as id, 
+                t.title 
+      FROM      video_tag vt
       LEFT JOIN tag t ON t.tag_id = vt.tag_id
-      WHERE youtube_id = ($1)`,
+      WHERE     youtube_id = ($1)`,
       [id])
     res.json(rows);
   })().catch(err => {
     res.json(err.stack)
   })
+});*/
+
+app.get(`${rootUrl}/videotags`, (req, res) => {
+  ;(async () => {
+    const { rows } = await pool.query(`
+      SELECT DISTINCT 
+        vt.youtube_id, 
+        ( SELECT jsonb_agg(json_ressource)
+          FROM (
+            SELECT
+              -- map to ITag model
+              t.tag_id as id,
+              t.title
+              FROM 		video_tag vt_agg
+              LEFT JOIN 	tag t ON t.tag_id = vt_agg.tag_id
+            WHERE 		vt_agg.youtube_id = vt.youtube_id
+          ) json_ressource
+        ) as tags
+      FROM video_tag vt
+    `)
+    res.json(rows);
+  })().catch(err => {
+    res.json(err.stack)
+  })
 });
-
-
 
 
 

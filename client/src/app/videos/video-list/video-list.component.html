@@ -1,5 +1,5 @@
-<ul class="video-list" *ngIf="videoList$ | async as videoList">
-  <li class="video-list--item" *ngFor="let videoItem of videoList" >
+<ul class="video-list" *ngIf="videos$ | async as videos">
+  <li class="video-list--item" *ngFor="let video of videos" >
     <!--<ul class="video-action">
       <li>
         <svg class="icon icon-cog"><use xlink:href="./assets/icon-list.svg#icon-cog"></use></svg>
@@ -8,27 +8,27 @@
     <div class="video-image">
       <div class="seo-bg">
         <picture>
-          <source srcset="http://i3.ytimg.com/vi/{{ videoItem.youtubeId }}/maxresdefault.jpg" media="(max-width: 767px)">
-          <img src="http://i3.ytimg.com/vi/{{ videoItem.youtubeId }}/maxresdefault.jpg" alt="#">
+          <source srcset="http://i3.ytimg.com/vi/{{ video.youtubeId }}/maxresdefault.jpg" media="(max-width: 767px)">
+          <img src="http://i3.ytimg.com/vi/{{ video.youtubeId }}/maxresdefault.jpg" alt="#">
         </picture>	
       </div>
       <div class="video-image--info">
-        <p class="video-image--length">{{ videoItem.length }}</p>
-        <!--<p class="video-image--new" *ngIf="videoItem.isNew">New</p>
-        <p class="video-image--new-border" *ngIf="videoItem.isNew"></p>-->
+        <p class="video-image--length">{{ video.length }}</p>
+        <!--<p class="video-image--new" *ngIf="video.isNew">New</p>
+        <p class="video-image--new-border" *ngIf="video.isNew"></p>-->
       </div>
     </div>
     <div class="video-info">
-      <p class="video-info--title">{{ videoItem.title }}</p>
-      <p class="video-info--artist">{{ videoItem.artist }}</p>
+      <p class="video-info--title">{{ video.title }}</p>
+      <p class="video-info--artist">{{ video.artist }}</p>
 
       <ul class="video-info--tag-list">
         <li 
-          *ngFor="let tag of videoItem.tagIds"
+          *ngFor="let tag of video.tags"
           class="video-tag"           
           ><p>{{ tag.title }}</p></li>
         <!---<li class="video-tag css-pattern-base css-pattern-2" style="background-color: #00aeff;"><p>Longer tag A</p></li>--->
-        <li class="video-tag video-tag--view-all" (click)="onEditTags(videoItem.youtubeId)">...</li>
+        <li class="video-tag video-tag--view-all" (click)="editTags(video.youtubeId)">Edit tags</li>
       </ul>
     </div>
   </li>

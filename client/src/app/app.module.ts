@@ -16,7 +16,8 @@ import { FiltersComponent } from './filters/filters.component';
 import { TagListComponent } from './tags/tag-list/tag-list.component';
 import { TagEditComponent } from './tags/tag-edit/tag-edit.component';
 
-import { VideoTagEditComponent } from './videos/video-tag/video-tag-edit.component';
+import { VideoTagEditComponent } from './videos/video-tag-edit/video-tag-edit.component';
+import { ErrorComponent } from './shared/error/error/error.component';
 
 
 @NgModule({
@@ -30,7 +31,8 @@ import { VideoTagEditComponent } from './videos/video-tag/video-tag-edit.compone
     FiltersComponent,
     TagListComponent,
     TagEditComponent,
-    VideoTagEditComponent
+    VideoTagEditComponent,
+    ErrorComponent
   ],
   imports: [
     BrowserModule,

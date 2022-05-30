@@ -11,17 +11,17 @@ import { IVideo } from '../../../models/video.model';
 })
 export class VideoListComponent implements OnInit {
 
-  videoList$ = this.videoService.videosFromPlaylist$;
+  videos$ = this.videoService.videos$;
 
   constructor(private route: ActivatedRoute,
               private router: Router,
               private videoService: VideoService) { }
 
   ngOnInit(): void {
-    //this.videoList = this.videoService.getVideos();
+    
   }
 
-  onEditTags(objectId: string) {
+  editTags(objectId: string) {
     this.router.navigate([objectId, 'edit-tag'], {relativeTo: this.route, queryParamsHandling: 'preserve'});
   }
 

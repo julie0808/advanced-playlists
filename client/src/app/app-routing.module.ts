@@ -4,7 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { TagsComponent } from './tags/tags.component';
 import { VideosComponent } from './videos/videos.component';
 import { TagEditComponent } from './tags/tag-edit/tag-edit.component';
-import { VideoTagEditComponent } from './videos/video-tag/video-tag-edit.component';
+import { VideoTagEditComponent } from './videos/video-tag-edit/video-tag-edit.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/videos', pathMatch: 'full' },

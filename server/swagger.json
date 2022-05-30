@@ -134,7 +134,18 @@
           }
         }
       }       
-    }    
+    },
+    "/videotags": {
+      "get": {
+        "tags": ["Videos"],
+        "summary": "Get all associated tags to all videos",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }       
+    }     
   },
   "definitions": {
     "Tag": {

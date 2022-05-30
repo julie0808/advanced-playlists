@@ -49,10 +49,6 @@ export class VideoTagEditComponent implements OnInit {
       .subscribe(
         (params: Params) => {
           this.videoSelectedSubject.next(+params['id']);
-
-          /* latence a recevoir les données. pas toujours prêt */
-          //this.tagsAssigned = this.videoService.getAssignedTags(this.id);
-          //console.log(this.tagsAssigned);
         }
       )
 
