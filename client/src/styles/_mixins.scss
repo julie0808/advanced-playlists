@@ -1,5 +1,7 @@
 $browser-context: 16; // Default
 
 @function em($pixels, $context: $browser-context) {
+  // deprecation math.div($pixels, $context)
   @return #{$pixels/$context}em;
 }
+

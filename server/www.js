@@ -7,6 +7,7 @@ require("dotenv").config();
 
 const express = require('express');
 const bodyParser = require("body-parser");
+const format = require("pg-format");
 const app = express();
 const rootUrl = '/api/v1';
 
@@ -146,21 +147,44 @@ app.delete(`${rootUrl}/tags/:id`, (req, res) => {
 //// VIDEO ////////////////////////
 ///////////////////////////////////
 
-/*app.get(`${rootUrl}/videotags/:id`, (req, res) => {
+app.put(`${rootUrl}/videotags/:id`, (req, res) => {
   const { id } = req.params;
+  const videoTags = req.body;
   ;(async () => {
-    const { rows } = await pool.query(`
-      SELECT    t.tag_id as id, 
-                t.title 
-      FROM      video_tag vt
-      LEFT JOIN tag t ON t.tag_id = vt.tag_id
-      WHERE     youtube_id = ($1)`,
-      [id])
-    res.json(rows);
+    const client = await pool.connect();
+
+    let insertsToMake = '';
+      for (var k in videoTags){
+        if (videoTags.hasOwnProperty(k)) {
+          insertsToMake += `('${id}', ${videoTags[k].id})`;
+            if ( +k < videoTags.length - 1) {
+              insertsToMake += ',';
+            }
+        }
+      }
+
+    try {  
+
+      const deleteQry = 
+        format(`DELETE FROM   video_tag 
+        WHERE         youtube_id = %L`, id);
+      await client.query(deleteQry);
+
+      
+      const insertQry = 
+        format(`INSERT INTO   video_tag (youtube_id, tag_id)
+        VALUES ${insertsToMake}`);
+      const { rows } = await client.query(insertQry);
+
+
+      res.status(201).json(rows);
+    } finally {
+      client.release();
+    }
   })().catch(err => {
     res.json(err.stack)
   })
-});*/
+});
 
 app.get(`${rootUrl}/videotags`, (req, res) => {
   ;(async () => {

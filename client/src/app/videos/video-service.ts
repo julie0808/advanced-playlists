@@ -1,11 +1,10 @@
 import { Injectable } from "@angular/core";
-import { BehaviorSubject, combineLatest, EMPTY, Observable, of, Subject, throwError } from 'rxjs';
-import { catchError, filter, map, shareReplay, switchMap, tap } from "rxjs/operators";
-import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
+import { BehaviorSubject, combineLatest, merge, Observable, of, Subject, throwError } from 'rxjs';
+import { catchError, concatMap, map, shareReplay, tap, scan } from "rxjs/operators";
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 
-import { TagService } from "../tags/tag-service";
-import { ITag } from "../../models/tag-model";
-import { IVideo } from "../../models/video.model";
+import { ITag } from "../tags/tag-model";
+import { IVideo, IVideoClass } from "./video.model";
 import { ErrorService } from "../shared/error/error/error-service";
 
 @Injectable({providedIn: 'root'})
@@ -14,36 +13,42 @@ export class VideoService {
   youtubeApiKey: string = "AIzaSyD0d0tKqyP1G_lrNEEiGxEpfuIoRfDWVKs";
   youtubeApiUrl: string = "https://youtube.googleapis.com/youtube/v3/playlistItems"
   testVideoPlaylistKey: string = "PLwgftAdEcD4phH9Z6pCOcW57mdxn5uJG1";
-  apiRootURL: string = '/api/v1';
+  apiRootURL: string = '/api/v1/videotags';
 
-  constructor(private tagService: TagService,
-              private http: HttpClient,
+  headers = new HttpHeaders()
+    .set('content-Type', 'application/json');
+
+  constructor(private http: HttpClient,
               private errorService: ErrorService) { 
 }
 
   videosFromPlaylist$ =  this.http.get<any>(this.youtubeApiUrl, {params: {
     'key': this.youtubeApiKey,
     'playlistId': this.testVideoPlaylistKey,
-    'maxResults': 20,
+    'maxResults': 150,
     'part': 'snippet'
   }})
     .pipe(
-      //tap( videos => console.log(JSON.stringify(videos))),
-      map( videos => 
-        videos['items'].map( (video: any) => ({
-          ...video,
+      /*tap(videos => {
+        console.log(videos);
+        return videos;
+      }),*/
+      map( videos => {
+        return videos['items'].map( (video: any) => ({
           title: video.snippet.title,
           youtubeId: video.snippet.resourceId.videoId,
           length: 'duree', // not included in "snippet"
           dateModified: 'date', // date of change by ME
           artist: 'Unknown', // not yet set, has to default to "publishedBy"
-          publishedBy: video.snippet.videoOwnerChannelTitle
+          publishedBy: video.snippet.videoOwnerChannelTitle,
+          tags: []
         } as IVideo )) as IVideo[]
-      ),
+      }),
+      
       catchError(err => this.errorService.handleError(err))
     );
 
-  videoTags$: Observable<any> = this.http.get(this.apiRootURL + '/videotags')
+  videoTags$: Observable<any> = this.http.get(this.apiRootURL)
     .pipe(
       shareReplay(1),
       catchError(err => this.errorService.handleError(err))
@@ -52,51 +57,119 @@ export class VideoService {
   videos$ = combineLatest([
     this.videosFromPlaylist$,
     this.videoTags$
-      .pipe(
-        catchError(err => of([]))
-      )
   ]).pipe(
     map( ([videos, tags]) => {
       return videos.map(video => ({
         ...video,
+        // todo i need to make sure that an empty array is returned if no tags found
         tags: video.tags = tags.find( (t: any) => t.youtube_id === video.youtubeId)?.tags as ITag[]
       }) as IVideo)
-    }),
-    tap(videos => console.log(videos))
+    })
   );
 
-  private videoSelectedSubject = new BehaviorSubject<string>('default1234'); 
+  private videoTagsModifiedSubject: Subject<IVideo> = new Subject<IVideo>();
+  videoTagsModifiedAction$: Observable<IVideo> = this.videoTagsModifiedSubject.asObservable();
+
+  videoTagsModified$ = merge(
+    this.videos$,
+    this.videoTagsModifiedAction$
+      .pipe(
+        tap(video => {
+          return video;
+        }),
+        concatMap(video => this.saveVideoTagsToBackend(video)),
+        catchError(err => this.errorService.handleError(err))
+      )
+  )
+    .pipe(
+      // @ts-ignore - typescript a une haine pour "scan"
+      scan((videos: IVideo[], video: IVideo) => this.adjustVideoList(videos, video)),
+      shareReplay(1),
+      catchError(err => this.errorService.handleError(err))
+    );
+
+  updateVideo(updatedVideo: IVideo): void {
+    this.videoTagsModifiedSubject.next(updatedVideo);
+  }
+
+  private sortByTagSubject = new BehaviorSubject<ITag[]>([]);
+  sortByTagAction$ = this.sortByTagSubject.asObservable();  
+
+  videosSorted$ = combineLatest([
+    this.videoTagsModified$,
+    this.sortByTagAction$
+  ])
+    .pipe(
+      map(([videos, selectedTags]) => {
+        if (selectedTags.length) {
+          return videos.filter(video => {
+            const videoTags = video.tags || [];
+            if (videoTags.length){
+              return videoTags.some(videoTag => {
+                return selectedTags.some(selectedTag => selectedTag.id === videoTag.id);
+              })
+            }
+            return false;
+          });
+        } 
+    
+        return videos;
+      }),
+      catchError(err => this.errorService.handleError(err)),
+      shareReplay(1)
+    );
+
+  sortVideoListByTag(selectedTags: ITag[]): void {
+    this.sortByTagSubject.next(selectedTags);
+  }
+
+  private videoSelectedSubject = new BehaviorSubject<string>('defaut12345'); 
   videoSelectedAction$ = this.videoSelectedSubject.asObservable();
 
   selectedVideo$ = combineLatest([
-    this.videosFromPlaylist$,
+    this.videoTagsModified$,
     this.videoSelectedAction$
   ]).pipe(
     map( ([videos, selectedVideoId]) => {
-      return videos.find( video => video.youtubeId === selectedVideoId)
+      const searchForVideo = videos.find( video => video.youtubeId === selectedVideoId);
+      if (searchForVideo !== undefined){
+        return searchForVideo;
+      } 
+      this.errorService.handleError('Video inexistant');
+      return new IVideoClass(); 
     }),
+    catchError(err => this.errorService.handleError(err)),
     shareReplay(1)
   );
 
-  fetchVideoList() {
+  selectedVideoTagChanged(selectedVideoTagId: string): void {
+    this.videoSelectedSubject.next(selectedVideoTagId);
+  }
 
-    /*this.sub = this.youtubeService.getVideosFromPlaylist('PLwgftAdEcD4phH9Z6pCOcW57mdxn5uJG1')
-        .subscribe({
-          next: videos => {
-            this.videoList = videos;
-            this.videosChanged.next( this.getVideos() );
-          },
-          error: err => console.log(err)
-        });*/
+  saveVideoTagsToBackend(video: IVideo): Observable<IVideo> {
+    const body = JSON.stringify(video.tags);
+    let params = new HttpParams(); 
+    params = params.append('id', video.youtubeId);
+
+    //console.log(body);
+
+    ///////////////TODO////////////////
+    ////////////////////////////////////
+    //////calquer le PUT sans le id dans l'URl de tag service///////////
+    return this.http.put(`${this.apiRootURL}/${video.youtubeId}`, body, { 
+      headers: this.headers,
+      params: params 
+    })
+      .pipe(
+        map(() => video),
+        catchError(err => this.errorService.handleError(err))
+      )
 
   }
 
-  updateTagsAssigned(newTagsAssigned: ITag[], id: number) {
-    /*const videoIndex = this.videoList.findIndex( obj => obj.youtubeId === id);
-    this.videoList[videoIndex].tags = newTagsAssigned;
-    console.log(this.videoList);
-    console.log('end before next');
-    this.assignedTabsChanged.next( newTagsAssigned );*/
+  adjustVideoList(videos: IVideo[], video: IVideo): IVideo[] {
+    return videos.map(v => v.youtubeId === video.youtubeId ? video : v);
   }
 
 }
+

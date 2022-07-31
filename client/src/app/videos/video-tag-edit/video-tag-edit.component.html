@@ -1,17 +1,35 @@
 <div class="video-manager--tag-list">
-  <h3>Edit assigned tags</h3>
-  <ul *ngIf="tags$ | async as tags">
+  <h3 *ngIf="video$ | async as video">Edit assigned tags for {{ video.title }}</h3>
+
+  <form [formGroup]="videoTagForm" (ngSubmit)="updateVideoTag()" class="form" novalidate>
+    <fieldset>
+      <div class="form-field">
+        <label for="tagIds">Tags :</label>
+    
+        <ng-multiselect-dropdown
+          formControlName='tags'
+          [placeholder]="'custom placeholder'"
+          [settings]="tagsDropdown"
+          [data]="tagList"> 
+        </ng-multiselect-dropdown>
+
+        <!--[(ngModel)]="tagsSelected"-->
+        <!--tags$-->   <!--videoTagForm.get('tagIds')-->
+
+      </div>
+      <span 
+          *ngIf="!videoTagForm.valid && videoTagForm.touched"
+          >The form contains errors</span>
+    </fieldset>
+    <div class="form-action">
+      <button class="btn-look" type="submit">Save</button>
+    </div>
+  </form>
+
+  <!--<ul *ngIf="tags$ | async as tags">
     <li *ngFor="let tag of tags; let i = index">
       {{ tag.title }}
-      <a 
-        *ngIf="!checkInTagsAssigned(tag.id)"  
-        (click)="onAddTag(tag.id)" 
-        class="link-look">Add</a>
-      <a 
-        *ngIf="checkInTagsAssigned(tag.id)" 
-        (click)="onRemoveTag(tag.id)" 
-        class="link-look">Remove</a>
     </li>
-  </ul>
+  </ul>-->
 </div>
 

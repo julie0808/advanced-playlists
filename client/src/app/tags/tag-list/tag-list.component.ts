@@ -11,8 +11,6 @@ import { TagService } from '../tag-service';
 })
 export class TagListComponent {
 
-  isFetching = false;
-
   private errorMessageSubject = new Subject<string>();
   errorMessage$ = this.errorMessageSubject.asObservable();
 

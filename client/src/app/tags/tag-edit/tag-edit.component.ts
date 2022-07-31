@@ -2,9 +2,8 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { EMPTY, Subject, Subscription } from 'rxjs';
-import { HttpHeaders } from '@angular/common/http';
 
-import { ITag, StatusCode } from '../../../models/tag-model';
+import { ITag, StatusCode } from '../tag-model';
 import { TagService } from '../tag-service';
 import { catchError } from 'rxjs/operators';
 

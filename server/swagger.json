@@ -112,16 +112,27 @@
       }
     },
     "/videotags/{id}": {
-      "get": {
+      "put": {
         "tags": ["Videos"],
-        "summary": "Get video tags by video id",
+        "summary": "Update assigned tags for a video",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "The video ID",
+            "description": "The youtube ID",
             "schema": {
-              "type": "number"
+              "type": "string"
+            },
+            "example": {
+              "id": "sPBVzqOax3Y"
+            }
+          },
+          {
+            "name": "tags",
+            "in": "body",
+            "description": "Object of tags to assign to video",
+            "schema": {
+              "$ref": "#/definitions/Tags"
             }
           }
         ],

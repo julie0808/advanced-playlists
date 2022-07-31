@@ -1,19 +1,32 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Params, Router } from '@angular/router';
-import { BehaviorSubject, EMPTY, Subject } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, Params } from '@angular/router';
+import { BehaviorSubject, EMPTY, Subject, Subscription } from 'rxjs';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { catchError, map } from 'rxjs/operators';
+import { IDropdownSettings } from 'ng-multiselect-dropdown';
 
-import { ITag } from 'src/models/tag-model';
 import { TagService } from 'src/app/tags/tag-service';
 import { VideoService } from '../video-service';
-import { catchError } from 'rxjs/operators';
+import { ITag } from '../../tags/tag-model';
+import { IVideo, IVideoClass } from '../video.model';
 
 @Component({
   selector: 'app-video-tag-edit',
   templateUrl: './video-tag-edit.component.html'
 })
-export class VideoTagEditComponent implements OnInit {
+export class VideoTagEditComponent implements OnInit, OnDestroy {
 
-  //tagsAssigned: ITag[] = [];
+  videoTagForm!: FormGroup;
+  tagsDropdown: IDropdownSettings = {
+    // singleSelection: false,
+    idField: 'id',
+    textField: 'title',
+    allowSearchFilter: true,
+    searchPlaceholderText: 'Search...'
+  };
+  tagList: ITag[] = [];
+  idSub!: Subscription;
+  videoId!: string;
 
   private errorMessageSubject = new Subject<string>();
   errorMessage$ = this.errorMessageSubject.asObservable();
@@ -23,14 +36,16 @@ export class VideoTagEditComponent implements OnInit {
 
   video$ = this.videoService.selectedVideo$
     .pipe(
+      map(video => {
+        return video;
+      }),
       catchError(err => {
         this.errorMessageSubject.next(err);
         return EMPTY;
       })
     )
     
-  // pour pouvoir choisir dans la liste les tags disponibles pour assignation
-  tags$ = this.tagService.tags$
+  tags$ = this.tagService.tagsModified$
     .pipe(
       catchError(err => {
         this.errorMessageSubject.next(err);
@@ -41,48 +56,42 @@ export class VideoTagEditComponent implements OnInit {
   constructor(private tagService: TagService,
               private videoService: VideoService,
               private route: ActivatedRoute,
-              private router: Router) { }
+              private fb: FormBuilder) { }
 
   ngOnInit() {
-
-    this.route.params 
+    
+    this.idSub = this.route.params 
       .subscribe(
         (params: Params) => {
-          this.videoSelectedSubject.next(+params['id']);
+          this.videoId = params['id'];
+          this.videoService.selectedVideoTagChanged(params['id']);
         }
       )
 
-   /* this.videoTagSub = this.videoService.assignedTabsChanged
-      .subscribe(
-        (tags: Tag[]) => {
-          this.tagsAssigned = tags;
-        }
-      );*/
+    this.videoTagForm = this.fb.group({
+      tags: [ '', Validators.required]
+    });
+
+    this.tags$.subscribe(tags => this.tagList = tags || []);
+    this.video$.subscribe(video => {
+      this.videoTagForm.patchValue({
+        tags:  video?.tags || []
+      })
+    });
 
   }
 
-  checkInTagsAssigned(id: number) {
-    let isAssigned = false;
-
-    /*if ( this.tagsAssigned.findIndex( obj => obj.id === id) > -1 ) {
-      isAssigned = true;
-    }*/
-
-    return isAssigned;
+  updateVideoTag(){
+    if (this.videoTagForm.valid){
+      let updatedVideo: IVideo = new IVideoClass();
+      this.video$.subscribe(video => updatedVideo = video);
+      updatedVideo.tags =this.videoTagForm.get('tags')?.value;
+      this.videoService.updateVideo(updatedVideo);
+    }
   }
 
-  onAddTag(id: number) {
-    // to redo without Parse   
-    //this.videoService.updateTagsAssigned(this.tagsAssigned, this.id);
+  ngOnDestroy(): void {
+    this.idSub.unsubscribe();
   }
-
-  onRemoveTag(id: number) {
-    /*
-    const objIndex = this.tagsAssigned.findIndex( obj => obj.id === id)
-    this.tagsAssigned.splice(objIndex, 1);
-    this.videoService.updateTagsAssigned(this.tagsAssigned, this.id);
-    */
-  }
-
 
 }

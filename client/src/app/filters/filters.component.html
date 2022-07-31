@@ -12,7 +12,14 @@
       </li>
     </ul>
     <div class="filter-sort">
-      Sort
+      <ng-multiselect-dropdown
+          [placeholder]="'Sort by tags'"
+          [settings]="tagsDropdown"
+          [(ngModel)]="selectedTagList"
+          (onSelect)="sortByTag()"
+          (onDeSelect)="sortByTag()"
+          [data]="tagList"> 
+        </ng-multiselect-dropdown>
     </div>
   </div>
 </section>

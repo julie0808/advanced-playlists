@@ -5,7 +5,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { VideosComponent } from './videos/videos.component';
 import { VideoListComponent } from './videos/video-list/video-list.component';
@@ -18,6 +18,8 @@ import { TagEditComponent } from './tags/tag-edit/tag-edit.component';
 
 import { VideoTagEditComponent } from './videos/video-tag-edit/video-tag-edit.component';
 import { ErrorComponent } from './shared/error/error/error.component';
+import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
+import { CommonModule } from '@angular/common';
 
 
 @NgModule({
@@ -36,9 +38,12 @@ import { ErrorComponent } from './shared/error/error/error.component';
   ],
   imports: [
     BrowserModule,
+    CommonModule,
+    FormsModule,
     AppRoutingModule,
     ReactiveFormsModule,
-    HttpClientModule
+    HttpClientModule,
+    NgMultiSelectDropDownModule
   ],
   providers: [],
   bootstrap: [AppComponent]

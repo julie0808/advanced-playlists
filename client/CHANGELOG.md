@@ -1,3 +1,8 @@
+# Release 0.4.0
+
+- Filter les vidéos par tags
+- Ajouter des tags à des vidéos
+
 # Release 0.3.0
 
 - Storer dans l'application le data venant de l'API Youtube et Back4App
@@ -12,6 +17,6 @@
 - Ajout ou suppression de tag assigné à un vidéo
 
 ## Étapes restantes pour Release 1.0.0 :
-- Branchement à Youtube API pour lire la liste de vidéos
 - Lecture de vidéo à même l'application
-- Filtrer les vidéos par Tag
+- Faire l'optimisation (repasser les to-do + peaufinement visuel)
+- Le visuel du multi select est insatisfaisant

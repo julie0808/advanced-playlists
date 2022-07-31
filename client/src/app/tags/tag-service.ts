@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, combineLatest, merge, Observable, Subject, of } from 'rxjs';
 import { catchError, concatMap, map, scan, shareReplay } from 'rxjs/operators';
 
-import { ITag, StatusCode } from '../../models/tag-model';
+import { ITag, StatusCode } from './tag-model';
 import { ErrorService } from '../shared/error/error/error-service';
 
 @Injectable({providedIn: 'root'})
