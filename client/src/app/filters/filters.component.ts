@@ -29,7 +29,7 @@ export class FiltersComponent implements OnInit {
 
   tags$ = this.tagService.tagsModified$
     .pipe(
-      tap(tags => console.log(tags)),
+      //tap(tags => console.log(tags)),
       catchError(err => {
         this.errorMessageSubject.next(err);
         return EMPTY; 

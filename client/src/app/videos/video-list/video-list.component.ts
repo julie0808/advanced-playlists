@@ -28,6 +28,13 @@ export class VideoListComponent {
               private router: Router,
               private videoService: VideoService) { }
 
+  ngOnInit(){
+    this.videos$.subscribe(videoList=>{
+      this.videoService.updateNewVideos(videoList);
+    })
+    
+  }
+
   editTags(objectId: string) {
     this.router.navigate([objectId, 'edit-tag'], {relativeTo: this.route, queryParamsHandling: 'preserve'});
   }

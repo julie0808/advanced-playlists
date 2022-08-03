@@ -147,35 +147,28 @@ app.delete(`${rootUrl}/tags/:id`, (req, res) => {
 //// VIDEO ////////////////////////
 ///////////////////////////////////
 
-app.put(`${rootUrl}/videotags/:id`, (req, res) => {
-  const { id } = req.params;
-  const videoTags = req.body;
+// for now, simply store the initial title of the video as fetched on
+// youtube, so if it's deleted, we can retrace it
+app.put(`${rootUrl}/video/update`, (req, res) => {
+  console.log('putting...');
+  const videos = req.body;
   ;(async () => {
     const client = await pool.connect();
 
-    let insertsToMake = '';
-      for (var k in videoTags){
-        if (videoTags.hasOwnProperty(k)) {
-          insertsToMake += `('${id}', ${videoTags[k].id})`;
-            if ( +k < videoTags.length - 1) {
-              insertsToMake += ',';
-            }
+    try { 
+      
+      let rows = 'todo';
+
+      for (var k in videos){
+        if (videos.hasOwnProperty(k)) {
+          let insertQry = `INSERT INTO video (youtube_id, title) 
+                      VALUES ($1, $2)
+                      ON CONFLICT DO NOTHING`;
+
+        console.log('qry', insertQry);
+          await client.query(insertQry, [`${videos[k].youtubeId}`,`${videos[k].title}`]);
         }
       }
-
-    try {  
-
-      const deleteQry = 
-        format(`DELETE FROM   video_tag 
-        WHERE         youtube_id = %L`, id);
-      await client.query(deleteQry);
-
-      
-      const insertQry = 
-        format(`INSERT INTO   video_tag (youtube_id, tag_id)
-        VALUES ${insertsToMake}`);
-      const { rows } = await client.query(insertQry);
-
 
       res.status(201).json(rows);
     } finally {
@@ -186,7 +179,43 @@ app.put(`${rootUrl}/videotags/:id`, (req, res) => {
   })
 });
 
-app.get(`${rootUrl}/videotags`, (req, res) => {
+
+app.put(`${rootUrl}/video/tags/update/:id`, (req, res) => {
+  const { id } = req.params;
+  const videoTags = req.body;
+  ;(async () => {
+    const client = await pool.connect();
+
+    try {  
+
+      let rows = 'todo';
+
+      const deleteQry = `
+        DELETE FROM   video_tag 
+        WHERE         youtube_id = $1
+        `;
+      await client.query(deleteQry, [id]);
+
+      for (var k in videoTags){
+        if (videoTags.hasOwnProperty(k)) {
+          const insertQry = `
+            INSERT INTO   video_tag (youtube_id, tag_id)
+            VALUES ($1, $2)
+            `;
+          await client.query(insertQry, [`${id}`, videoTags[k].id ]);
+        }
+      }
+
+      res.status(201).json(rows);
+    } finally {
+      client.release();
+    }
+  })().catch(err => {
+    res.json(err.stack)
+  })
+});
+
+app.get(`${rootUrl}/video/tags`, (req, res) => {
   ;(async () => {
     const { rows } = await pool.query(`
       SELECT DISTINCT 

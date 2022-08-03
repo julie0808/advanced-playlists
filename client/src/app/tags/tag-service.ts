@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, combineLatest, merge, Observable, Subject, of } from 'rxjs';
-import { catchError, concatMap, map, scan, shareReplay } from 'rxjs/operators';
+import { catchError, concatMap, map, scan, tap, shareReplay } from 'rxjs/operators';
 
 import { ITag, StatusCode } from './tag-model';
 import { ErrorService } from '../shared/error/error/error-service';

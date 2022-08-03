@@ -1,7 +1,15 @@
+## Étapes restantes pour Release 1.0.0 :
+- Lecture de vidéo à même l'application
+- Faire l'optimisation (repasser les to-do + peaufinement visuel)
+- Le visuel du multi select est insatisfaisant
+
+
+
 # Release 0.4.0
 
 - Filter les vidéos par tags
 - Ajouter des tags à des vidéos
+- Enregistrer le titre initial des vidéos dans la base de données
 
 # Release 0.3.0
 
@@ -16,7 +24,4 @@
 - Ajout, suppression et modification de tag
 - Ajout ou suppression de tag assigné à un vidéo
 
-## Étapes restantes pour Release 1.0.0 :
-- Lecture de vidéo à même l'application
-- Faire l'optimisation (repasser les to-do + peaufinement visuel)
-- Le visuel du multi select est insatisfaisant
+

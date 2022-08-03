@@ -13,7 +13,7 @@ export class VideoService {
   youtubeApiKey: string = "AIzaSyD0d0tKqyP1G_lrNEEiGxEpfuIoRfDWVKs";
   youtubeApiUrl: string = "https://youtube.googleapis.com/youtube/v3/playlistItems"
   testVideoPlaylistKey: string = "PLwgftAdEcD4phH9Z6pCOcW57mdxn5uJG1";
-  apiRootURL: string = '/api/v1/videotags';
+  apiRootURL: string = '/api/v1/video';
 
   headers = new HttpHeaders()
     .set('content-Type', 'application/json');
@@ -22,33 +22,45 @@ export class VideoService {
               private errorService: ErrorService) { 
 }
 
-  videosFromPlaylist$ =  this.http.get<any>(this.youtubeApiUrl, {params: {
+  videosFromPlaylist$ = this.http.get<any>(this.youtubeApiUrl, {params: {
     'key': this.youtubeApiKey,
     'playlistId': this.testVideoPlaylistKey,
     'maxResults': 150,
     'part': 'snippet'
   }})
     .pipe(
-      /*tap(videos => {
-        console.log(videos);
-        return videos;
-      }),*/
       map( videos => {
-        return videos['items'].map( (video: any) => ({
+        const formattedVideos = videos['items'].map( (video: any) => ({
           title: video.snippet.title,
           youtubeId: video.snippet.resourceId.videoId,
           length: 'duree', // not included in "snippet"
           dateModified: 'date', // date of change by ME
           artist: 'Unknown', // not yet set, has to default to "publishedBy"
           publishedBy: video.snippet.videoOwnerChannelTitle,
-          tags: []
-        } as IVideo )) as IVideo[]
-      }),
-      
+          tags: [] // is added in subsequent request
+        } as IVideo )) as IVideo[];
+        
+        // i don't need the observable, but I need to subscribe to it to have it "run"
+        this.updateNewVideos(formattedVideos).subscribe((videos: IVideo[]) => videos);
+
+        return formattedVideos;
+      }),     
       catchError(err => this.errorService.handleError(err))
     );
 
-  videoTags$: Observable<any> = this.http.get(this.apiRootURL)
+  updateNewVideos(videos: IVideo[]): Observable<IVideo[]> {
+    const body = JSON.stringify(videos);
+
+    return this.http.put<IVideo[]>(`${this.apiRootURL}/update`, body, {
+      headers: this.headers
+    })
+    .pipe(
+        map(() => videos),
+        catchError(err => this.errorService.handleError(err))
+      )
+  }
+
+  videoTags$: Observable<any> = this.http.get(`${this.apiRootURL}/tags`)
     .pipe(
       shareReplay(1),
       catchError(err => this.errorService.handleError(err))
@@ -151,12 +163,7 @@ export class VideoService {
     let params = new HttpParams(); 
     params = params.append('id', video.youtubeId);
 
-    //console.log(body);
-
-    ///////////////TODO////////////////
-    ////////////////////////////////////
-    //////calquer le PUT sans le id dans l'URl de tag service///////////
-    return this.http.put(`${this.apiRootURL}/${video.youtubeId}`, body, { 
+    return this.http.put(`${this.apiRootURL}/tags/update/${video.youtubeId}`, body, { 
       headers: this.headers,
       params: params 
     })

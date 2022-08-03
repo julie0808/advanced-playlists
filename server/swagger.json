@@ -111,7 +111,31 @@
         }
       }
     },
-    "/videotags/{id}": {
+    "/video/update": {
+      "put": {
+        "tags": ["Videos"],
+        "summary": "Update information of videos",
+        "parameters": [
+          {
+            "name": "informations",
+            "in": "body",
+            "description": "Video informations",
+            "schema": {
+              "$ref": "#/definitions/Video"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Video"
+            }
+          }
+        }
+      }       
+    },
+    "/video/tags/update/{id}": {
       "put": {
         "tags": ["Videos"],
         "summary": "Update assigned tags for a video",
@@ -146,7 +170,7 @@
         }
       }       
     },
-    "/videotags": {
+    "/video/tags": {
       "get": {
         "tags": ["Videos"],
         "summary": "Get all associated tags to all videos",
@@ -174,6 +198,30 @@
     "Tags": {
       "type": "array",
       "$ref": "#/definitions/Tag"
+    },
+    "Video": {
+      "required": [
+        "youtubeId", 
+        "title", 
+        "length", 
+        "dateModified",
+        "tags",
+        "artist",
+        "publishedBy"],
+      "properties": {
+        "youtube_id": {
+          "type": "string",
+          "uniqueItems": true
+        },
+        "title": {"type": "string"},
+        "length": {"type": "string"},
+        "dateModified": {"type": "string"},
+        "tags": {
+          "type": "string"
+        },
+        "artist": {"type": "string"},
+        "publishedBy": {"type": "string"}
+      }
     }
   }
 }
