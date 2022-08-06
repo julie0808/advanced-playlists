@@ -1,3 +1,5 @@
+import { FormControl, FormGroup } from "@angular/forms";
+
 export interface ITag {
   id: number;
   title: string;
@@ -11,3 +13,7 @@ export enum StatusCode {
   deleted,
   updated
 }
+
+export interface ITagForm extends FormGroup<{
+  title: FormControl<string>;
+}> {}

@@ -15,6 +15,7 @@ src/styles/_sass_modele/*
 /node_modules
 /client/node_modules
 /server/node_modules
+/client/.angular
 
 # profiling files
 chrome-profiler-events*.json

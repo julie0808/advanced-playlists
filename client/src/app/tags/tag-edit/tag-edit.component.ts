@@ -1,9 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { EMPTY, Subject, Subscription } from 'rxjs';
 
-import { ITag, StatusCode } from '../tag-model';
+import { ITag, StatusCode, ITagForm } from '../tag-model';
 import { TagService } from '../tag-service';
 import { catchError } from 'rxjs/operators';
 
@@ -14,9 +14,13 @@ import { catchError } from 'rxjs/operators';
 export class TagEditComponent implements OnInit, OnDestroy {
 
   private idSub!: Subscription;
-  tagForm!: FormGroup;
   tag!: ITag;
   editMode: boolean = false;
+
+  tagForm: ITagForm = this.fb.group({
+    title: this.fb.control('', Validators.required),
+    //tags: this.fb.array([])
+  });
 
   private errorMessageSubject = new Subject<string>();
   errorMessage$ = this.errorMessageSubject.asObservable();
@@ -31,16 +35,12 @@ export class TagEditComponent implements OnInit, OnDestroy {
 
   constructor(private route: ActivatedRoute,
               private router: Router,
-              private fb: FormBuilder,
+              private fb: NonNullableFormBuilder,
               private tagService: TagService) { 
+                
   }
 
   ngOnInit() {
-
-    this.tagForm = this.fb.group({
-      title: ['', Validators.required],
-      //tags: this.fb.array([])
-    });
 
     this.selectedTag$.subscribe(tag => {
       this.displayTag(tag);
@@ -78,7 +78,7 @@ export class TagEditComponent implements OnInit, OnDestroy {
 
   addTag() {
     const newTag: ITag = {
-      title: this.tagForm.value['title'], 
+      title: this.tagForm.value['title']!, 
       id: 0,
       status: StatusCode.added
     }

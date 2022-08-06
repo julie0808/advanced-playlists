@@ -1,3 +1,4 @@
+import { FormGroup, FormControl } from "@angular/forms";
 import { ITag } from "../tags/tag-model";
 
 export interface IVideo {
@@ -23,3 +24,7 @@ export class IVideoClass {
   artist: string = '';
   publishedBy: string = '';
 }
+
+export interface IVideoForm extends FormGroup<{
+  tags: FormControl<ITag[]>;
+}> {}

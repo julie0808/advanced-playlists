@@ -1,14 +1,14 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { BehaviorSubject, EMPTY, Subject, Subscription } from 'rxjs';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NonNullableFormBuilder, Validators } from '@angular/forms';
 import { catchError, map } from 'rxjs/operators';
 import { IDropdownSettings } from 'ng-multiselect-dropdown';
 
 import { TagService } from 'src/app/tags/tag-service';
 import { VideoService } from '../video-service';
 import { ITag } from '../../tags/tag-model';
-import { IVideo, IVideoClass } from '../video.model';
+import { IVideo, IVideoClass, IVideoForm } from '../video.model';
 
 @Component({
   selector: 'app-video-tag-edit',
@@ -16,7 +16,6 @@ import { IVideo, IVideoClass } from '../video.model';
 })
 export class VideoTagEditComponent implements OnInit, OnDestroy {
 
-  videoTagForm!: FormGroup;
   tagsDropdown: IDropdownSettings = {
     // singleSelection: false,
     idField: 'id',
@@ -27,6 +26,10 @@ export class VideoTagEditComponent implements OnInit, OnDestroy {
   tagList: ITag[] = [];
   idSub!: Subscription;
   videoId!: string;
+
+  videoTagForm: IVideoForm = this.fb.group({
+    tags: this.fb.control( [] as ITag[], Validators.required)
+  });
 
   private errorMessageSubject = new Subject<string>();
   errorMessage$ = this.errorMessageSubject.asObservable();
@@ -56,7 +59,7 @@ export class VideoTagEditComponent implements OnInit, OnDestroy {
   constructor(private tagService: TagService,
               private videoService: VideoService,
               private route: ActivatedRoute,
-              private fb: FormBuilder) { }
+              private fb: NonNullableFormBuilder) { }
 
   ngOnInit() {
     
@@ -67,10 +70,6 @@ export class VideoTagEditComponent implements OnInit, OnDestroy {
           this.videoService.selectedVideoTagChanged(params['id']);
         }
       )
-
-    this.videoTagForm = this.fb.group({
-      tags: [ '', Validators.required]
-    });
 
     this.tags$.subscribe(tags => this.tagList = tags || []);
     this.video$.subscribe(video => {
@@ -85,7 +84,7 @@ export class VideoTagEditComponent implements OnInit, OnDestroy {
     if (this.videoTagForm.valid){
       let updatedVideo: IVideo = new IVideoClass();
       this.video$.subscribe(video => updatedVideo = video);
-      updatedVideo.tags =this.videoTagForm.get('tags')?.value;
+      updatedVideo.tags =this.videoTagForm.get('tags')?.value!;
       this.videoService.updateVideo(updatedVideo);
     }
   }

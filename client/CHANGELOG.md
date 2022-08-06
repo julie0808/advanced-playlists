@@ -2,6 +2,7 @@
 - Lecture de vidéo à même l'application
 - Faire l'optimisation (repasser les to-do + peaufinement visuel)
 - Le visuel du multi select est insatisfaisant
+- bogue: videoList not updated if tagname is updated in tag manager
 
 
 
