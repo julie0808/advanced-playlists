@@ -14,6 +14,7 @@ export class VideoService {
   youtubeApiKey: string = "AIzaSyD0d0tKqyP1G_lrNEEiGxEpfuIoRfDWVKs";
   youtubeApiUrl: string = "https://youtube.googleapis.com/youtube/v3/playlistItems"
   testVideoPlaylistKey: string = "PLwgftAdEcD4phH9Z6pCOcW57mdxn5uJG1";
+  videoPlayListKPop: string = "PLwgftAdEcD4rXHmDdFTFI8Hch3BfWBQIt";
   apiRootURL: string = '/api/v1/video';
 
   headers = new HttpHeaders()
@@ -26,12 +27,13 @@ export class VideoService {
 
   videosFromPlaylist$ = this.http.get<any>(this.youtubeApiUrl, {params: {
     'key': this.youtubeApiKey,
-    'playlistId': this.testVideoPlaylistKey,
-    'maxResults': 150,
+    'playlistId': this.videoPlayListKPop,
+    'maxResults': 50, // max provided by API is 50
     'part': 'snippet,contentDetails'
   }})
     .pipe(
       map( videos => {
+        console.log('video length',videos['items'].length);
         const formattedVideos = videos['items'].map( (video: any) => ({
           title: video.snippet.title,
           youtubeId: video.snippet.resourceId.videoId,
@@ -84,7 +86,7 @@ export class VideoService {
   private videoTagsModifiedSubject: Subject<IVideo> = new Subject<IVideo>();
   videoTagsModifiedAction$: Observable<IVideo> = this.videoTagsModifiedSubject.asObservable();
 
-  videoTagsModified$ = merge(
+  videoTagsModified$: Observable<IVideo[]> = merge(
     this.videos$,
     this.videoTagsModifiedAction$
       .pipe(
@@ -116,7 +118,7 @@ export class VideoService {
     .pipe(
       map(([videos, selectedTags]) => {
         if (selectedTags.length) {
-          return videos.filter(video => {
+          return videos.filter( (video: IVideo) => {
             const videoTags = video.tags || [];
             if (videoTags.length){
               return videoTags.some(videoTag => {
@@ -157,6 +159,7 @@ export class VideoService {
         } 
 
         this.errorService.handleError('Video inexistant');
+        console.log(selectedVideoId);
         return new IVideoClass(); 
       }
       // videoList is not yet loaded with default video
@@ -202,19 +205,6 @@ export class VideoService {
     return videos.map(v => v.youtubeId === video.youtubeId ? video : v);
   }
 
-  // WIP
-  batchInsert() {
-    this.http.get<any>(this.youtubeApiUrl, {params: {
-      'key': this.youtubeApiKey,
-      'playlistId': this.testVideoPlaylistKey
-    }})
-      .pipe(
-        map( videos => {
-          console.log(videos);
-        }),     
-        catchError(err => this.errorService.handleError(err))
-      );
-  }
 
 }
 

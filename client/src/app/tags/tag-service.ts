@@ -26,7 +26,7 @@ export class TagService {
   private tagModifiedSubject: Subject<ITag> = new Subject<ITag>();
   tagModifiedAction$: Observable<ITag> = this.tagModifiedSubject.asObservable();
 
-  tagsModified$ = merge(
+  tagsModified$: Observable<ITag[]> = merge(
     this.tags$,
     this.tagModifiedAction$
       .pipe(
@@ -37,7 +37,7 @@ export class TagService {
     .pipe(
       // @ts-ignore - typescript a une haine pour "scan"
       scan((tags: ITag[], tag: ITag) => this.adjustTagList(tags, tag)),
-      map(tags => {
+      map((tags: ITag[]) => {
         return tags.sort( (x: ITag, y: ITag) => {
           return x.title.localeCompare(y.title);
         });

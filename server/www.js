@@ -44,7 +44,6 @@ app.use(bodyParser.json());
 app.post(`${rootUrl}/tags`, (req, res) => {
   const {id, title} = req.body;
  ;(async () => {
-   console.log(id, title);
    const client = await pool.connect();
    try {
      let results = await client.query(
@@ -150,7 +149,6 @@ app.delete(`${rootUrl}/tags/:id`, (req, res) => {
 // for now, simply store the initial title of the video as fetched on
 // youtube, so if it's deleted, we can retrace it
 app.put(`${rootUrl}/video/update`, (req, res) => {
-  console.log('putting...');
   const videos = req.body;
   ;(async () => {
     const client = await pool.connect();
@@ -165,7 +163,6 @@ app.put(`${rootUrl}/video/update`, (req, res) => {
                       VALUES ($1, $2)
                       ON CONFLICT DO NOTHING`;
 
-        console.log('qry', insertQry);
           await client.query(insertQry, [`${videos[k].youtubeId}`,`${videos[k].title}`]);
         }
       }

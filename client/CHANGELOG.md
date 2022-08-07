@@ -1,8 +1,28 @@
-## Étapes restantes pour Release 1.0.0 :
-- Le visuel du multi select est insatisfaisant
-- bogue: videoList not updated if tagname is updated in tag manager
+## TODOS
+https://trello.com/b/sihPIKvw/fancyt
+- le maxresults de la requête est capped à 50. je dois aller chercher tous les vidéos
+- vérifier l'erreur dans la console (postMessage on Domwindow target origin does not match)
+- Le visuel du multi select est insatisfaisant 
+- bogue: videoList not updated if tagname is updated in tag manager 
+- supprimer un tag a besoin d'un modal de confirmation (+ suppression des liaisons)
+- système pour savoir quels videos sont nouveaux / n'ont aucun tag assigné
+- avoir un système à part pour les Artistes
+- enregistrer filtre actuel en session
+- enregistrer un groupe de filtre pour sélection rapide
+- voir la durée des vidéos
+- tri par date d'ajout à la playlist
+- option pour jouer de façon aléatoire
+- contrôle vidéos pour next/previous
+- groupe de tags
 
 
+
+
+
+# Release 1.0.0
+
+- MVP officiel
+- Ajout du login via Google oAuth
 
 # Release 0.6.0
 

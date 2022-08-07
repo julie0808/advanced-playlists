@@ -5,4 +5,5 @@
       <li class="main-menu--item" routerLinkActive="item-active"><a routerLink="/tags">Tag Manager</a></li>
     </ul>
   </nav>
+  <p *ngIf="user">Logged as {{ user.name }}</p>
 </header>

@@ -1,5 +1,4 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute, Params } from '@angular/router';
 import { BehaviorSubject, EMPTY, Subject, Subscription } from 'rxjs';
 import { NonNullableFormBuilder, Validators } from '@angular/forms';
 import { catchError, map } from 'rxjs/operators';
@@ -9,6 +8,7 @@ import { TagService } from 'src/app/tags/tag-service';
 import { VideoService } from '../video-service';
 import { ITag } from '../../tags/tag-model';
 import { IVideo, IVideoClass, IVideoForm } from '../video.model';
+import { ActivatedRoute, Params } from '@angular/router';
 
 @Component({
   selector: 'app-video-tag-edit',
