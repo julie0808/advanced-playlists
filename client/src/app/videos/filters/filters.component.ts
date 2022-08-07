@@ -6,7 +6,7 @@ import { catchError, tap } from 'rxjs/operators';
 
 import { ITag } from 'src/app/tags/tag-model';
 import { TagService } from 'src/app/tags/tag-service';
-import { VideoService } from '../videos/video-service';
+import { VideoService } from '../video-service';
 
 @Component({
   selector: 'app-filters',

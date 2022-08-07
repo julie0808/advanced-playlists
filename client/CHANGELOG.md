@@ -1,10 +1,18 @@
 ## Étapes restantes pour Release 1.0.0 :
-- Lecture de vidéo à même l'application
+- Lecture de vidéo à même l'application d'une playlist filtrée
 - Faire l'optimisation (repasser les to-do + peaufinement visuel)
 - Le visuel du multi select est insatisfaisant
 - bogue: videoList not updated if tagname is updated in tag manager
 
 
+
+
+
+# Release 0.5.0
+
+- Refonte des modules pour permettre lazy loading
+- Mise à jour de Angular 12 vers Angular 14 ainsi que ses dépendances
+- Implantation du module de lecteur de vidéo Youtube de base avec ID hardcodé
 
 # Release 0.4.0
 
