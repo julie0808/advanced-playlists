@@ -1,15 +1,24 @@
-<ul class="video-list" *ngIf="videos$ | async as videos">
-  <li class="video-list--item" *ngFor="let video of videos" >
+<ul 
+  class="video-list" 
+  *ngIf="allVideoData$ | async as allVideoData">
+  <li 
+    class="video-list--item" 
+    *ngFor="let video of allVideoData.videos" 
+    [ngClass]="{'video--active' : video.youtubeId === currentVideo.youtubeId }">
     <!--<ul class="video-action">
       <li>
         <svg class="icon icon-cog"><use xlink:href="./assets/icon-list.svg#icon-cog"></use></svg>
       </li>
     </ul>-->
+    <div 
+      class="video-action--play"
+      *ngIf="video.youtubeId !== currentVideo.youtubeId"
+      (click)="playVideo(video)">></div>
     <div class="video-image">
       <div class="seo-bg">
         <picture>
-          <source srcset="http://i3.ytimg.com/vi/{{ video.youtubeId }}/maxresdefault.jpg" media="(max-width: 767px)">
-          <img src="http://i3.ytimg.com/vi/{{ video.youtubeId }}/maxresdefault.jpg" alt="#">
+          <!--<source srcset="http://i3.ytimg.com/vi/{{ video.youtubeId }}/maxresdefault.jpg" media="(max-width: 767px)">-->
+          <img src="{{ video.thumbnailPath }}" alt="#">
         </picture>	
       </div>
       <div class="video-image--info">

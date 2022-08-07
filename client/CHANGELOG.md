@@ -1,12 +1,12 @@
 ## Étapes restantes pour Release 1.0.0 :
-- Lecture de vidéo à même l'application d'une playlist filtrée
-- Faire l'optimisation (repasser les to-do + peaufinement visuel)
 - Le visuel du multi select est insatisfaisant
 - bogue: videoList not updated if tagname is updated in tag manager
 
 
 
+# Release 0.6.0
 
+- Videoplayer dans l'application
 
 # Release 0.5.0
 
@@ -19,6 +19,7 @@
 - Filter les vidéos par tags
 - Ajouter des tags à des vidéos
 - Enregistrer le titre initial des vidéos dans la base de données
+- Retrait de back4app pour backend Node avec Postgres SQL
 
 # Release 0.3.0
 

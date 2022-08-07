@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { EMPTY, Subject } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { VideoService } from '../video-service';
 
 @Component({
   selector: 'app-video-player',
@@ -8,7 +11,22 @@ export class VideoPlayerComponent implements OnInit {
 
   apiLoaded = false;
 
-  constructor() { }
+  playerConfig = {
+    controls: 1
+  }
+
+  private errorMessageSubject = new Subject<string>();
+  errorMessage$ = this.errorMessageSubject.asObservable();
+
+  video$ = this.videoService.selectedVideo$
+    .pipe(
+      catchError(err => {
+        this.errorMessageSubject.next(err);
+        return EMPTY;
+      })
+    );
+
+  constructor(private videoService: VideoService) { }
 
   ngOnInit(): void {
     if (!this.apiLoaded) {
@@ -16,6 +34,21 @@ export class VideoPlayerComponent implements OnInit {
       tag.src = "https://www.youtube.com/iframe_api";
       document.body.appendChild(tag);
       this.apiLoaded = true;
+    }
+  }
+
+  followState(event: any) {
+    // https://developers.google.com/youtube/iframe_api_reference#Events
+    switch(event.data) {
+      case 0:
+        // video has ended
+        this.videoService.playNextVideo();
+        break;
+      case -1:
+        event.target.playVideo();
+        break;
+      default:
+        // not every state needs an action
     }
   }
 

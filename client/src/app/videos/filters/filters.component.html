@@ -1,6 +1,6 @@
 <section class="filter-list">
   <div class="boxed-container filter-group">
-    <ul>
+    <!--<ul>
       <li>
         + Tags
       </li>
@@ -10,7 +10,7 @@
       <li>
         YT playlist
       </li>
-    </ul>
+    </ul>-->
     <div class="filter-sort">
       <ng-multiselect-dropdown
           [placeholder]="'Sort by tags'"
@@ -26,8 +26,11 @@
 
 <section class="filter-active">
   <ul class="boxed-container filter-active-list">
-    <li class="filter-active--label" *ngFor="let tempLoop of [1,2,3,4,5]">
-      <p>Tag name</p>
+    <li 
+      class="filter-active--label" 
+      *ngFor="let tag of selectedTagList"
+      (click)="removeTagFromFilter(tag.id)">
+      <p>{{ tag.title }}</p>
       <span class="filter-active--remove" title="Remove">X</span>
     </li>
   </ul>

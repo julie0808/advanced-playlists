@@ -82,7 +82,6 @@ export class TagEditComponent implements OnInit, OnDestroy {
       id: 0,
       status: StatusCode.added
     }
-    // todo : errorhandling if update fail on the backend?
     this.tagService.addTag(newTag);
     this.resetPage();
   }
@@ -91,7 +90,6 @@ export class TagEditComponent implements OnInit, OnDestroy {
     if (this.tagForm.valid){
       const updatedTag = {...this.tag, ...this.tagForm.value};
       updatedTag.status = StatusCode.updated;
-      // todo : errorhandling if update fail on the backend?
       this.tagService.updateTag(updatedTag);
       this.resetPage();
     }
@@ -101,7 +99,6 @@ export class TagEditComponent implements OnInit, OnDestroy {
     const deletedTag = this.tag;
     deletedTag.status = StatusCode.deleted;
 
-    // todo : errorhandling if update fail on the backend?
     this.tagService.updateTag(deletedTag);
     this.resetPage();
   }

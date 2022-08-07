@@ -19,7 +19,7 @@ export class FiltersComponent implements OnInit {
     textField: 'title',
     enableCheckAll: false,
     allowSearchFilter: true,
-    searchPlaceholderText: 'Sort'
+    searchPlaceholderText: 'Keyword search'
   };
   tagList: ITag[] = [];
   selectedTagList: ITag[] = [];
@@ -44,6 +44,12 @@ export class FiltersComponent implements OnInit {
   }
 
   sortByTag(){
+    this.videoService.sortVideoListByTag(this.selectedTagList);
+  }
+
+  removeTagFromFilter(tagId: number) {
+    const selectedTagListUpdated = this.selectedTagList.filter(t => t.id !== tagId);
+    this.selectedTagList = selectedTagListUpdated;
     this.videoService.sortVideoListByTag(this.selectedTagList);
   }
 

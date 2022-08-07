@@ -5,7 +5,7 @@ export interface IVideo {
   title: string; 
   youtubeId: string;
   length: string; // should be valid time format
-  //thumbnailPath: string; // only if I go for custom thumbnail
+  thumbnailPath: string;
   dateModified: string; // for any change to tags and moods. should be a valid date format
   //moods: {name: string, id: number, intensity: number, color: string}[];
   tags: ITag[];
@@ -19,6 +19,7 @@ export class IVideoClass {
   title: string = 'Video test'; 
   youtubeId: string = "12345678910";
   length: string = ''; 
+  thumbnailPath: string = '';
   dateModified: string = ''; 
   tags: ITag[]= [];
   artist: string = '';

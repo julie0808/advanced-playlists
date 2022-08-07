@@ -1,5 +1,4 @@
 .video-manager {
-  margin-top: 20px;
   display: flex;
   justify-content: space-between;
 }
@@ -35,10 +34,19 @@
 }
 
 .video-list--item {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   border-bottom-left-radius: 6px;
   border-bottom-right-radius: 6px;
   display: flex;
+  padding: 10px;
+  border: 1px solid #444;
+  background: rgba(0,0,0,0.2);
+  position: relative;
+
+  &.video--active {
+    border: 1px solid #444;
+    background: rgba(255,255,255,0.05);
+  }
 }
 
 .video-action {
@@ -53,6 +61,27 @@
   li {
     flex: 0 0 auto;
     width: 100%;
+  }
+}
+
+.video-action--play {
+  background: $cAccent2;
+  position: absolute;
+  top: 50%;
+  right: -15px;
+  margin-top: -15px;
+  height: 30px;
+  width: 30px;
+  font-family: Courier, monospace;
+  border-radius: 100%;
+  font-weight: 900;
+  text-align: center;
+  padding-top: 6px;
+  cursor: pointer;
+  font-size: 12px;
+
+  &:hover {
+    background: $cAccent1;
   }
 }
 
@@ -125,6 +154,7 @@
 .video-info--tag-list {
   position: relative;
   display: flex;
+  flex-wrap: wrap;
 
   .video-tag {
     background: $cAccent2;
@@ -134,9 +164,9 @@
     overflow: hidden;
     text-overflow: ellipsis;
     font-weight: bold;
-    font-size: 9px;
-    border-radius: 7px;
-    padding: 5px 10px;
+    font-size: 10px;
+    border-radius: 5px;
+    padding: 3px 6px;
     margin-top: 5px;
     margin-right: 5px;
     position: relative;
@@ -193,11 +223,19 @@
 /*      VIDEO PLAYER             */
 /*********************************/
 
+.video-player {
+  position: fixed;
+  border: 3px solid #333;
+  bottom: 0;
+  right: 0;
+}
+
 .video-player--container {
-  position: relative;
-  width: 100%;
-  padding-top: 56.25%; 
-  margin-bottom: 20px;
+  //width: 100%;
+  //padding-top: 56.25%;
+  width: 240px;
+  height: 160px;  
+  z-index: 2; 
 
   iframe {
     position: absolute;

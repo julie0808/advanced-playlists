@@ -36,12 +36,13 @@ Liste de tags + Édition des tags  :
 
 ## Choix technologiques
 
-- Angular (version 12)
+- Angular (version 14)
 - Node.js - Backend
 - Postgres SQL
 - SCSS / SASS
-- Trello pour la gestion des priorités et de l'avancement
+- Trello/Onenote pour la gestion des priorités et de l'avancement
 
 ## Info Angular
 
 Projet généré avec [Angular CLI](https://github.com/angular/angular-cli) version 12.1.1.
+Mise à jour vers Angular 14 manuellement

@@ -6,6 +6,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { ITag } from "../tags/tag-model";
 import { IVideo, IVideoClass } from "./video.model";
 import { ErrorService } from "../shared/error/error/error-service";
+import { TagService } from "../tags/tag-service";
 
 @Injectable({providedIn: 'root'})
 export class VideoService {
@@ -19,21 +20,23 @@ export class VideoService {
     .set('content-Type', 'application/json');
 
   constructor(private http: HttpClient,
-              private errorService: ErrorService) { 
+              private errorService: ErrorService,
+              private tagService: TagService) { 
 }
 
   videosFromPlaylist$ = this.http.get<any>(this.youtubeApiUrl, {params: {
     'key': this.youtubeApiKey,
     'playlistId': this.testVideoPlaylistKey,
     'maxResults': 150,
-    'part': 'snippet'
+    'part': 'snippet,contentDetails'
   }})
     .pipe(
       map( videos => {
         const formattedVideos = videos['items'].map( (video: any) => ({
           title: video.snippet.title,
           youtubeId: video.snippet.resourceId.videoId,
-          length: 'duree', // not included in "snippet"
+          length: 'duree', // not included in "snippet", view https://developers.google.com/youtube/v3/docs/videos/list
+          thumbnailPath: video.snippet.thumbnails.default.url,
           dateModified: 'date', // date of change by ME
           artist: 'Unknown', // not yet set, has to default to "publishedBy"
           publishedBy: video.snippet.videoOwnerChannelTitle,
@@ -73,7 +76,6 @@ export class VideoService {
     map( ([videos, tags]) => {
       return videos.map(video => ({
         ...video,
-        // todo i need to make sure that an empty array is returned if no tags found
         tags: video.tags = tags.find( (t: any) => t.youtube_id === video.youtubeId)?.tags as ITag[]
       }) as IVideo)
     })
@@ -124,7 +126,12 @@ export class VideoService {
             return false;
           });
         } 
-    
+        
+        // set default video to the first in the list
+        if ( this.videoSelectedSubject.getValue() === '' ) {
+          this.selectedVideoIdChanged(videos[0].youtubeId);
+        }        
+
         return videos;
       }),
       catchError(err => this.errorService.handleError(err)),
@@ -135,7 +142,7 @@ export class VideoService {
     this.sortByTagSubject.next(selectedTags);
   }
 
-  private videoSelectedSubject = new BehaviorSubject<string>('defaut12345'); 
+  private videoSelectedSubject = new BehaviorSubject<string>(''); 
   videoSelectedAction$ = this.videoSelectedSubject.asObservable();
 
   selectedVideo$ = combineLatest([
@@ -143,19 +150,36 @@ export class VideoService {
     this.videoSelectedAction$
   ]).pipe(
     map( ([videos, selectedVideoId]) => {
-      const searchForVideo = videos.find( video => video.youtubeId === selectedVideoId);
-      if (searchForVideo !== undefined){
-        return searchForVideo;
-      } 
-      this.errorService.handleError('Video inexistant');
-      return new IVideoClass(); 
+      if (selectedVideoId) {
+        const searchForVideo = videos.find( video => video.youtubeId === selectedVideoId);
+        if (searchForVideo !== undefined){
+          return searchForVideo;
+        } 
+
+        this.errorService.handleError('Video inexistant');
+        return new IVideoClass(); 
+      }
+      // videoList is not yet loaded with default video
+      return new IVideoClass();
     }),
     catchError(err => this.errorService.handleError(err)),
     shareReplay(1)
   );
 
-  selectedVideoTagChanged(selectedVideoTagId: string): void {
-    this.videoSelectedSubject.next(selectedVideoTagId);
+  selectedVideoIdChanged(selectedVideoId: string): void {
+    this.videoSelectedSubject.next(selectedVideoId);
+  }
+
+  playNextVideo() {
+    // logic may b e flawed, since I can't be sure all components
+    // depends on the videosSorted$ list
+    this.videosSorted$.subscribe(videos => {
+      const currentVideoPosition = videos.findIndex( (v: IVideo) => v.youtubeId === this.videoSelectedSubject.getValue())
+      const videosSortedLength = videos.length;
+      const nextVideoPosition = videosSortedLength - 1 === currentVideoPosition ? 0 : currentVideoPosition + 1;
+
+      this.selectedVideoIdChanged(videos[nextVideoPosition].youtubeId);
+    });
   }
 
   saveVideoTagsToBackend(video: IVideo): Observable<IVideo> {
@@ -176,6 +200,20 @@ export class VideoService {
 
   adjustVideoList(videos: IVideo[], video: IVideo): IVideo[] {
     return videos.map(v => v.youtubeId === video.youtubeId ? video : v);
+  }
+
+  // WIP
+  batchInsert() {
+    this.http.get<any>(this.youtubeApiUrl, {params: {
+      'key': this.youtubeApiKey,
+      'playlistId': this.testVideoPlaylistKey
+    }})
+      .pipe(
+        map( videos => {
+          console.log(videos);
+        }),     
+        catchError(err => this.errorService.handleError(err))
+      );
   }
 
 }

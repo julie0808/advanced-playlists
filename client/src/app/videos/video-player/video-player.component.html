@@ -1,14 +1,14 @@
-<section class="boxed-container video-player">
+<section class="video-player">
   <div>
-    <div class="video-player--container">
-    <youtube-player 
-      videoId="GYAB4Td62zI" 
-      suggestedQuality="highres" 
-      [height]="250" 
-      [width]="500" 
-      [startSeconds]="4"
-      [endSeconds]="8">
-    </youtube-player>
+    <div 
+    *ngIf="video$ | async as video"
+    class="video-player--container">
+      <youtube-player 
+        videoId="{{ video.youtubeId }}" 
+        suggestedQuality="highres"
+        (stateChange)="followState($event)"
+        [playerVars]="playerConfig">
+      </youtube-player>
     </div>
   </div>
 </section>

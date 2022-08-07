@@ -67,7 +67,7 @@ export class VideoTagEditComponent implements OnInit, OnDestroy {
       .subscribe(
         (params: Params) => {
           this.videoId = params['id'];
-          this.videoService.selectedVideoTagChanged(params['id']);
+          this.videoService.selectedVideoIdChanged(params['id']);
         }
       )
 
