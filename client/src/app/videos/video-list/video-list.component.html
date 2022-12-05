@@ -1,9 +1,13 @@
+<div 
+  class="video--total-count"
+  *ngIf="allVideoData$ | async">Total videos : {{ playlistCount }}</div>
+
 <ul 
   class="video-list" 
   *ngIf="allVideoData$ | async as allVideoData">
   <li 
     class="video-list--item" 
-    *ngFor="let video of allVideoData.videos" 
+    *ngFor="let video of allVideoData.videos; index as i" 
     [ngClass]="{'video--active' : video.youtubeId === currentVideo.youtubeId }">
     <!--<ul class="video-action">
       <li>
@@ -14,6 +18,7 @@
       class="video-action--play"
       *ngIf="video.youtubeId !== currentVideo.youtubeId"
       (click)="playVideo(video)">></div>
+    <div class="video--counter">{{ i + 1 }}</div>
     <div class="video-image">
       <div class="seo-bg">
         <picture>
@@ -22,7 +27,7 @@
         </picture>	
       </div>
       <div class="video-image--info">
-        <p class="video-image--length">{{ video.length }}</p>
+        <p class="video-image--length">{{ video.duration }}</p>
         <!--<p class="video-image--new" *ngIf="video.isNew">New</p>
         <p class="video-image--new-border" *ngIf="video.isNew"></p>-->
       </div>

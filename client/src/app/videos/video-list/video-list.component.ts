@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, filter, map, tap } from 'rxjs/operators';
-import { BehaviorSubject, combineLatest, Subject, EMPTY } from 'rxjs';
+import { combineLatest, Subject, EMPTY } from 'rxjs';
 
 import { VideoService } from '../video-service';
 import { IVideo } from '../video.model';
-import { ITag } from 'src/app/tags/tag-model';
 
 @Component({
   selector: 'app-video-list',
@@ -14,12 +13,17 @@ import { ITag } from 'src/app/tags/tag-model';
 export class VideoListComponent {
 
   currentVideo!: IVideo;
+  playlistCount = 0;
 
   private errorMessageSubject = new Subject<string>();
   errorMessage$ = this.errorMessageSubject.asObservable();
 
   videos$ = this.videoService.videosSorted$
     .pipe(
+      tap(videos => {
+        //console.info('emitting + videos lengnth', videos.length);
+        this.playlistCount = videos.length;
+      }),
       catchError(err => {
         this.errorMessageSubject.next(err);
         return EMPTY;
@@ -28,6 +32,7 @@ export class VideoListComponent {
 
   selectedVideo$ = this.videoService.selectedVideo$
     .pipe(
+      //tap(() => console.info('video selected')),
       catchError(err => {
         this.errorMessageSubject.next(err);
         return EMPTY;
@@ -40,8 +45,8 @@ export class VideoListComponent {
     ])
       .pipe(
         filter( ([videos]) => Boolean(videos)), 
-        map( ([videos, selectedVideo]) =>
-        ({videos, selectedVideo}))
+        map( ([videos, selectedVideo]) => ({videos, selectedVideo}))
+        //,tap(() => console.info(`Final emit`))
       );
 
   constructor(private route: ActivatedRoute,
@@ -49,7 +54,7 @@ export class VideoListComponent {
               private videoService: VideoService) { }
 
   ngOnInit(){
-    this.selectedVideo$.subscribe(selecteVideo => {
+    this.selectedVideo$.subscribe( (selecteVideo: IVideo) => {
       this.currentVideo = selecteVideo
     });
   }

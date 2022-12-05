@@ -9,7 +9,6 @@ import { HeaderComponent } from './header/header.component';
 
 import { SocialLoginModule, SocialAuthServiceConfig, GoogleLoginProvider } from '@abacritt/angularx-social-login';
 
-// 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  secret client oauth 
 @NgModule({
   declarations: [
     AppComponent,
@@ -30,6 +29,7 @@ import { SocialLoginModule, SocialAuthServiceConfig, GoogleLoginProvider } from 
           id: GoogleLoginProvider.PROVIDER_ID,
           provider: new GoogleLoginProvider(
             '218803000758-6pdba5ettd4i0ii4ovl0k89fgo3l6oq5.apps.googleusercontent.com'
+            // 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  secret client oauth
           )
         }
       ],

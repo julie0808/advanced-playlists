@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { EMPTY, Subject } from 'rxjs';
+import { EMPTY, Subject, tap } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+
 import { VideoService } from '../video-service';
 
 @Component({

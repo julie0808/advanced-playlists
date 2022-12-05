@@ -72,7 +72,7 @@ export class VideoTagEditComponent implements OnInit, OnDestroy {
       )
 
     this.tags$.subscribe(tags => this.tagList = tags || []);
-    this.video$.subscribe(video => {
+    this.video$.subscribe( (video: IVideo) => {
       this.videoTagForm.patchValue({
         tags:  video?.tags || []
       })
@@ -83,7 +83,7 @@ export class VideoTagEditComponent implements OnInit, OnDestroy {
   updateVideoTag(){
     if (this.videoTagForm.valid){
       let updatedVideo: IVideo = new IVideoClass();
-      this.video$.subscribe(video => updatedVideo = video);
+      this.video$.subscribe( (video: IVideo) => updatedVideo = video);
       updatedVideo.tags =this.videoTagForm.get('tags')?.value!;
       this.videoService.updateVideo(updatedVideo);
     }

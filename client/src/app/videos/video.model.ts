@@ -4,7 +4,7 @@ import { ITag } from "../tags/tag-model";
 export interface IVideo {
   title: string; 
   youtubeId: string;
-  length: string; // should be valid time format
+  duration: string; // should be valid time format
   thumbnailPath: string;
   dateModified: string; // for any change to tags and moods. should be a valid date format
   //moods: {name: string, id: number, intensity: number, color: string}[];
@@ -18,7 +18,7 @@ export interface IVideo {
 export class IVideoClass {
   title: string = 'Video test'; 
   youtubeId: string = "12345678910";
-  length: string = ''; 
+  duration: string = ''; 
   thumbnailPath: string = '';
   dateModified: string = ''; 
   tags: ITag[]= [];
