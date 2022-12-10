@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { FormBuilder, NonNullableFormBuilder, Validators } from '@angular/forms';
+import { NonNullableFormBuilder, Validators } from '@angular/forms';
 import { EMPTY, Subject, Subscription } from 'rxjs';
 
 import { ITag, StatusCode, ITagForm } from '../tag-model';
@@ -19,7 +19,8 @@ export class TagEditComponent implements OnInit, OnDestroy {
 
   tagForm: ITagForm = this.fb.group({
     title: this.fb.control('', Validators.required),
-    //tags: this.fb.array([])
+    color: this.fb.control(''),
+    parent_tag_id: this.fb.control(0)
   });
 
   private errorMessageSubject = new Subject<string>();
@@ -36,8 +37,7 @@ export class TagEditComponent implements OnInit, OnDestroy {
   constructor(private route: ActivatedRoute,
               private router: Router,
               private fb: NonNullableFormBuilder,
-              private tagService: TagService) { 
-                
+              private tagService: TagService) {                 
   }
 
   ngOnInit() {
@@ -68,7 +68,8 @@ export class TagEditComponent implements OnInit, OnDestroy {
     this.tag = tag;
 
     this.tagForm.patchValue({
-      title: tag.title
+      title: tag.title,
+      color: tag.color
     })
   }
 
@@ -77,11 +78,10 @@ export class TagEditComponent implements OnInit, OnDestroy {
   }
 
   addTag() {
-    const newTag: ITag = {
-      title: this.tagForm.value['title']!, 
-      id: 0,
-      status: StatusCode.added
-    }
+    const newTag: ITag = new ITag();
+    newTag.title = this.tagForm.value['title']!;
+    newTag.status = StatusCode.added;
+    
     this.tagService.addTag(newTag);
     this.resetPage();
   }

@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
-import { BehaviorSubject, combineLatest, forkJoin, from, merge, Observable, Subject, of } from 'rxjs';
-import { catchError, concatMap, map, shareReplay, tap, scan, switchMap, expand, takeWhile, reduce } from "rxjs/operators";
+import { BehaviorSubject, combineLatest, merge, Observable, Subject } from 'rxjs';
+import { catchError, concatMap, map, shareReplay, tap, scan, expand, takeWhile, reduce } from "rxjs/operators";
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 
 import { ITag } from "../tags/tag-model";

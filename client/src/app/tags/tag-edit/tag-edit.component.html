@@ -15,6 +15,17 @@
               <span *ngIf="tagForm.get('title')?.errors?.required">This field is required</span>
             </span>
         </div>
+        <div class="form-field">
+          <label for="color">Color code :</label>
+          <input
+            type="text"
+            id="color"
+            formControlName="color">
+        </div>
+        <div class="form-field">
+          <label for="color">Group : </label>
+          
+        </div>
         <span 
             *ngIf="!tagForm.valid && tagForm.touched"
             >The form contains errors</span>

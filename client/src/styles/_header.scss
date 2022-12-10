@@ -1,6 +1,12 @@
 .main-menu {
   background: $cMain1;
 
+  div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
   .main-menu--item {
     background: $cMain1;
     border-right: 1px solid $cMain3;

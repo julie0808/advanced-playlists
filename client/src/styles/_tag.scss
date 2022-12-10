@@ -27,15 +27,15 @@
 }
 
 .tag-list {
-  background: $cMain2;
-
+ 
   a {
     color: $cAccent1;
   }
 
   .tag-parent {
-    border-bottom: 1px solid $cMain3;
+    margin-bottom: 5px;
     padding: 12px 14px;
+    background: $cMain2;
 
     &:last-child {
       border-bottom: none;

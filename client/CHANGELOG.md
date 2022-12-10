@@ -1,22 +1,31 @@
 ## TODOS
 https://trello.com/b/sihPIKvw/fancyt
-- le maxresults de la requête est capped à 50. je dois aller chercher tous les vidéos
 - vérifier l'erreur dans la console (postMessage on Domwindow target origin does not match)
+- montrer un loading gif le temps que les vidéos se chargent
 - Le visuel du multi select est insatisfaisant 
 - bogue: videoList not updated if tagname is updated in tag manager 
 - supprimer un tag a besoin d'un modal de confirmation (+ suppression des liaisons)
 - système pour savoir quels videos sont nouveaux / n'ont aucun tag assigné
-- avoir un système à part pour les Artistes
+- avoir un système à part pour les Artistes ???
 - enregistrer filtre actuel en session
 - enregistrer un groupe de filtre pour sélection rapide
 - voir la durée des vidéos
 - tri par date d'ajout à la playlist
 - option pour jouer de façon aléatoire
 - contrôle vidéos pour next/previous
-- groupe de tags
+- groupe de tags ?? ou catégories? give colors to différents parent categories too
+- Star rating for a filter
 
 
+# Release 1.1.0
 
+- Système de tag parent poour mieux catégoriser les vidéos
+
+
+# Release 1.0.1
+
+- Mise à jour de divers modules obsolètes
+- Charger correctement une liste de vidéos volumineuse
 
 
 # Release 1.0.0

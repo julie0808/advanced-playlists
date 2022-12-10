@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, combineLatest, merge, Observable, Subject, of } from 'rxjs';
+import { BehaviorSubject, combineLatest, merge, Observable, Subject, of, empty } from 'rxjs';
 import { catchError, concatMap, map, scan, tap, shareReplay } from 'rxjs/operators';
 
 import { ITag, StatusCode } from './tag-model';
@@ -119,14 +119,18 @@ export class TagService {
         if (tagFound !== undefined){
           return tagFound;
         } else {
-          //this.errorService.handleError("Tag inexistant")
+          // this.errorService.handleError("Tag inexistant")
           // todo - handle error correctly. function is expecting a ITag...
           // but we should redirect to homepage with correct error message
-          return { id: 0, title: '', status: StatusCode.unchanged};
+          const emptyTag: ITag = new ITag();
+          emptyTag.status = StatusCode.unchanged;
+          return emptyTag;
         }
       } else {
         // todo instanciate ITag correctly...
-        return { id: 0, title: '', status: StatusCode.unchanged};
+        const emptyTag: ITag = new ITag();
+        emptyTag.status = StatusCode.unchanged;
+        return emptyTag;
       }     
     }),
     shareReplay(1)
