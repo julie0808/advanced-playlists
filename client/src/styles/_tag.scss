@@ -24,6 +24,13 @@
   h2 {
     margin-bottom: 20px;
   }
+
+  .action-link {
+    color: #fff;
+    margin-left: 10px;
+    font-size: em(12);
+    cursor: pointer;
+  }
 }
 
 .tag-list {
@@ -32,13 +39,26 @@
     color: $cAccent1;
   }
 
-  .tag-parent {
-    margin-bottom: 5px;
+  .tag-label {
+    display: flex;
+    justify-content: space-between;
     padding: 12px 14px;
+  }
+  .tag-parent {
+    margin-bottom: 10px;
     background: $cMain2;
 
     &:last-child {
       border-bottom: none;
+    }
+  }
+
+  .tag-children {
+    background-color: $cMain1;
+
+    .tag-label {
+      padding: 6px 14px;
+      font-size: em(13);
     }
   }
 

@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, combineLatest, merge, Observable, Subject, of, empty } from 'rxjs';
-import { catchError, concatMap, map, scan, tap, shareReplay } from 'rxjs/operators';
+import { catchError, concatMap, map, scan, tap, shareReplay, filter } from 'rxjs/operators';
 
 import { ITag, StatusCode } from './tag-model';
 import { ErrorService } from '../shared/error/error/error-service';
@@ -38,9 +38,16 @@ export class TagService {
       // @ts-ignore - typescript a une haine pour "scan"
       scan((tags: ITag[], tag: ITag) => this.adjustTagList(tags, tag)),
       map((tags: ITag[]) => {
-        return tags.sort( (x: ITag, y: ITag) => {
+        const alphaSortedArray = tags.sort( (x: ITag, y: ITag) => {
           return x.title.localeCompare(y.title);
         });
+
+        const tagsWithChildren = alphaSortedArray.map(tag => {
+          tag.lst_children_tag_id = tags.filter(t => t.parent_tag_id === tag.id);
+          return tag;
+        });
+
+        return tagsWithChildren;
       }),
       shareReplay(1),
       catchError(err => this.errorService.handleError(err))
@@ -103,6 +110,12 @@ export class TagService {
       this.tagModifiedSubject.next(updatedTag);
     }
 
+  validTagGroups$: Observable<ITag[]> = this.tagsModified$
+    .pipe(
+      map(tag => {
+        return tag.filter(tag => tag.parent_tag_id === 0 || tag.parent_tag_id === null);
+      })
+    );
 
   private tagSelectedSubject = new BehaviorSubject<number>(0);
   tagSelectedAction$ = this.tagSelectedSubject.asObservable();
@@ -111,7 +124,6 @@ export class TagService {
     this.tagsModified$,
     this.tagSelectedAction$
   ]).pipe(
-    //tap(data => console.log('combine/selected : ' + JSON.stringify(data))),
     map( ([tags, selectedTagId]) => {
       if ( selectedTagId !== 0 ){
         const tagFound = tags.find( tag => tag.id === selectedTagId);

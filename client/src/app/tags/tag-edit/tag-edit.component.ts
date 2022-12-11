@@ -5,7 +5,7 @@ import { EMPTY, Subject, Subscription } from 'rxjs';
 
 import { ITag, StatusCode, ITagForm } from '../tag-model';
 import { TagService } from '../tag-service';
-import { catchError } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-tag-edit',
@@ -16,15 +16,25 @@ export class TagEditComponent implements OnInit, OnDestroy {
   private idSub!: Subscription;
   tag!: ITag;
   editMode: boolean = false;
-
+  
   tagForm: ITagForm = this.fb.group({
     title: this.fb.control('', Validators.required),
-    color: this.fb.control(''),
+    color: this.fb.control('#777777'),
     parent_tag_id: this.fb.control(0)
   });
 
   private errorMessageSubject = new Subject<string>();
   errorMessage$ = this.errorMessageSubject.asObservable();
+
+  lstValidTagGroup$ = this.tagService.validTagGroups$
+    .pipe(
+      tap(tags => {
+        const noneOption = new ITag();
+        noneOption.title = 'None';
+        tags.push(noneOption)
+////////////// TO FINISH
+      })
+    );
 
   selectedTag$ = this.tagService.selectedTag$
     .pipe(
@@ -59,6 +69,12 @@ export class TagEditComponent implements OnInit, OnDestroy {
       )
   }
 
+  removeColor() {
+    this.tagForm.patchValue({
+      color: ''
+    })
+  }
+
   displayTag(tag: ITag){
 
     if (this.tagForm) {
@@ -69,7 +85,8 @@ export class TagEditComponent implements OnInit, OnDestroy {
 
     this.tagForm.patchValue({
       title: tag.title,
-      color: tag.color
+      color: tag.color,
+      parent_tag_id: tag.parent_tag_id
     })
   }
 
@@ -80,6 +97,8 @@ export class TagEditComponent implements OnInit, OnDestroy {
   addTag() {
     const newTag: ITag = new ITag();
     newTag.title = this.tagForm.value['title']!;
+    newTag.color = this.tagForm.value['color']!;
+    newTag.parent_tag_id = this.tagForm.value['parent_tag_id']!;
     newTag.status = StatusCode.added;
     
     this.tagService.addTag(newTag);

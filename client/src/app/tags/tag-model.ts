@@ -12,7 +12,7 @@ export interface ITag {
 export class ITag {
     id = 0;
     title = '';
-    color = '';
+    color = '#777777';
     parent_tag_id = 0
 }
 

@@ -1,4 +1,5 @@
 // TO START SERVER: npm run start:dev
+// view swagger : http://localhost:3080/api-docs/
 // Ref: https://medium.com/swlh/angular-node-and-postgresql-4a07d597be07
 
 // sql standard ref : https://towardsdatascience.com/10-sql-standards-to-make-your-code-more-readable-in-2021-4410dc50b909
@@ -42,23 +43,29 @@ app.use(bodyParser.json());
 ///////////////////////////////////
 
 app.post(`${rootUrl}/tags`, (req, res) => {
-  const {id, title} = req.body;
+  const {id, parent_tag_id, title, color} = req.body;
  ;(async () => {
    const client = await pool.connect();
    try {
      let results = await client.query(
        `INSERT INTO tag (
-           title
-       ) VALUES ($1)
+           title,
+           parent_tag_id,
+           color
+       ) VALUES ($1, $2, $3)
        RETURNING tag_id`,
-       [title]);
+       [title, parent_tag_id, color]);
      if (results.rowCount === 0) { 
        results = { 
-         title 
+         title,
+         parent_tag_id,
+         color 
        };
      }
      const newTag = {
        title: title,
+       parent_tag_id: parent_tag_id,
+       color: color,
        id: results.rows[0].tag_id
      };
      res.status(201).json(newTag);
@@ -76,7 +83,7 @@ app.post(`${rootUrl}/tags`, (req, res) => {
 app.get(`${rootUrl}/tags`, (req, res) => {
   ;(async () => {
     const { rows } = await pool.query(`
-      SELECT tag_id as id, title 
+      SELECT tag_id as id, title, parent_tag_id, color
       FROM tag
       ORDER BY title`
       )
@@ -87,19 +94,24 @@ app.get(`${rootUrl}/tags`, (req, res) => {
 });
 
 app.put(`${rootUrl}/tags`, (req, res) => {
-  const {id, title} = req.body;
+  const {id, title, parent_tag_id, color} = req.body;
  ;(async () => {
    const client = await pool.connect();
    try {
     let results = await client.query(
        `UPDATE tag
-       SET title = ($1)
-       WHERE tag_id = ($2) `,
-       [title, id]);
+        SET 
+          title = ($1),
+          parent_tag_id = ($2),
+          color = ($3)
+       WHERE tag_id = ($4) `,
+       [title, parent_tag_id, color, id]);
      if (results.rowCount === 0) { 
        results = { 
          title,
-         id 
+         id,
+         parent_tag_id,
+         color
        };
      }
      res.status(201).json(results);
@@ -248,7 +260,7 @@ app.get('/api/status', (req, res) => {
 });
 
 app.get('/', (req, res) => {
-  res.send('Hello World!');
+  res.send('<a href="api-docs">Go to swagger UI</a>');
 });
 
 // Listen to the specified port, otherwise 3080

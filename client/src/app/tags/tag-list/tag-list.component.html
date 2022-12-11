@@ -1,10 +1,25 @@
 <section class="tag-list">
   <ul *ngIf="tags$ | async as tags">
-    <li class="tag-parent" *ngFor="let tag of tags">
-      <div class="tag-label">
-        {{ tag.title }} |
-        <a class="link-look" (click)="editTag(tag.id)">Edit</a>
-      </div>
-    </li>
+    <ng-container *ngFor="let tag of tags" >
+      <li 
+        class="tag-parent" 
+        *ngIf="tag.parent_tag_id === null || tag.parent_tag_id === 0"
+        [ngStyle]="{'background': tag.color !== null || tag.color !== '' ? tag.color : '#282f39' }">
+        <div class="tag-label">
+          <span>{{ tag.title }}</span>
+          <a class="link-look" (click)="editTag(tag.id)">Edit</a>
+        </div>
+        <ul 
+          *ngIf="tag.lst_children_tag_id && tag.lst_children_tag_id.length"
+          class="tag-children">
+          <li *ngFor="let tagchildren of tag.lst_children_tag_id">
+            <div class="tag-label">
+              <span>{{ tagchildren.title }}</span>
+              <a class="link-look" (click)="editTag(tagchildren.id)">Edit</a>
+            </div>
+          </li>
+        </ul>
+      </li>
+    </ng-container>
   </ul>
 </section>

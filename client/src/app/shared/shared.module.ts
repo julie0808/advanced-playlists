@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { ErrorComponent } from './error/error/error.component';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
+import { PrimeNgModule } from './primeng.module';
 
 
 @NgModule({
@@ -15,7 +16,8 @@ import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
   ],
   exports: [
     CommonModule, 
-    NgMultiSelectDropDownModule,   
+    NgMultiSelectDropDownModule,  
+    PrimeNgModule, 
     FormsModule,
     ReactiveFormsModule
   ]

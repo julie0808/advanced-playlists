@@ -15,16 +15,21 @@
               <span *ngIf="tagForm.get('title')?.errors?.required">This field is required</span>
             </span>
         </div>
-        <div class="form-field">
-          <label for="color">Color code :</label>
-          <input
-            type="text"
-            id="color"
-            formControlName="color">
-        </div>
-        <div class="form-field">
+        <div class="form-field" *ngIf="lstValidTagGroup$ | async as lstValidTagGroup">
           <label for="color">Group : </label>
-          
+          <p-dropdown 
+            [options]="lstValidTagGroup" 
+            formControlName="parent_tag_id" 
+            optionValue="id"
+            placeholder="Select Item"
+            optionLabel="title"></p-dropdown>
+        </div>
+        <div 
+          class="form-field" 
+          *ngIf="tagForm.get('parent_tag_id')!.value === null || tagForm.get('parent_tag_id')!.value === 0">
+          <label for="color2">Color code : </label>
+          <p-colorPicker formControlName="color" ngDefaultControl></p-colorPicker>
+          <a *ngIf="tagForm.get('color')!.value !== null && tagForm.get('color')!.value !== ''" (click)="removeColor()" class="action-link">Remove color</a>
         </div>
         <span 
             *ngIf="!tagForm.valid && tagForm.touched"
