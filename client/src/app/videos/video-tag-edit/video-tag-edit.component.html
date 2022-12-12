@@ -3,18 +3,19 @@
 
   <form [formGroup]="videoTagForm" (ngSubmit)="updateVideoTag()" class="form" novalidate>
     <fieldset>
-      <div class="form-field">
+      <div class="form-field" *ngIf="tags$ | async as tagList">
         <label for="tagIds">Tags :</label>
     
-        <ng-multiselect-dropdown
-          formControlName='tags'
-          [placeholder]="'custom placeholder'"
-          [settings]="tagsDropdown"
-          [data]="tagList"> 
-        </ng-multiselect-dropdown>
-
-        <!--[(ngModel)]="tagsSelected"-->
-        <!--tags$-->   <!--videoTagForm.get('tagIds')-->
+        <p-multiSelect 
+          [options]="tagList" 
+          formControlName="tags"
+          [group]="true"
+          optionLabel="title"
+          optionGroupLabel="title"
+          optionGroupChildren="lst_children_tag_id"
+          defaultLabel="Select tags"
+          display="chip">   
+        </p-multiSelect>
 
       </div>
       <span 
@@ -26,10 +27,5 @@
     </div>
   </form>
 
-  <!--<ul *ngIf="tags$ | async as tags">
-    <li *ngFor="let tag of tags; let i = index">
-      {{ tag.title }}
-    </li>
-  </ul>-->
 </div>
 

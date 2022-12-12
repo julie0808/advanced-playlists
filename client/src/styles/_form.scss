@@ -1,7 +1,4 @@
 .form {
-  input, select, textarea {
-    @extend %baseInput;
-  }
 
   label {
     @extend %baseLabel;
@@ -80,6 +77,4 @@
 .messageErreur {
 	@extend %message;
 	background-color: $cAlert2;
-
 }
-

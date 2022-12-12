@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { BehaviorSubject, EMPTY, Subject, Subscription } from 'rxjs';
 import { NonNullableFormBuilder, Validators } from '@angular/forms';
 import { catchError, map } from 'rxjs/operators';
-import { IDropdownSettings } from 'ng-multiselect-dropdown';
+import { MultiSelectFilterOptions } from 'primeng/multiselect';
 
 import { TagService } from 'src/app/tags/tag-service';
 import { VideoService } from '../video-service';
@@ -16,14 +16,6 @@ import { ActivatedRoute, Params } from '@angular/router';
 })
 export class VideoTagEditComponent implements OnInit, OnDestroy {
 
-  tagsDropdown: IDropdownSettings = {
-    // singleSelection: false,
-    idField: 'id',
-    textField: 'title',
-    allowSearchFilter: true,
-    searchPlaceholderText: 'Search...'
-  };
-  tagList: ITag[] = [];
   idSub!: Subscription;
   videoId!: string;
 
@@ -48,13 +40,7 @@ export class VideoTagEditComponent implements OnInit, OnDestroy {
       })
     )
     
-  tags$ = this.tagService.tagsModified$
-    .pipe(
-      catchError(err => {
-        this.errorMessageSubject.next(err);
-        return EMPTY; 
-      })
-    );
+  tags$ = this.tagService.tagsFormatedForGrouping$;
 
   constructor(private tagService: TagService,
               private videoService: VideoService,
@@ -71,18 +57,19 @@ export class VideoTagEditComponent implements OnInit, OnDestroy {
         }
       )
 
-    this.tags$.subscribe(tags => this.tagList = tags || []);
     this.video$.subscribe( (video: IVideo) => {
       this.videoTagForm.patchValue({
         tags:  video?.tags || []
       })
     });
 
-  }
+  } 
 
   updateVideoTag(){
     if (this.videoTagForm.valid){
       let updatedVideo: IVideo = new IVideoClass();
+
+///////////////// is this necessary%      
       this.video$.subscribe( (video: IVideo) => updatedVideo = video);
       updatedVideo.tags =this.videoTagForm.get('tags')?.value!;
       this.videoService.updateVideo(updatedVideo);

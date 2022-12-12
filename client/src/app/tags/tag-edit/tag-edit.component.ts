@@ -31,8 +31,7 @@ export class TagEditComponent implements OnInit, OnDestroy {
       tap(tags => {
         const noneOption = new ITag();
         noneOption.title = 'None';
-        tags.push(noneOption)
-////////////// TO FINISH
+        tags.unshift(noneOption)
       })
     );
 

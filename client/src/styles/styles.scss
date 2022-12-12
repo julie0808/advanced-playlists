@@ -2,8 +2,6 @@
 @import "variables";
 @import "extends";
 @import "mixins";
-@import "css-patterns";
-
 
 @import "main"; 
 @import "form";
@@ -13,5 +11,5 @@
 @import "video";
 @import "filter";
 
-@import "ng-multiselect-dropdown.theme";
+@import "primeng-overrides";
 

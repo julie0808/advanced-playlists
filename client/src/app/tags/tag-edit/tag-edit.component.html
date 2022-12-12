@@ -9,12 +9,14 @@
           <input
             type="text"
             id="title"
+            pInputText 
             formControlName="title">
             <span 
               *ngIf="!tagForm.get('title')?.valid && tagForm.get('title')?.touched">
               <span *ngIf="tagForm.get('title')?.errors?.required">This field is required</span>
             </span>
         </div>
+
         <div class="form-field" *ngIf="lstValidTagGroup$ | async as lstValidTagGroup">
           <label for="color">Group : </label>
           <p-dropdown 

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EMPTY, Subject } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 
 import { TagService } from '../tag-service';
 
@@ -14,13 +14,7 @@ export class TagListComponent {
   private errorMessageSubject = new Subject<string>();
   errorMessage$ = this.errorMessageSubject.asObservable();
 
-  tags$ = this.tagService.tagsModified$
-    .pipe(
-      catchError(err => {
-        this.errorMessageSubject.next(err);
-        return EMPTY; 
-      })
-    );
+  tagGroups$ = this.tagService.tagsFormatedForGrouping$;
 
   constructor(private route: ActivatedRoute,
               private tagService: TagService,

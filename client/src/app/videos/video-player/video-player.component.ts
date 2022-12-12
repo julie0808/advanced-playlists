@@ -46,7 +46,14 @@ export class VideoPlayerComponent implements OnInit {
         this.videoService.playNextVideo();
         break;
       case -1:
-        event.target.playVideo();
+        // video is unstarted
+        // console.log('unstarted');
+        // event.target.playVideo();
+        break;
+      case 5:
+        // video is cued
+        // console.log('cued');
+        // event.target.playVideo();
         break;
       default:
         // not every state needs an action

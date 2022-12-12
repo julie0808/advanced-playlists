@@ -42,6 +42,15 @@ export class TagService {
           return x.title.localeCompare(y.title);
         });
 
+        tags.map(tag => {
+          if ( tag.parent_tag_id > 0 ) {
+            const parentTag = tags.find(t => t.id === tag.parent_tag_id);
+            if (typeof parentTag !== 'undefined') {
+              tag.color = parentTag.color;
+            }
+          }
+        });
+
         const tagsWithChildren = alphaSortedArray.map(tag => {
           tag.lst_children_tag_id = tags.filter(t => t.parent_tag_id === tag.id);
           return tag;
@@ -51,6 +60,30 @@ export class TagService {
       }),
       shareReplay(1),
       catchError(err => this.errorService.handleError(err))
+    );
+
+  tagsFormatedForGrouping$: Observable<ITag[]> = this.tagsModified$
+    .pipe(
+      map(tag => {
+        const finalTagList: ITag[] = [];
+
+        // standalone parents need to be put under "Other" 
+        // tag group for multiselect from PrimeNg to work properly
+        const otherTagGroup: ITag = new ITag();
+        otherTagGroup.title = 'Other';   
+        otherTagGroup.color = '#000000';     
+
+        tag.map(t => {
+          if ( t.lst_children_tag_id.length > 0 ){
+            finalTagList.push(t); 
+          } else if ( t.parent_tag_id === 0 || t.parent_tag_id === null) {
+            otherTagGroup.lst_children_tag_id.push(t);
+          }
+        });
+
+        finalTagList.push(otherTagGroup);
+        return finalTagList;
+      })
     );
 
     saveTagToBackend(tag: ITag): Observable<ITag> {

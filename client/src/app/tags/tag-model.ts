@@ -5,7 +5,7 @@ export interface ITag {
   title: string;
   color: string;
   parent_tag_id: number;
-  lst_children_tag_id?: Array<ITag>;
+  lst_children_tag_id: ITag[];
   status?: StatusCode;
 }
 
@@ -13,6 +13,7 @@ export class ITag {
     id = 0;
     title = '';
     color = '#777777';
+    lst_children_tag_id = [] as ITag[];
     parent_tag_id = 0
 }
 

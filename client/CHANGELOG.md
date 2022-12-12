@@ -2,17 +2,19 @@
 https://trello.com/b/sihPIKvw/fancyt
 
 ### P1
-- remove ng dropdown pour primeng
 - remplacer le dropdown multiselect pour le filtre
-- utiliser les chips de primeng pour les filtre?
-- https://github.com/julie0808/advanced-playlists/security/dependabot/46
+- changer mes inputs pour primeng dans video list
 
 ### P2
+- séparer le selectedVideo de /edit de /list
 - bogue: videoList not updated if tagname is updated in tag manager 
 - vérifier l'erreur dans la console (postMessage on Domwindow target origin does not match)
 - montrer un loading gif le temps que les vidéos se chargent
 - supprimer un tag a besoin d'un modal de confirmation (+ suppression des liaisons)
 - système pour savoir quels videos sont nouveaux / n'ont aucun tag assigné
+- mettre des accordéons dans taglist
+- nettoyer form.scss
+- supprier le filtre du vidéo en court de lecture fait boguer le lecteur, celui-ci doit recommencer au premier vidéo chaque fois quon change un filtre
 
 ### P3
 - enregistrer filtre actuel en session
@@ -22,6 +24,8 @@ https://trello.com/b/sihPIKvw/fancyt
 - option pour jouer de façon aléatoire
 - contrôle vidéos pour next/previous
 - Star rating for a filter
+
+
 
 
 # Release 1.1.0

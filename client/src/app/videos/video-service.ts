@@ -6,7 +6,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { ITag } from "../tags/tag-model";
 import { IVideo, IVideoClass } from "./video.model";
 import { ErrorService } from "../shared/error/error/error-service";
-//import { TagService } from "../tags/tag-service";
+import { TagService } from "../tags/tag-service";
 
 @Injectable({providedIn: 'root'})
 export class VideoService {
@@ -26,6 +26,7 @@ export class VideoService {
 
   constructor(
     private http: HttpClient,
+    private tagService: TagService,
     private errorService: ErrorService) { }  
 
   videosFromPlaylistCount$ = this.http.get<any>(this.youtubeApiUrl + '/playlistItems', {params: {
@@ -111,36 +112,46 @@ export class VideoService {
 
   videoTags$: Observable<any> = this.http.get(`${this.apiRootURL}/tags`)
     .pipe(
-      shareReplay(1),
       catchError(err => this.errorService.handleError(err))
     );
+
+  tagsInfo: Observable<ITag[]> = this.tagService.tagsModified$;
   
   videosWithTags$ = combineLatest([
     this.videosFromPlaylist$,
-    this.videoTags$
+    this.videoTags$,
+    this.tagsInfo
   ]).pipe(
-    map( ([videos, tags]) => {
-      //console.warn('videoWithTags$ count', videos.length, 'first: ', videos[0].title);
-      const newVideoArray = videos.map((video: IVideo) => ({
-        ...video,
-        tags: video.tags = tags.find( (t: any) => t.youtube_id === video.youtubeId)?.tags as ITag[]
-      }) as IVideo);
+    map( ([videos, videotags, tagsinformation]) => {
+      
+      const newVideoArray = videos.map((video: IVideo) => {
+        let associatedVideoTagsWithInfo: ITag[] = [];
+        const associatedVideoTags = videotags.find( (vt: any) => vt.youtube_id === video.youtubeId);
+
+        if (typeof associatedVideoTags !== 'undefined') {
+          associatedVideoTagsWithInfo = associatedVideoTags.tags.map( (avt: any) => {
+            return tagsinformation.find(ti => ti.id === avt.id) as ITag;
+          });
+        }
+
+        const finalVideo: IVideo = ({
+          ...video,
+          tags: associatedVideoTagsWithInfo
+        }) as IVideo
+
+        return finalVideo;
+      });
 
       return newVideoArray;
     }),
-    tap(videos => console.warn('videosWithTags$ origin', videos)),
     shareReplay(1)
   );
 
   private videoTagsModifiedSubject: Subject<IVideo> = new Subject<IVideo>();
   videoTagsModifiedAction$: Observable<IVideo> = this.videoTagsModifiedSubject.asObservable();
 
-  ///////////////// AJUST DOES NOT CONSIDER LAST EMITTED
   videoTagsModified$: Observable<IVideo[]> = merge(
-    this.videosWithTags$
-      .pipe(
-        tap(videos => console.log('piped', videos))
-      ),
+    this.videosWithTags$,
     this.videoTagsModifiedAction$
       .pipe(
         concatMap(video => this.saveVideoTagsToBackend(video)),
@@ -151,7 +162,6 @@ export class VideoService {
       // @ts-ignore - typescript a une haine pour "scan"
       scan((acc: IVideo[], video: IVideo) => this.adjustVideoList(acc, video)),
       tap((videos: IVideo[]) => {
-        //console.info(videos[0].title);
         return videos;
       }),
       shareReplay(1),
@@ -160,7 +170,6 @@ export class VideoService {
 
   adjustVideoList(videos: IVideo[], video: IVideo): IVideo[] {
     // inspiré de tagService, uniquement bon pour un UPDATE
-    console.log('adjust...', videos); // always only have 50...??? always the first batch
     return videos.map(v => v.youtubeId === video.youtubeId ? video : v);
   }
 
@@ -210,7 +219,6 @@ export class VideoService {
   videoSelectedAction$ = this.videoSelectedSubject.asObservable();
 
   selectedVideo$ = combineLatest([
-    //this.videoTagsModified$,  /////////////////////////////// i hve the feeling this is the culprit.
     this.videosSorted$,
     this.videoSelectedAction$
   ]).pipe(
@@ -262,9 +270,6 @@ export class VideoService {
       )
 
   }
-
-
-
 
 }
 
