@@ -112,9 +112,9 @@
       }
     },
     "/video/update": {
-      "put": {
+      "post": {
         "tags": ["Videos"],
-        "summary": "Update information of videos",
+        "summary": "Store initial title of all videos",
         "parameters": [
           {
             "name": "informations",
@@ -180,7 +180,18 @@
           }
         }
       }       
-    }     
+    },
+    "/video/information": {
+      "get": {
+        "tags": ["Videos"],
+        "summary": "Get informations associated to videos",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }       
+    }       
   },
   "definitions": {
     "Tag": {
@@ -201,7 +212,8 @@
     },
     "Video": {
       "required": [
-        "youtubeId", 
+        "youtubeId",
+        "rating", 
         "title", 
         "length", 
         "dateModified",
@@ -213,6 +225,7 @@
           "type": "string",
           "uniqueItems": true
         },
+        "rating": {"type": "number"},
         "title": {"type": "string"},
         "length": {"type": "string"},
         "dateModified": {"type": "string"},

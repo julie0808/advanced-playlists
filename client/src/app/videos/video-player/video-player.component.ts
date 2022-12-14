@@ -19,9 +19,10 @@ export class VideoPlayerComponent implements OnInit {
   private errorMessageSubject = new Subject<string>();
   errorMessage$ = this.errorMessageSubject.asObservable();
 
-  video$ = this.videoService.selectedVideo$
+  video$ = this.videoService.videoPlaying$
     .pipe(
       catchError(err => {
+        tap(video => console.log('player', video)),
         this.errorMessageSubject.next(err);
         return EMPTY;
       })
@@ -48,7 +49,7 @@ export class VideoPlayerComponent implements OnInit {
       case -1:
         // video is unstarted
         // console.log('unstarted');
-        // event.target.playVideo();
+        event.target.playVideo();
         break;
       case 5:
         // video is cued

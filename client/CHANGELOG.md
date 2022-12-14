@@ -2,11 +2,10 @@
 https://trello.com/b/sihPIKvw/fancyt
 
 ### P1
-- remplacer le dropdown multiselect pour le filtre
-- changer mes inputs pour primeng dans video list
+- Ajouter le filtre pour trier par rating
 
 ### P2
-- séparer le selectedVideo de /edit de /list
+- ajouter les artites dans un champ à part et non dans les vignettes
 - bogue: videoList not updated if tagname is updated in tag manager 
 - vérifier l'erreur dans la console (postMessage on Domwindow target origin does not match)
 - montrer un loading gif le temps que les vidéos se chargent
@@ -14,7 +13,8 @@ https://trello.com/b/sihPIKvw/fancyt
 - système pour savoir quels videos sont nouveaux / n'ont aucun tag assigné
 - mettre des accordéons dans taglist
 - nettoyer form.scss
-- supprier le filtre du vidéo en court de lecture fait boguer le lecteur, celui-ci doit recommencer au premier vidéo chaque fois quon change un filtre
+- supprimer le filtre du vidéo en court de lecture fait boguer le lecteur, celui-ci doit recommencer au premier vidéo chaque fois quon change un filtre
+- faire le tag/release management sur github
 
 ### P3
 - enregistrer filtre actuel en session
@@ -23,14 +23,17 @@ https://trello.com/b/sihPIKvw/fancyt
 - tri par date d'ajout à la playlist
 - option pour jouer de façon aléatoire
 - contrôle vidéos pour next/previous
-- Star rating for a filter
-
+- fonction pour flaguer les vidéos à ne pas montrer (Maze of memories doublons, age restricted...)
+- fonction pour consulter les vidéos retirés de youtube
+- avoir un filtre négatif pour retirer de la liste certains tags
+- utiliser l'authentification Youtube pour aller chercher la liste de mon choix
 
 
 
 # Release 1.1.0
 
 - Système de tag parent poour mieux catégoriser les vidéos
+- Système de rating pour filtrer les vidéos (WIP)
 
 
 # Release 1.0.1

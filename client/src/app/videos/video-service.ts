@@ -57,7 +57,7 @@ export class VideoService {
 
             const formattedVideos = videos['items'].reduce(function(filteredVideos: IVideo[], video: any) {
               if (video.snippet.description !== 'This video is unavailable.') {
-                var formattedVideo = {
+                /*var formattedVideo = {
                     title: video.snippet.title,
                     youtubeId: video.snippet.resourceId.videoId,
                     duration: 'duree', // not included in "playlistItems" / snippet, view https://developers.google.com/youtube/v3/docs/videos/list
@@ -65,10 +65,17 @@ export class VideoService {
                     dateModified: 'date', // date of change by ME
                     artist: 'Unknown', // not yet set, has to default to "publishedBy"
                     publishedBy: video.snippet.videoOwnerChannelTitle,
-                    tags: []
-                  } as IVideo;
+                    tags: [],
+                    rating: 1
+                  } as IVideo;*/
 
-                filteredVideos.push(formattedVideo);
+                  const formattedVideo: IVideo = new IVideoClass();
+                  formattedVideo.title = video.snippet.title;
+                  formattedVideo.youtubeId = video.snippet.resourceId.videoId;
+                  formattedVideo.thumbnailPath = video.snippet.thumbnails.default.url;
+                  formattedVideo.publishedBy = video.snippet.videoOwnerChannelTitle;
+
+                  filteredVideos.push(formattedVideo);
               }
               return filteredVideos;
             }, []) as IVideo[];
@@ -101,7 +108,7 @@ export class VideoService {
   updateNewVideos(videos: IVideo[]): Observable<IVideo[]> {
     const body = JSON.stringify(videos);
 
-    return this.http.put<IVideo[]>(`${this.apiRootURL}/update`, body, {
+    return this.http.post<IVideo[]>(`${this.apiRootURL}/update`, body, {
       headers: this.headers
     })
     .pipe(
@@ -115,14 +122,20 @@ export class VideoService {
       catchError(err => this.errorService.handleError(err))
     );
 
+  videoInfos$: Observable<any> = this.http.get(`${this.apiRootURL}/information`)
+    .pipe(
+      catchError(err => this.errorService.handleError(err))
+    );
+
   tagsInfo: Observable<ITag[]> = this.tagService.tagsModified$;
   
   videosWithTags$ = combineLatest([
     this.videosFromPlaylist$,
     this.videoTags$,
-    this.tagsInfo
+    this.tagsInfo,
+    this.videoInfos$
   ]).pipe(
-    map( ([videos, videotags, tagsinformation]) => {
+    map( ([videos, videotags, tagsinformation, videoinformation]) => {
       
       const newVideoArray = videos.map((video: IVideo) => {
         let associatedVideoTagsWithInfo: ITag[] = [];
@@ -134,9 +147,17 @@ export class VideoService {
           });
         }
 
+        let associatedVideoInformation: number = 1;
+        const findAssociatedVideoInformation = videoinformation.find( (vi: any) => vi.youtube_id === video.youtubeId);
+
+        if (typeof findAssociatedVideoInformation !== 'undefined') {
+          associatedVideoInformation = findAssociatedVideoInformation.rating;
+        }
+
         const finalVideo: IVideo = ({
           ...video,
-          tags: associatedVideoTagsWithInfo
+          tags: associatedVideoTagsWithInfo,
+          rating: associatedVideoInformation
         }) as IVideo
 
         return finalVideo;
@@ -200,8 +221,8 @@ export class VideoService {
           } 
           
           // set default video to the first in the list
-          if ( this.videoSelectedSubject.getValue() === '' ) {
-            this.selectedVideoIdChanged(videos[0].youtubeId);
+          if ( this.videoPlayingSubject.getValue() === '' ) {
+            this.videoPlayingIdChanged(videos[0].youtubeId);
           }      
         }  
 
@@ -213,6 +234,34 @@ export class VideoService {
 
   sortVideoListByTag(selectedTags: ITag[]): void {
     this.sortByTagSubject.next(selectedTags);
+  }
+
+  private videoPlayingSubject = new BehaviorSubject<string>(''); 
+  videoPlayingAction$ = this.videoPlayingSubject.asObservable();
+
+  videoPlaying$ = combineLatest([
+    this.videosSorted$,
+    this.videoPlayingAction$
+  ]).pipe(
+    map( ([videos, selectedVideoId]) => {
+      if (selectedVideoId) {
+        const searchForVideo = videos.find( video => video.youtubeId === selectedVideoId);
+        if (searchForVideo !== undefined){
+          return searchForVideo;
+        } 
+
+        this.errorService.handleError('Video inexistant');
+        return new IVideoClass(); 
+      }
+      // videoList is not yet loaded with default video
+      return new IVideoClass();
+    }),
+    catchError(err => this.errorService.handleError(err)),
+    shareReplay(1)
+  );
+
+  videoPlayingIdChanged(selectedVideoId: string): void {
+    this.videoPlayingSubject.next(selectedVideoId);
   }
 
   private videoSelectedSubject = new BehaviorSubject<string>(''); 
@@ -244,19 +293,21 @@ export class VideoService {
   }
 
   playNextVideo() {
-    // logic may b e flawed, since I can't be sure all components
+    // logic may be flawed, since I can't be sure all components
     // depends on the videosSorted$ list
     this.videosSorted$.subscribe(videos => {
-      const currentVideoPosition = videos.findIndex( (v: IVideo) => v.youtubeId === this.videoSelectedSubject.getValue())
+      const currentVideoPosition = videos.findIndex( (v: IVideo) => {
+        return v.youtubeId === this.videoPlayingSubject.getValue();
+      });
       const videosSortedLength = videos.length;
       const nextVideoPosition = videosSortedLength - 1 === currentVideoPosition ? 0 : currentVideoPosition + 1;
 
-      this.selectedVideoIdChanged(videos[nextVideoPosition].youtubeId);
+      this.videoPlayingIdChanged(videos[nextVideoPosition].youtubeId);
     });
   }
 
   saveVideoTagsToBackend(video: IVideo): Observable<IVideo> {
-    const body = JSON.stringify(video.tags);
+    const body = JSON.stringify(video);
     let params = new HttpParams(); 
     params = params.append('id', video.youtubeId);
 

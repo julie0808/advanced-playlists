@@ -1,7 +1,7 @@
 <div class="video-manager--tag-list">
   <h3 *ngIf="video$ | async as video">Edit assigned tags for {{ video.title }}</h3>
 
-  <form [formGroup]="videoTagForm" (ngSubmit)="updateVideoTag()" class="form" novalidate>
+  <form [formGroup]="videoTagForm" (ngSubmit)="updateVideo()" class="form" novalidate>
     <fieldset>
       <div class="form-field" *ngIf="tags$ | async as tagList">
         <label for="tagIds">Tags :</label>
@@ -17,6 +17,20 @@
           display="chip">   
         </p-multiSelect>
 
+      </div>
+      <div class="form-field">
+        <p-rating 
+          [cancel]="false"
+          [stars]="3"
+          formControlName="rating"
+          >
+          <ng-template pTemplate="onicon">
+            <i class="pi pi-star-fill"></i>
+          </ng-template>
+          <ng-template pTemplate="officon">
+            <i class="pi pi-star"></i>
+          </ng-template>
+          </p-rating>
       </div>
       <span 
           *ngIf="!videoTagForm.valid && videoTagForm.touched"

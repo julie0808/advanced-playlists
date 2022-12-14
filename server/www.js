@@ -160,12 +160,11 @@ app.delete(`${rootUrl}/tags/:id`, (req, res) => {
 
 // for now, simply store the initial title of the video as fetched on
 // youtube, so if it's deleted, we can retrace it
-app.put(`${rootUrl}/video/update`, (req, res) => {
+app.post(`${rootUrl}/video/update`, (req, res) => {
   const videos = req.body;
   ;(async () => {
     const client = await pool.connect();
-
-    try { 
+    try {  
       
       let rows = 'todo';
 
@@ -188,10 +187,10 @@ app.put(`${rootUrl}/video/update`, (req, res) => {
   })
 });
 
-
 app.put(`${rootUrl}/video/tags/update/:id`, (req, res) => {
   const { id } = req.params;
-  const videoTags = req.body;
+  const videoInfo = req.body;
+  const videoTags = req.body.tags;
   ;(async () => {
     const client = await pool.connect();
 
@@ -213,6 +212,20 @@ app.put(`${rootUrl}/video/tags/update/:id`, (req, res) => {
             `;
           await client.query(insertQry, [`${id}`, videoTags[k].id ]);
         }
+      }
+
+      const videoInfoRating = videoInfo.rating;
+      let resultsCustomInfo = await client.query(
+        `UPDATE video
+          SET 
+            rating = ($1)
+        WHERE youtube_id = ($2) `,
+        [videoInfoRating, id]);
+      if (resultsCustomInfo.rowCount === 0) { 
+        resultsCustomInfo = { 
+          videoInfoRating,
+          id
+        };
       }
 
       res.status(201).json(rows);
@@ -241,6 +254,21 @@ app.get(`${rootUrl}/video/tags`, (req, res) => {
           ) json_ressource
         ) as tags
       FROM video_tag vt
+    `)
+    res.json(rows);
+  })().catch(err => {
+    res.json(err.stack)
+  })
+});
+
+
+app.get(`${rootUrl}/video/information`, (req, res) => {
+  ;(async () => {
+    const { rows } = await pool.query(`
+      SELECT  
+        v.youtube_id, 
+        v.rating
+      FROM video v
     `)
     res.json(rows);
   })().catch(err => {

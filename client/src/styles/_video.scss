@@ -11,6 +11,21 @@
 .video-tag-container {
   flex: 0 0 auto;
   width: 40%;
+  position: fixed;
+  top: 15%;
+  right: 20px;
+}
+
+.p-rating .p-rating-icon:nth-child(1) {
+  color:rgb(201, 137, 40);
+}
+
+.p-rating .p-rating-icon:nth-child(2) {
+  color:rgb(228, 228, 228);
+}
+
+.p-rating .p-rating-icon:nth-child(3) {
+  color:rgb(250, 225, 81);
 }
 
 .video-manager--tag-list {
@@ -136,6 +151,15 @@
   flex: 0 0 auto;
   width: 60%;
 
+  .video-info--rating {
+    display: inline-block;
+
+    .p-rating .p-rating-icon {
+      height: 14px;
+      width: 20px;
+    }
+  }
+
   .video-info--title {
     border-bottom: 1px solid #fff;
     display: inline-block;
@@ -208,8 +232,8 @@
 .video-player--container {
   //width: 100%;
   //padding-top: 56.25%;
-  width: 240px;
-  height: 160px;  
+  width: 480px;
+  height: 320px;  
   z-index: 2; 
 
   iframe {

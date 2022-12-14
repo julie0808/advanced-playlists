@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { catchError, filter, map, tap } from 'rxjs/operators';
-import { combineLatest, Subject, EMPTY } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
+import { Subject, EMPTY } from 'rxjs';
 
 import { VideoService } from '../video-service';
 import { IVideo } from '../video.model';
@@ -21,7 +21,6 @@ export class VideoListComponent {
   videos$ = this.videoService.videosSorted$
     .pipe(
       tap(videos => {
-        //console.info('emitting + videos lengnth', videos.length);
         this.playlistCount = videos.length;
       }),
       catchError(err => {
@@ -30,32 +29,22 @@ export class VideoListComponent {
       })
     );
 
-  selectedVideo$ = this.videoService.selectedVideo$
+  videoPlaying$ = this.videoService.videoPlaying$
     .pipe(
-      //tap(() => console.info('video selected')),
       catchError(err => {
+        tap (video => console.log('videop', video)),
         this.errorMessageSubject.next(err);
         return EMPTY;
       })
     );
-
-  allVideoData$ = combineLatest([
-      this.videos$,
-      this.selectedVideo$,
-    ])
-      .pipe(
-        filter( ([videos]) => Boolean(videos)), 
-        map( ([videos, selectedVideo]) => ({videos, selectedVideo}))
-        //,tap(() => console.info(`Final emit`))
-      );
 
   constructor(private route: ActivatedRoute,
               private router: Router,
               private videoService: VideoService) { }
 
   ngOnInit(){
-    this.selectedVideo$.subscribe( (selecteVideo: IVideo) => {
-      this.currentVideo = selecteVideo
+    this.videoPlaying$.subscribe( (selectedVideo: IVideo) => {
+      this.currentVideo = selectedVideo
     });
   }
 
@@ -64,7 +53,7 @@ export class VideoListComponent {
   }
 
   playVideo(video: IVideo) {
-    this.videoService.selectedVideoIdChanged(video.youtubeId);
+    this.videoService.videoPlayingIdChanged(video.youtubeId);
   }
 
 }

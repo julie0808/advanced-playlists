@@ -1,8 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { BehaviorSubject, EMPTY, Subject, Subscription } from 'rxjs';
-import { NonNullableFormBuilder, Validators } from '@angular/forms';
+import { NonNullableFormBuilder } from '@angular/forms';
 import { catchError, map } from 'rxjs/operators';
-import { MultiSelectFilterOptions } from 'primeng/multiselect';
 
 import { TagService } from 'src/app/tags/tag-service';
 import { VideoService } from '../video-service';
@@ -18,9 +17,11 @@ export class VideoTagEditComponent implements OnInit, OnDestroy {
 
   idSub!: Subscription;
   videoId!: string;
+  currentlyEditedVideo!: IVideo;
 
   videoTagForm: IVideoForm = this.fb.group({
-    tags: this.fb.control( [] as ITag[], Validators.required)
+    tags: this.fb.control( [] as ITag[]),
+    rating: this.fb.control(1)
   });
 
   private errorMessageSubject = new Subject<string>();
@@ -58,21 +59,21 @@ export class VideoTagEditComponent implements OnInit, OnDestroy {
       )
 
     this.video$.subscribe( (video: IVideo) => {
+      this.currentlyEditedVideo = video;
       this.videoTagForm.patchValue({
-        tags:  video?.tags || []
+        tags:  video?.tags || [],
+        rating: video.rating
       })
     });
 
   } 
 
-  updateVideoTag(){
+  updateVideo(){
     if (this.videoTagForm.valid){
-      let updatedVideo: IVideo = new IVideoClass();
+      this.currentlyEditedVideo.tags = this.videoTagForm.get('tags')?.value!;
+      this.currentlyEditedVideo.rating = this.videoTagForm.get('rating')?.value!;
 
-///////////////// is this necessary%      
-      this.video$.subscribe( (video: IVideo) => updatedVideo = video);
-      updatedVideo.tags =this.videoTagForm.get('tags')?.value!;
-      this.videoService.updateVideo(updatedVideo);
+      this.videoService.updateVideo(this.currentlyEditedVideo);
     }
   }
 

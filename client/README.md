@@ -1,18 +1,19 @@
 # Liste de lecture Youtube avancées
 
-Étant une utilisatrice avide de Youtube, j'ai atteint un point où mes listes de lectures sont devenues inutilisables. Spécialement pour les listes de musique avec plus de 300 items, je ne trouve pas facilement ce que je veux.
+Étant une utilisatrice avide de Youtube, j'ai atteint un point où mes listes de lectures sont devenues inutilisables. Spécialement pour les listes de musique avec plus de 800 items, je ne trouve pas facilement ce que je veux.
 
 ## La solution
 
 Créer un système de "tags". En associant ces tags aux videos de mes listes d'origine sur Youtube, je peux gérer dans ma nouvelle plateforme, à l'aide de filtre, ce que j'ai envie d'écouter.
 
-### Fonctionnaliés prévues pour la release 1.0.0 (MVP - minimum viable product)
+### Fonctionnaliés actuelles
 
 - Créer / modifier / supprimer un tag
 - Ajouter / supprimer un tag à un video (multiple tags par vidéo possible)
-- Filtrer par tag, playlist d'origine
+- Filtrer par tag
 - Lecture à même l'application, selon les filtres choisis
-- Connexion à l'API de Youtube pour obtenir mes listes de lecture
+- Branchement à l'authentification Youtube pour que l'app prenne en compte l'abonnement Youtube Premium
+- Connexion à l'API de Youtube pour obtenir la liste de lecture désirée (hardcodée pour le moment)
 
 ## Avancement actuel du projet
 
@@ -22,22 +23,18 @@ Liste de vidéos + Édition des tags associés :
 Liste de tags + Édition des tags  :
 ![Tag List](_doctech/tagList.jpg "Tag list")
 
-### Fonctionnalités pour une release future
+### Fonctionnalités désirée pour une release future
 
 - Enregistrement de filtres pour les réutiliser à une visite ultérieure
-- Authentification Google pour pouvoir gérer la liste de n'importe quelle usager Youtube (actuellement hardcodé pour mon usage personnel)
-- Organiser la liste de lecture selon la date d'ajout à la liste d'origine
 - Filtrer les vidéos pour voir seulement ceux ajoutés depuis la dernière visite
 - Filtrer par Artiste
-- Filtre par longueur de video
 - Jouer de façon aléatoire la liste en cours
-- Optimisation "mobile-first" pour l'usage sur n'importe quel appareil
 
 
 ## Choix technologiques
 
-- Angular (version 14)
-- Node.js - Backend
+- Angular (version 15)
+- Node.js pour le Backend
 - Postgres SQL
 - SCSS / SASS
 - Trello/Onenote pour la gestion des priorités et de l'avancement
@@ -45,4 +42,3 @@ Liste de tags + Édition des tags  :
 ## Info Angular
 
 Projet généré avec [Angular CLI](https://github.com/angular/angular-cli) version 12.1.1.
-Mise à jour vers Angular 14 manuellement
