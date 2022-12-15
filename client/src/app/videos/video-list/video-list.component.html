@@ -1,68 +1,72 @@
 <div 
   class="video--total-count"
-  *ngIf="videos$ | async">Total videos : {{ playlistCount }}</div>
+  *ngIf="videos$ | async">Total videos : {{ playlistCount }}
+</div>
 
-<ul 
-  class="video-list" 
-  *ngIf="videos$ | async as allVideos">
-  <li 
-    class="video-list--item" 
-    *ngFor="let video of allVideos; index as i" 
-    [ngClass]="{'video--active' : video.youtubeId === currentVideo.youtubeId }">
-    <!--<ul class="video-action">
-      <li>
-        <svg class="icon icon-cog"><use xlink:href="./assets/icon-list.svg#icon-cog"></use></svg>
-      </li>
-    </ul>-->
-    <div 
-      class="video-action--play"
-      *ngIf="video.youtubeId !== currentVideo.youtubeId"
-      (click)="playVideo(video)">></div>
-    <div class="video--counter">{{ i + 1 }}</div>
-    <div class="video-image">
-      <div class="seo-bg">
-        <picture>
-          <source srcset="http://i3.ytimg.com/vi/{{ video.youtubeId }}/maxresdefault.jpg" media="(max-width: 767px)">
-          <img src="{{ video.thumbnailPath }}" alt="#">
-        </picture>	
+<section class="video-list">
+  <ul 
+    *ngIf="videos$ | async as allVideos">
+    <li 
+      class="video-list--item" 
+      *ngFor="let video of allVideos; index as i" 
+      [ngClass]="{'video--active' : video.youtubeId === currentVideo.youtubeId }">
+      <!--<ul class="video-action">
+        <li>
+          <svg class="icon icon-cog"><use xlink:href="./assets/icon-list.svg#icon-cog"></use></svg>
+        </li>
+      </ul>-->
+      <div 
+        class="video-action--play"
+        *ngIf="video.youtubeId !== currentVideo.youtubeId"
+        (click)="playVideo(video)">
+        <i class="pi pi-play"></i>
       </div>
-      <div class="video-image--info">
-        <!-- duration will be hard to get, as it is not in /playlist api call, but in individual video GET call -->
-        <!--<p class="video-image--length">{{ video.duration }}</p>-->
-        <p class="video-image--new" *ngIf="!video.tags || !video.tags.length">New</p>
-        <p class="video-image--new-border" *ngIf="!video.tags || !video.tags.length"></p>
+      <div class="video--counter">{{ i + 1 }}</div>
+      <div class="video-image">
+        <div class="seo-bg">
+          <picture>
+            <source srcset="http://i3.ytimg.com/vi/{{ video.youtubeId }}/maxresdefault.jpg" media="(max-width: 767px)">
+            <img src="{{ video.thumbnailPath }}" alt="#">
+          </picture>	
+        </div>
+        <div class="video-image--info">
+          <!-- duration will be hard to get, as it is not in /playlist api call, but in individual video GET call -->
+          <!--<p class="video-image--length">{{ video.duration }}</p>-->
+          <p class="video-image--new" *ngIf="!video.tags || !video.tags.length">New</p>
+          <p class="video-image--new-border" *ngIf="!video.tags || !video.tags.length"></p>
+        </div>
       </div>
-    </div>
-    <div class="video-info">
-     
-      <p class="video-info--title">
-        <p-rating 
-        class="video-info--rating"
-        [cancel]="false"
-        [stars]="3"
-        [(ngModel)]="video.rating"
-        >
-        <ng-template pTemplate="onicon">
-          <i class="pi pi-star-fill"></i>
-        </ng-template>
-        <ng-template pTemplate="officon">
-          <i class="pi pi-star"></i>
-        </ng-template>
-      </p-rating>
-        {{ video.title }}
-      </p>
-      <!-- <p class="video-info--artist">{{ video.artist }}</p> -->
+      <div class="video-info">
+      
+        <p class="video-info--title">
+          <p-rating 
+          class="video-info--rating"
+          [cancel]="false"
+          [stars]="3"
+          [(ngModel)]="video.rating"
+          >
+          <ng-template pTemplate="onicon">
+            <i class="pi pi-star-fill"></i>
+          </ng-template>
+          <ng-template pTemplate="officon">
+            <i class="pi pi-star"></i>
+          </ng-template>
+        </p-rating>
+          {{ video.title }}
+        </p>
+        <!-- <p class="video-info--artist">{{ video.artist }}</p> -->
 
-      <ul class="video-info--tag-list">
-        <ng-container *ngFor="let tag of video.tags">
-          <li 
-            [ngStyle]="{'background': tag.color !== null || tag.color !== '' ? tag.color : '#282f39' }"
-            class="video-tag">
-            <p>{{ tag.title }}</p>
-          </li>
-        </ng-container>
-        <li class="video-tag video-tag--view-all" (click)="editTags(video.youtubeId)"><p>Manage</p></li>
-      </ul>
-    </div>
-  </li>
-</ul>
+        <ul class="video-info--tag-list">
+          <ng-container *ngFor="let tag of video.tags">
+            <li 
+              [ngStyle]="{'background': tag.color !== null || tag.color !== '' ? tag.color : '#282f39' }"
+              class="video-tag">
+              <p>{{ tag.title }}</p>
+            </li>
+          </ng-container>
+          <li class="video-tag video-tag--view-all" (click)="editTags(video.youtubeId)"><p>Manage</p></li>
+        </ul>
+      </div>
+    </li>
+  </ul>
+</section>

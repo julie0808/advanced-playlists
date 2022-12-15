@@ -32,7 +32,6 @@ export class VideoListComponent {
   videoPlaying$ = this.videoService.videoPlaying$
     .pipe(
       catchError(err => {
-        tap (video => console.log('videop', video)),
         this.errorMessageSubject.next(err);
         return EMPTY;
       })

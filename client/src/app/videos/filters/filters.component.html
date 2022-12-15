@@ -1,40 +1,52 @@
 <section class="filter-list">
   <div class="boxed-container filter-group">
-    <!--<ul>
-      <li>
-        + Tags
-      </li>
-      <li>
-        + Length
-      </li>
-      <li>
-        YT playlist
-      </li>
-    </ul>-->
-    <div class="filter-sort">
-        <p-multiSelect 
-          [options]="tagList" 
-          [(ngModel)]="selectedTagList"
-          (onChange)="sortByTag()"
-          [group]="true"
-          optionLabel="title"
-          optionGroupLabel="title"
-          optionGroupChildren="lst_children_tag_id"
-          defaultLabel="Sort tags"
-          display="chip">   
-        </p-multiSelect>
+    <div class="filter-sort filter-sort--tags">
+      <p-multiSelect 
+        [options]="tagList" 
+        [(ngModel)]="selectedTagList"
+        (onChange)="sortByTag()"
+        [group]="true"
+        optionLabel="title"
+        optionGroupLabel="title"
+        optionGroupChildren="lst_children_tag_id"
+        defaultLabel="Sort tags"> 
+        <ng-template let-country pTemplate="selectedItems">
+          Sort by tag
+          <!-- custom "chips" codés -->
+        </ng-template>  
+      </p-multiSelect>
+    </div>
+    <div class="filter-sort filter-sort--rating">  
+      <p-rating 
+        [stars]="3"
+        [(ngModel)]="selectedRating"
+        (onCancel)="removeSortByRating()"
+        (onRate)="sortByRating()"
+        >
+        <ng-template pTemplate="onicon">
+          <i class="pi pi-star-fill"></i>
+        </ng-template>
+        <ng-template pTemplate="officon">
+          <i class="pi pi-star"></i>
+        </ng-template>
+        <ng-template pTemplate="cancel">
+          <i class="pi pi-times-circle"></i>
+        </ng-template>
+      </p-rating>
     </div>
   </div>
 </section>
 
 <section class="filter-active">
   <ul class="boxed-container filter-active-list">
-    <li 
-      class="filter-active--label" 
-      *ngFor="let tag of selectedTagList"
-      (click)="removeTagFromFilter(tag.id)">
-      <p>{{ tag.title }}</p>
-      <span class="filter-active--remove" title="Remove">X</span>
-    </li>
+    <ng-container *ngFor="let tag of selectedTagList">
+      <li 
+        [ngStyle]="{'background': tag.color !== null || tag.color !== '' ? tag.color : '#282f39' }"
+        class="filter-active--label" 
+        (click)="removeTagFromFilter(tag.id)">
+        <p>{{ tag.title }}</p>
+        <span class="filter-active--remove" title="Remove">X</span>
+      </li>
+    </ng-container>
   </ul>
 </section>

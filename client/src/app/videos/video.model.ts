@@ -22,7 +22,7 @@ export class IVideoClass {
   thumbnailPath: string = '';
   dateModified: string = ''; 
   tags: ITag[]= [];
-  rating: number = 1;
+  rating: number = 0;
   artist: string = 'Unknown';
   publishedBy: string = '';
 }

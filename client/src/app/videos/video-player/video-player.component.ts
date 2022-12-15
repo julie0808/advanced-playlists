@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { EMPTY, Subject, tap } from 'rxjs';
+import { EMPTY, Subject } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 import { VideoService } from '../video-service';
+import { IVideo } from '../video.model';
 
 @Component({
   selector: 'app-video-player',
@@ -11,6 +12,7 @@ import { VideoService } from '../video-service';
 export class VideoPlayerComponent implements OnInit {
 
   apiLoaded = false;
+  currentVideoList!: IVideo[];
 
   playerConfig = {
     controls: 1
@@ -22,7 +24,14 @@ export class VideoPlayerComponent implements OnInit {
   video$ = this.videoService.videoPlaying$
     .pipe(
       catchError(err => {
-        tap(video => console.log('player', video)),
+        this.errorMessageSubject.next(err);
+        return EMPTY;
+      })
+    );
+
+  videoList$ = this.videoService.videosSorted$
+    .pipe(
+      catchError(err => {
         this.errorMessageSubject.next(err);
         return EMPTY;
       })
@@ -37,6 +46,10 @@ export class VideoPlayerComponent implements OnInit {
       document.body.appendChild(tag);
       this.apiLoaded = true;
     }
+
+    this.videoList$.subscribe( (videos: IVideo[]) => {
+      this.currentVideoList = videos;
+    });
   }
 
   followState(event: any) {
@@ -44,7 +57,8 @@ export class VideoPlayerComponent implements OnInit {
     switch(event.data) {
       case 0:
         // video has ended
-        this.videoService.playNextVideo();
+        console.log('follow atate');
+        this.videoService.playNextVideo(this.currentVideoList);
         break;
       case -1:
         // video is unstarted

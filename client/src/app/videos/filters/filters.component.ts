@@ -15,6 +15,7 @@ export class FiltersComponent implements OnInit {
 
   tagList: ITag[] = [];
   selectedTagList: ITag[] = [];
+  selectedRating: number = 0;
 
   private errorMessageSubject = new Subject<string>();
   errorMessage$ = this.errorMessageSubject.asObservable();
@@ -30,6 +31,15 @@ export class FiltersComponent implements OnInit {
 
   sortByTag(){
     this.videoService.sortVideoListByTag(this.selectedTagList);
+  }
+
+  sortByRating(){
+    this.videoService.sortVideoListByRating(this.selectedRating);
+  }
+
+  removeSortByRating(){
+    this.selectedRating = 0;
+    this.sortByRating();
   }
 
   removeTagFromFilter(tagId: number) {

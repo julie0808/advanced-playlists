@@ -13,7 +13,6 @@ export class VideoService {
 
   youtubeApiKey: string = "AIzaSyD0d0tKqyP1G_lrNEEiGxEpfuIoRfDWVKs";
   youtubeApiUrl: string = "https://youtube.googleapis.com/youtube/v3";
-  //testVideoPlaylistKey: string = "PLwgftAdEcD4phH9Z6pCOcW57mdxn5uJG1";
   videoPlayListKPop: string = "PLwgftAdEcD4rXHmDdFTFI8Hch3BfWBQIt";
   apiRootURL: string = '/api/v1/video';
 
@@ -57,17 +56,6 @@ export class VideoService {
 
             const formattedVideos = videos['items'].reduce(function(filteredVideos: IVideo[], video: any) {
               if (video.snippet.description !== 'This video is unavailable.') {
-                /*var formattedVideo = {
-                    title: video.snippet.title,
-                    youtubeId: video.snippet.resourceId.videoId,
-                    duration: 'duree', // not included in "playlistItems" / snippet, view https://developers.google.com/youtube/v3/docs/videos/list
-                    thumbnailPath: video.snippet.thumbnails.default.url,
-                    dateModified: 'date', // date of change by ME
-                    artist: 'Unknown', // not yet set, has to default to "publishedBy"
-                    publishedBy: video.snippet.videoOwnerChannelTitle,
-                    tags: [],
-                    rating: 1
-                  } as IVideo;*/
 
                   const formattedVideo: IVideo = new IVideoClass();
                   formattedVideo.title = video.snippet.title;
@@ -200,16 +188,21 @@ export class VideoService {
 
   private sortByTagSubject = new BehaviorSubject<ITag[]>([]);
   sortByTagAction$ = this.sortByTagSubject.asObservable();  
+  private sortByRatingSubject = new BehaviorSubject<number>(0);
+  sortByRatingAction$ = this.sortByRatingSubject.asObservable();  
 
   videosSorted$: Observable<IVideo[]> = combineLatest([
     this.videoTagsModified$,
-    this.sortByTagAction$
+    this.sortByTagAction$,
+    this.sortByRatingAction$
   ])
     .pipe(
-      map(([videos, selectedTags]) => {
+      map(([videos, selectedTags, selectedRating]) => {
+        let sortedVideos = videos;
+
         if(videos.length){
           if (selectedTags.length) {
-            return videos.filter( (video: IVideo) => {
+            return sortedVideos.filter( (video: IVideo) => {
               const videoTags = video.tags || [];
               if (videoTags.length){
                 return videoTags.some(videoTag => {
@@ -219,6 +212,11 @@ export class VideoService {
               return false;
             });
           } 
+          if (selectedRating !== 0){
+            return sortedVideos.filter((video: IVideo) => {
+              return video.rating === selectedRating;
+            });
+          }
           
           // set default video to the first in the list
           if ( this.videoPlayingSubject.getValue() === '' ) {
@@ -226,7 +224,7 @@ export class VideoService {
           }      
         }  
 
-        return videos;
+        return sortedVideos;
       }),
       catchError(err => this.errorService.handleError(err)),
       shareReplay(1)
@@ -234,6 +232,10 @@ export class VideoService {
 
   sortVideoListByTag(selectedTags: ITag[]): void {
     this.sortByTagSubject.next(selectedTags);
+  }
+
+  sortVideoListByRating(rating: number): void {
+    this.sortByRatingSubject.next(rating);
   }
 
   private videoPlayingSubject = new BehaviorSubject<string>(''); 
@@ -292,18 +294,13 @@ export class VideoService {
     this.videoSelectedSubject.next(selectedVideoId);
   }
 
-  playNextVideo() {
-    // logic may be flawed, since I can't be sure all components
-    // depends on the videosSorted$ list
-    this.videosSorted$.subscribe(videos => {
-      const currentVideoPosition = videos.findIndex( (v: IVideo) => {
-        return v.youtubeId === this.videoPlayingSubject.getValue();
-      });
-      const videosSortedLength = videos.length;
-      const nextVideoPosition = videosSortedLength - 1 === currentVideoPosition ? 0 : currentVideoPosition + 1;
-
-      this.videoPlayingIdChanged(videos[nextVideoPosition].youtubeId);
+  playNextVideo(videoList: IVideo[]) {
+    const currentVideoPosition = videoList.findIndex( (v: IVideo) => {
+      return v.youtubeId === this.videoPlayingSubject.getValue();
     });
+    const videosSortedLength = videoList.length;
+    const nextVideoPosition = videosSortedLength - 1 === currentVideoPosition ? 0 : currentVideoPosition + 1;
+    this.videoPlayingIdChanged(videoList[nextVideoPosition].youtubeId);
   }
 
   saveVideoTagsToBackend(video: IVideo): Observable<IVideo> {
