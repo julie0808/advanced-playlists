@@ -2,7 +2,7 @@
 https://trello.com/b/sihPIKvw/fancyt
 
 ### P1
-- Ajouter le filtre pour trier par rating
+
 
 ### P2
 - ajouter les artites dans un champ à part et non dans les vignettes
@@ -15,6 +15,8 @@ https://trello.com/b/sihPIKvw/fancyt
 - nettoyer form.scss
 - supprimer le filtre du vidéo en court de lecture fait boguer le lecteur, celui-ci doit recommencer au premier vidéo chaque fois quon change un filtre
 - faire le tag/release management sur github
+- préloader les video et les garde en session
+- controle de vue du lecture : fullscreen et cacher
 
 ### P3
 - enregistrer filtre actuel en session
@@ -24,9 +26,12 @@ https://trello.com/b/sihPIKvw/fancyt
 - option pour jouer de façon aléatoire
 - contrôle vidéos pour next/previous
 - fonction pour flaguer les vidéos à ne pas montrer (Maze of memories doublons, age restricted...)
+- choisir plus d'un rating en même temps
 - fonction pour consulter les vidéos retirés de youtube
 - avoir un filtre négatif pour retirer de la liste certains tags
 - utiliser l'authentification Youtube pour aller chercher la liste de mon choix
+- bogue couleur sélection de rating dans les filtres
+- BUG - en triant par "new" : video non existant. vidéo privé?
 
 
 

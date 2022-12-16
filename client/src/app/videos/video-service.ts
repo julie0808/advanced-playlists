@@ -190,17 +190,26 @@ export class VideoService {
   sortByTagAction$ = this.sortByTagSubject.asObservable();  
   private sortByRatingSubject = new BehaviorSubject<number>(0);
   sortByRatingAction$ = this.sortByRatingSubject.asObservable();  
+  private sortByNew = new BehaviorSubject<boolean>(false);
+  sortByNew$ = this.sortByNew.asObservable(); 
 
   videosSorted$: Observable<IVideo[]> = combineLatest([
     this.videoTagsModified$,
     this.sortByTagAction$,
-    this.sortByRatingAction$
+    this.sortByRatingAction$,
+    this.sortByNew$
   ])
     .pipe(
-      map(([videos, selectedTags, selectedRating]) => {
+      map(([videos, selectedTags, selectedRating, showOnlyNew]) => {
         let sortedVideos = videos;
 
         if(videos.length){
+          if (showOnlyNew) {
+            return sortedVideos.filter((video: IVideo) => {
+              return video.rating === 0;
+            });
+          }
+
           if (selectedTags.length) {
             return sortedVideos.filter( (video: IVideo) => {
               const videoTags = video.tags || [];
@@ -236,6 +245,10 @@ export class VideoService {
 
   sortVideoListByRating(rating: number): void {
     this.sortByRatingSubject.next(rating);
+  }
+
+  sortVideoListByNewOnly(showOnlyNew: boolean): void {
+    this.sortByNew.next(showOnlyNew);
   }
 
   private videoPlayingSubject = new BehaviorSubject<string>(''); 
