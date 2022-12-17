@@ -6,7 +6,7 @@ import { catchError, map } from 'rxjs/operators';
 import { TagService } from 'src/app/tags/tag-service';
 import { VideoService } from '../video-service';
 import { ITag } from '../../tags/tag-model';
-import { IVideo, IVideoClass, IVideoForm } from '../video.model';
+import { IVideo, IVideoForm } from '../video.model';
 import { ActivatedRoute, Params } from '@angular/router';
 
 @Component({
@@ -20,6 +20,7 @@ export class VideoTagEditComponent implements OnInit, OnDestroy {
   currentlyEditedVideo!: IVideo;
 
   videoTagForm: IVideoForm = this.fb.group({
+    artists: this.fb.control( [] as ITag[]),
     tags: this.fb.control( [] as ITag[]),
     rating: this.fb.control(1)
   });
@@ -41,7 +42,19 @@ export class VideoTagEditComponent implements OnInit, OnDestroy {
       })
     )
     
-  tags$ = this.tagService.tagsFormatedForGrouping$;
+  tags$ = this.tagService.tagsFormatedForGrouping$
+    .pipe(
+      map(tags => {
+        return tags.filter(tag => tag.id !== 55);
+      })
+    );
+
+  artistsTags$ = this.tagService.tagsModified$
+    .pipe(
+      map(tags => {
+        return tags.filter(tag => tag.parent_tag_id === 55);
+      })
+    );
 
   constructor(private tagService: TagService,
               private videoService: VideoService,
@@ -61,6 +74,7 @@ export class VideoTagEditComponent implements OnInit, OnDestroy {
     this.video$.subscribe( (video: IVideo) => {
       this.currentlyEditedVideo = video;
       this.videoTagForm.patchValue({
+        artists:  video?.artists || [],
         tags:  video?.tags || [],
         rating: video.rating
       })
@@ -70,6 +84,7 @@ export class VideoTagEditComponent implements OnInit, OnDestroy {
 
   updateVideo(){
     if (this.videoTagForm.valid){
+      this.currentlyEditedVideo.artists = this.videoTagForm.get('artists')?.value!;
       this.currentlyEditedVideo.tags = this.videoTagForm.get('tags')?.value!;
       this.currentlyEditedVideo.rating = this.videoTagForm.get('rating')?.value!;
 

@@ -9,25 +9,26 @@ export interface IVideo {
   dateModified: string; // for any change to tags. should be a valid date format. correspond to date it was modified by ME in this app
   tags: ITag[];
   rating: number;
-  artist: string; // this might be handle differently with tags actually
+  artists: ITag[]; 
   publishedBy: string; // original Channel name on which it was published
   //ytPlaylists: {name: string, id: string, dateAdded: string}[]; // in which lists the video is in. might have duplicates
 }
 
 // créer une instance par défaut de vidéo
-export class IVideoClass {
+export class IVideo {
   title: string = 'Video test'; 
   youtubeId: string = "12345678910";
   duration: string = ''; 
   thumbnailPath: string = '';
   dateModified: string = ''; 
-  tags: ITag[]= [];
+  tags: ITag[] = [];
   rating: number = 0;
-  artist: string = 'Unknown';
+  artists: ITag[] = [];
   publishedBy: string = '';
 }
 
 export interface IVideoForm extends FormGroup<{
+  artists: FormControl<ITag[]>;
   tags: FormControl<ITag[]>;
   rating: FormControl<number>;
 }> {}

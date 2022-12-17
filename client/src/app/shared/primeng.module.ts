@@ -7,6 +7,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { RatingModule } from 'primeng/rating';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
 import { CheckboxModule } from 'primeng/checkbox';
+import { AccordionModule } from 'primeng/accordion';
 
 @NgModule({
   exports: [
@@ -16,7 +17,8 @@ import { CheckboxModule } from 'primeng/checkbox';
     MultiSelectModule,
     RatingModule,
     ScrollPanelModule,
-    CheckboxModule
+    CheckboxModule,
+    AccordionModule
   ]
 })
 

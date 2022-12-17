@@ -4,7 +4,7 @@ import { catchError, concatMap, map, shareReplay, tap, scan, expand, takeWhile, 
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 
 import { ITag } from "../tags/tag-model";
-import { IVideo, IVideoClass } from "./video.model";
+import { IVideo } from "./video.model";
 import { ErrorService } from "../shared/error/error/error-service";
 import { TagService } from "../tags/tag-service";
 
@@ -57,7 +57,7 @@ export class VideoService {
             const formattedVideos = videos['items'].reduce(function(filteredVideos: IVideo[], video: any) {
               if (video.snippet.description !== 'This video is unavailable.') {
 
-                  const formattedVideo: IVideo = new IVideoClass();
+                  const formattedVideo: IVideo = new IVideo();
                   formattedVideo.title = video.snippet.title;
                   formattedVideo.youtubeId = video.snippet.resourceId.videoId;
                   formattedVideo.thumbnailPath = video.snippet.thumbnails.default.url;
@@ -80,6 +80,7 @@ export class VideoService {
 
   videosFromPlaylist$ = this.makeYoutubeAPICall()
     .pipe(
+      tap(() => this.isLoadingSubject.next(true)),
       expand(() => this.makeYoutubeAPICall()),
       takeWhile(() => this.nextPageToken !== '', true),
       reduce((acc, curr) => acc.concat(curr))
@@ -127,11 +128,21 @@ export class VideoService {
       
       const newVideoArray = videos.map((video: IVideo) => {
         let associatedVideoTagsWithInfo: ITag[] = [];
+        let artistsTags: ITag[] = [];
+        let otherTags: ITag[] = [];
         const associatedVideoTags = videotags.find( (vt: any) => vt.youtube_id === video.youtubeId);
 
         if (typeof associatedVideoTags !== 'undefined') {
           associatedVideoTagsWithInfo = associatedVideoTags.tags.map( (avt: any) => {
             return tagsinformation.find(ti => ti.id === avt.id) as ITag;
+          });
+
+          artistsTags = associatedVideoTagsWithInfo.filter(tag => {
+            if ( tag.parent_tag_id === 55 ) {
+              return true;
+            } else {
+              otherTags.push(tag);
+            }
           });
         }
 
@@ -144,7 +155,8 @@ export class VideoService {
 
         const finalVideo: IVideo = ({
           ...video,
-          tags: associatedVideoTagsWithInfo,
+          tags: otherTags,
+          artists: artistsTags,
           rating: associatedVideoInformation
         }) as IVideo
 
@@ -185,6 +197,9 @@ export class VideoService {
   updateVideo(updatedVideo: IVideo): void {
     this.videoTagsModifiedSubject.next(updatedVideo);
   }
+
+  private isLoadingSubject = new BehaviorSubject<boolean>(false);
+  isLoadingAction$ = this.isLoadingSubject.asObservable();
 
   private sortByTagSubject = new BehaviorSubject<ITag[]>([]);
   sortByTagAction$ = this.sortByTagSubject.asObservable();  
@@ -235,6 +250,7 @@ export class VideoService {
 
         return sortedVideos;
       }),
+      tap(() => this.isLoadingSubject.next(false)),
       catchError(err => this.errorService.handleError(err)),
       shareReplay(1)
     );
@@ -266,10 +282,10 @@ export class VideoService {
         } 
 
         this.errorService.handleError('Video inexistant');
-        return new IVideoClass(); 
+        return new IVideo(); 
       }
       // videoList is not yet loaded with default video
-      return new IVideoClass();
+      return new IVideo();
     }),
     catchError(err => this.errorService.handleError(err)),
     shareReplay(1)
@@ -294,10 +310,10 @@ export class VideoService {
         } 
 
         this.errorService.handleError('Video inexistant');
-        return new IVideoClass(); 
+        return new IVideo(); 
       }
       // videoList is not yet loaded with default video
-      return new IVideoClass();
+      return new IVideo();
     }),
     catchError(err => this.errorService.handleError(err)),
     shareReplay(1)

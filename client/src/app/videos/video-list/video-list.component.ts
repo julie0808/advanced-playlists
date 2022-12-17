@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { catchError, tap } from 'rxjs/operators';
-import { Subject, EMPTY } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { Subject, combineLatest, Observable } from 'rxjs';
 
 import { VideoService } from '../video-service';
 import { IVideo } from '../video.model';
@@ -12,40 +12,40 @@ import { IVideo } from '../video.model';
 })
 export class VideoListComponent {
 
-  currentVideo!: IVideo;
-  playlistCount = 0;
+  currentlyPlayingVideoPosition: number = 0;
 
   private errorMessageSubject = new Subject<string>();
   errorMessage$ = this.errorMessageSubject.asObservable();
 
-  videos$ = this.videoService.videosSorted$
+  videos$ = this.videoService.videosSorted$;
+  allVideos$ = this.videoService.videoTagsModified$;
+  videoPlaying$ = this.videoService.videoPlaying$;
+
+  isLoading$ = this.videoService.isLoadingAction$;
+
+  currentlyPlayingVideoPosition$: Observable<number> = combineLatest([
+      this.videos$,
+      this.videoPlaying$
+    ])
     .pipe(
-      tap(videos => {
-        this.playlistCount = videos.length;
-      }),
-      catchError(err => {
-        this.errorMessageSubject.next(err);
-        return EMPTY;
+      map( ([videoList, currentVideoPlaying]) => {
+        const videoPositionInList: number = videoList.indexOf(currentVideoPlaying);
+        return videoPositionInList + 1;
       })
     );
 
-  videoPlaying$ = this.videoService.videoPlaying$
-    .pipe(
-      catchError(err => {
-        this.errorMessageSubject.next(err);
-        return EMPTY;
-      })
-    );
+  vm$ = combineLatest([
+    this.videos$,
+    this.allVideos$,
+    this.videoPlaying$
+  ]).pipe(
+    map(([sortedVideos, allVideos, videoPlaying]) =>
+        ({ sortedVideos, allVideos, videoPlaying }))
+  )  
 
   constructor(private route: ActivatedRoute,
               private router: Router,
               private videoService: VideoService) { }
-
-  ngOnInit(){
-    this.videoPlaying$.subscribe( (selectedVideo: IVideo) => {
-      this.currentVideo = selectedVideo
-    });
-  }
 
   editTags(objectId: string) {
     this.router.navigate([objectId, 'edit-tag'], {relativeTo: this.route, queryParamsHandling: 'preserve'});

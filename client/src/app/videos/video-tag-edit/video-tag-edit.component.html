@@ -3,9 +3,18 @@
 
   <form [formGroup]="videoTagForm" (ngSubmit)="updateVideo()" class="form" novalidate>
     <fieldset>
+      <div class="form-field" *ngIf="artistsTags$ | async as artistTagList">
+        <label for="artistsTagIds">Artists :</label>
+        <p-multiSelect 
+          [options]="artistTagList"
+          formControlName="artists"
+          optionLabel="title"
+          defaultLabel="Select artists"
+          display="chip">   
+        </p-multiSelect>
+      </div>
       <div class="form-field" *ngIf="tags$ | async as tagList">
         <label for="tagIds">Tags :</label>
-    
         <p-multiSelect 
           [options]="tagList" 
           formControlName="tags"
@@ -16,7 +25,6 @@
           defaultLabel="Select tags"
           display="chip">   
         </p-multiSelect>
-
       </div>
       <div class="form-field">
         <label for="rating">Rating :</label>

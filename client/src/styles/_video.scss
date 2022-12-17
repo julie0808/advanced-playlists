@@ -17,7 +17,7 @@
 .video-tag-container {
   flex: 0 0 auto;
   width: 40%;
-  padding-top: 37px;
+  padding-top: 63px;
 }
 
 .p-rating .p-rating-icon:nth-child(1) {
@@ -232,11 +232,14 @@
 }
 
 .video-player--container {
-  //width: 100%;
-  //padding-top: 56.25%;
   width: 480px;
   height: 320px;  
   z-index: 2; 
+
+  &.large {
+    width: 100%;
+    padding-top: 56.25%;
+  }
 
   iframe {
     position: absolute;

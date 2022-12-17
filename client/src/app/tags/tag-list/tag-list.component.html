@@ -1,28 +1,36 @@
 <section class="tag-list">
-  <ul *ngIf="tagGroups$ | async as tags">
-    <ng-container *ngFor="let tag of tags" >
-      <li 
-        class="tag-parent" 
-        [ngStyle]="{'background': tag.color !== null || tag.color !== '' ? tag.color : '#282f39' }">
-        <div class="tag-label">
-          <span>{{ tag.title }}</span>
-          <a 
-            class="link-look" 
-            *ngIf="tag.title !== 'Other'"
-            (click)="editTag(tag.id)">Edit</a>
-        </div>
-        <ul 
-          *ngIf="tag.lst_children_tag_id.length"
-          class="tag-children">
-          <li *ngFor="let tagchildren of tag.lst_children_tag_id"
-          [ngStyle]="{'background': (tagchildren.parent_tag_id === 0 || tagchildren.parent_tag_id === null) && (tag.color !== null || tag.color !== '') ? tagchildren.color : '#353f4d' }">
-            <div class="tag-label">
-              <span>{{ tagchildren.title }}</span>
-              <a class="link-look" (click)="editTag(tagchildren.id)">Edit</a>
-            </div>
-          </li>
-        </ul>
-      </li>
+  <p-accordion *ngIf="tagGroups$ | async as tags">
+    <ng-container *ngFor="let tag of tags">
+      <p-accordionTab>
+        <ng-template pTemplate="header">
+          <div 
+            [ngStyle]="{'background-color': tag.color !== null || tag.color !== '' ? tag.color : '#282f39' }" 
+            class="tag-parent">
+            <p>{{ tag.title }}</p>
+            <a 
+              class="link-look" 
+              *ngIf="tag.title !== 'Other'"
+              (click)="editTag(tag.id)">
+              Edit
+            </a>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="content">
+          <p-scrollPanel [style]="{width: '100%', height: '200px'}">
+            <ul 
+              *ngIf="tag.lst_children_tag_id.length"
+              class="tag-children">
+              <li *ngFor="let tagchildren of tag.lst_children_tag_id"
+              [ngStyle]="{'background': (tagchildren.parent_tag_id === 0 || tagchildren.parent_tag_id === null) && (tag.color !== null || tag.color !== '') ? tagchildren.color : '#353f4d' }">
+                <div class="tag-label">
+                  <span>{{ tagchildren.title }}</span>
+                  <a class="link-look" (click)="editTag(tagchildren.id)">Edit</a>
+                </div>
+              </li>
+            </ul>
+          </p-scrollPanel>
+        </ng-template>
+      </p-accordionTab>
     </ng-container>
-  </ul>
+  </p-accordion>
 </section>

@@ -191,6 +191,9 @@ app.put(`${rootUrl}/video/tags/update/:id`, (req, res) => {
   const { id } = req.params;
   const videoInfo = req.body;
   const videoTags = req.body.tags;
+  const videoArtists = req.body.artists;
+  const videoAllTags = videoTags.concat(videoArtists);
+
   ;(async () => {
     const client = await pool.connect();
 
@@ -204,13 +207,13 @@ app.put(`${rootUrl}/video/tags/update/:id`, (req, res) => {
         `;
       await client.query(deleteQry, [id]);
 
-      for (var k in videoTags){
-        if (videoTags.hasOwnProperty(k)) {
+      for (var k in videoAllTags){
+        if (videoAllTags.hasOwnProperty(k)) {
           const insertQry = `
             INSERT INTO   video_tag (youtube_id, tag_id)
             VALUES ($1, $2)
             `;
-          await client.query(insertQry, [`${id}`, videoTags[k].id ]);
+          await client.query(insertQry, [`${id}`, videoAllTags[k].id ]);
         }
       }
 

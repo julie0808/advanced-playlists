@@ -37,11 +37,12 @@
     <div class="filter-sort filter-sort--new">
       <p-checkbox 
         name="filterByNew" 
-        [binary]="true" 
+        [binary]="true"
+        id="filterByNew"
         (onChange)="sortByNewOnly()"
         [(ngModel)]="showOnlyNew">
       </p-checkbox>
-      <label for="binary">Show only new</label>
+      <label for="filterByNew">Show only new</label>
     </div>
   </div>
 </section>

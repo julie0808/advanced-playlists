@@ -39,6 +39,22 @@
     color: $cAccent1;
   }
 
+  .p-accordion .p-accordion-content {
+    padding: 0;
+  }
+
+  .p-accordion .p-accordion-header .p-accordion-header-link {
+    padding: 0 10px 0 0;
+  }
+
+  .p-accordion p-accordiontab .p-accordion-tab {
+    margin-bottom: 10px;
+  }
+
+  .p-accordion .p-accordion-header .p-accordion-header-link {
+    background: $cMain1;
+  }
+
   .tag-label {
     display: flex;
     justify-content: space-between;
@@ -46,8 +62,12 @@
   }
 
   .tag-parent {
-    margin-bottom: 10px;
     background: $cMain2;
+    display: flex;
+    justify-content: space-between;
+    width: calc(100% - 50px);
+    padding: 14px 20px;
+    font-size: em(14);
 
     &:last-child {
       border-bottom: none;
