@@ -8,6 +8,10 @@ import { RatingModule } from 'primeng/rating';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
 import { CheckboxModule } from 'primeng/checkbox';
 import { AccordionModule } from 'primeng/accordion';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ToastModule } from 'primeng/toast';
+
+import { ConfirmationService, MessageService } from 'primeng/api';
 
 @NgModule({
   exports: [
@@ -18,7 +22,13 @@ import { AccordionModule } from 'primeng/accordion';
     RatingModule,
     ScrollPanelModule,
     CheckboxModule,
-    AccordionModule
+    AccordionModule,
+    ConfirmDialogModule,
+    ToastModule
+  ],
+  providers: [
+    ConfirmationService,
+    MessageService
   ]
 })
 

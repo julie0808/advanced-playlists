@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
-import { BehaviorSubject, combineLatest, merge, Observable, Subject } from 'rxjs';
-import { catchError, concatMap, map, shareReplay, tap, scan, expand, takeWhile, reduce } from "rxjs/operators";
+import { BehaviorSubject, combineLatest, merge, Observable, of, Subject } from 'rxjs';
+import { catchError, concatMap, map, shareReplay, tap, scan, expand, takeWhile, reduce, switchMap } from "rxjs/operators";
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 
 import { ITag } from "../tags/tag-model";
@@ -125,7 +125,6 @@ export class VideoService {
     this.videoInfos$
   ]).pipe(
     map( ([videos, videotags, tagsinformation, videoinformation]) => {
-      
       const newVideoArray = videos.map((video: IVideo) => {
         let associatedVideoTagsWithInfo: ITag[] = [];
         let artistsTags: ITag[] = [];
@@ -171,23 +170,27 @@ export class VideoService {
   private videoTagsModifiedSubject: Subject<IVideo> = new Subject<IVideo>();
   videoTagsModifiedAction$: Observable<IVideo> = this.videoTagsModifiedSubject.asObservable();
 
-  videoTagsModified$: Observable<IVideo[]> = merge(
-    this.videosWithTags$,
-    this.videoTagsModifiedAction$
-      .pipe(
-        concatMap(video => this.saveVideoTagsToBackend(video)),
+  videoTagsModified$: Observable<IVideo[]> = this.videosWithTags$.pipe(
+    switchMap( (videosWithTags: IVideo[]) => merge(
+        of(videosWithTags),
+        this.videoTagsModifiedAction$.pipe(
+          concatMap(video => this.saveVideoTagsToBackend(video)),
+          catchError(err => this.errorService.handleError(err))
+        )
+      ).pipe(
+        // @ts-ignore - typescript a une haine pour "scan"
+        scan((acc: IVideo[], video: IVideo) => {
+          return this.adjustVideoList(acc, video);
+        }),
+        // needed to return correctly an IVideo[] type
+        tap((videos: IVideo[]) => {
+          return videos;
+        }),
+        shareReplay(1),
         catchError(err => this.errorService.handleError(err))
       )
     )
-    .pipe(
-      // @ts-ignore - typescript a une haine pour "scan"
-      scan((acc: IVideo[], video: IVideo) => this.adjustVideoList(acc, video)),
-      tap((videos: IVideo[]) => {
-        return videos;
-      }),
-      shareReplay(1),
-      catchError(err => this.errorService.handleError(err))
-    );
+  );
 
   adjustVideoList(videos: IVideo[], video: IVideo): IVideo[] {
     // inspiré de tagService, uniquement bon pour un UPDATE
@@ -215,18 +218,21 @@ export class VideoService {
     this.sortByNew$
   ])
     .pipe(
+      tap(() => this.isLoadingSubject.next(true)),
       map(([videos, selectedTags, selectedRating, showOnlyNew]) => {
+        
         let sortedVideos = videos;
 
         if(videos.length){
+
           if (showOnlyNew) {
-            return sortedVideos.filter((video: IVideo) => {
+            sortedVideos = sortedVideos.filter((video: IVideo) => {
               return video.rating === 0;
             });
           }
 
           if (selectedTags.length) {
-            return sortedVideos.filter( (video: IVideo) => {
+            sortedVideos = sortedVideos.filter( (video: IVideo) => {
               const videoTags = video.tags || [];
               if (videoTags.length){
                 return videoTags.some(videoTag => {
@@ -236,15 +242,16 @@ export class VideoService {
               return false;
             });
           } 
+
           if (selectedRating !== 0){
-            return sortedVideos.filter((video: IVideo) => {
+            sortedVideos = sortedVideos.filter((video: IVideo) => {
               return video.rating === selectedRating;
             });
           }
-          
+
           // set default video to the first in the list
           if ( this.videoPlayingSubject.getValue() === '' ) {
-            this.videoPlayingIdChanged(videos[0].youtubeId);
+            this.videoPlayingIdChanged(sortedVideos[0].youtubeId);
           }      
         }  
 
@@ -256,14 +263,19 @@ export class VideoService {
     );
 
   sortVideoListByTag(selectedTags: ITag[]): void {
+    this.videoPlayingSubject.next('');
     this.sortByTagSubject.next(selectedTags);
   }
 
   sortVideoListByRating(rating: number): void {
+    
+    this.videoPlayingSubject.next('');
+    console.log('rating sort', this.videoPlayingSubject.getValue() + '---');
     this.sortByRatingSubject.next(rating);
   }
 
   sortVideoListByNewOnly(showOnlyNew: boolean): void {
+    this.videoPlayingSubject.next('');
     this.sortByNew.next(showOnlyNew);
   }
 

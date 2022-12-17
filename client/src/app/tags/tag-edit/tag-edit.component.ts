@@ -6,6 +6,7 @@ import { EMPTY, Subject, Subscription } from 'rxjs';
 import { ITag, StatusCode, ITagForm } from '../tag-model';
 import { TagService } from '../tag-service';
 import { catchError, tap } from 'rxjs/operators';
+import { ConfirmationService, ConfirmEventType, MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-tag-edit',
@@ -46,6 +47,8 @@ export class TagEditComponent implements OnInit, OnDestroy {
   constructor(private route: ActivatedRoute,
               private router: Router,
               private fb: NonNullableFormBuilder,
+              private messageService: MessageService,
+              private confirmationService: ConfirmationService,
               private tagService: TagService) {                 
   }
 
@@ -72,6 +75,21 @@ export class TagEditComponent implements OnInit, OnDestroy {
     this.tagForm.patchValue({
       color: ''
     })
+  }
+
+  confirmDeletion() {
+    this.confirmationService.confirm({
+      message: 'Do you want to delete this tag?',
+      header: 'Delete Confirmation',
+      icon: 'pi pi-info-circle',
+      accept: () => {
+        this.deleteTag();
+        this.messageService.add({severity:'info', summary:'Confirmed', detail:'Tag deleted.'});
+      },
+      reject: ( () => {
+        this.messageService.add({severity:'warn', summary:'Cancelled', detail:'Action was cancelled.'});
+      })
+    });
   }
 
   displayTag(tag: ITag){

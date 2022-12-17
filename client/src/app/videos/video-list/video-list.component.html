@@ -12,7 +12,7 @@
     </span>
     <span 
       *ngIf="vm.sortedVideos.length === vm.allVideos.length">
-      {{  vm.allVideos.length }} videos in list
+      {{ vm.allVideos.length }} videos in list
     </span>
     <p 
       *ngIf="currentlyPlayingVideoPosition$ | async as currentlyPlayingVideoPosition">
@@ -55,6 +55,7 @@
               <p-rating 
               class="video-info--rating"
               [cancel]="false"
+              [readonly]="true"
               [stars]="3"
               [(ngModel)]="video.rating"
               >

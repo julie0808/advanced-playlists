@@ -39,9 +39,12 @@
       </fieldset>
       <div class="form-action">
         <button *ngIf="editMode" class="btn-look" type="submit">Save</button>
-        <button *ngIf="editMode" class="btn-look btn-warning" (click)="deleteTag()" type="button">Delete</button>
+        <button *ngIf="editMode" class="btn-look btn-warning" (click)="confirmDeletion()" type="button">Delete</button>
         <button *ngIf="!editMode" class="btn-look" (click)="addTag()" type="button">Add</button>
       </div>
     </form>
   </div>
 </section>
+
+<p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+<p-toast></p-toast>
