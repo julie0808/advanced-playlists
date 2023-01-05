@@ -111,6 +111,17 @@
         }
       }
     },
+    "/playlist": {
+      "get": {
+        "tags": ["Playlists"],
+        "summary": "Get informations associated to playlists",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }       
+    }, 
     "/video/update": {
       "post": {
         "tags": ["Videos"],

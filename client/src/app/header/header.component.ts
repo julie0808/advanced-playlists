@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GoogleLoginProvider, SocialAuthService, SocialUser } from '@abacritt/angularx-social-login';
 
-
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html'

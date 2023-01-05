@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { Subject, combineLatest, Observable } from 'rxjs';
 
 import { VideoService } from '../video-service';
 import { IVideo } from '../video.model';
+import { IPlaylist } from '../playlist.model';
 
 @Component({
   selector: 'app-video-list',
@@ -21,7 +22,17 @@ export class VideoListComponent {
   allVideos$ = this.videoService.videoTagsModified$;
   videoPlaying$ = this.videoService.videoPlaying$;
 
+  selectedPlaylist!: IPlaylist;
+
   isLoading$ = this.videoService.isLoadingAction$;
+
+  playlistList$: Observable<IPlaylist[]> = this.videoService.playlists$
+    .pipe( 
+      tap((playlists: IPlaylist[]) => {
+        this.selectedPlaylist = playlists[0];
+        this.sortByPlaylist();
+      })
+    );
 
   currentlyPlayingVideoPosition$: Observable<number> = combineLatest([
       this.videos$,
@@ -53,6 +64,10 @@ export class VideoListComponent {
 
   playVideo(video: IVideo) {
     this.videoService.videoPlayingIdChanged(video.youtubeId);
+  }
+
+  sortByPlaylist(): void {
+    this.videoService.sortAppByPlaylist(this.selectedPlaylist);
   }
 
 }

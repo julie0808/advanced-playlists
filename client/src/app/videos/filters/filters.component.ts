@@ -14,6 +14,7 @@ import { VideoService } from '../video-service';
 export class FiltersComponent implements OnInit {
 
   tagList: ITag[] = [];
+  artistTagList: ITag[] = [];
   selectedTagList: ITag[] = [];
   selectedRating: number = 0;
   showOnlyNew: boolean = false;
@@ -27,7 +28,10 @@ export class FiltersComponent implements OnInit {
               private videoService: VideoService) { }
 
   ngOnInit(): void {
-    this.tags$.subscribe(tags => this.tagList = tags || []);
+    this.tags$.subscribe(tags => {
+      this.tagList = tags.filter(tag => tag.id !== 55);
+      this.artistTagList = tags.filter(tag => tag.id === 55);
+    });
   }
 
   sortByTag(){

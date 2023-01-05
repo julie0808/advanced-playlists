@@ -153,6 +153,26 @@ app.delete(`${rootUrl}/tags/:id`, (req, res) => {
 
 
 
+///////////////////////////////////
+//// PLAYSLIST ////////////////////
+///////////////////////////////////
+
+app.get(`${rootUrl}/playlist/`, (req, res) => {
+  ;(async () => {
+    const { rows } = await pool.query(`
+      SELECT  
+        p.id,
+        p.title
+      FROM playlist p
+    `)
+    res.json(rows);
+  })().catch(err => {
+    res.json(err.stack)
+  })
+});
+
+
+
 
 ///////////////////////////////////
 //// VIDEO ////////////////////////
@@ -270,7 +290,8 @@ app.get(`${rootUrl}/video/information`, (req, res) => {
     const { rows } = await pool.query(`
       SELECT  
         v.youtube_id, 
-        v.rating
+        v.rating,
+        v.title
       FROM video v
     `)
     res.json(rows);

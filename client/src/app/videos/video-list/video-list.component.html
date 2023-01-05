@@ -1,3 +1,17 @@
+<div 
+  class="playlist-container"
+  *ngIf="playlistList$ | async as playlistList">
+    <p class="playlist-container--title">Current playlist: </p>
+    <p-dropdown 
+      [options]="playlistList" 
+      [(ngModel)]="selectedPlaylist"
+      (onChange)="sortByPlaylist()"
+      placeholder="Choose a playlist"
+      autoWidth="false"
+      class="playlist-container--dropdown"
+      optionLabel="title"></p-dropdown>
+</div>
+
 <div *ngIf="(isLoading$ | async) === true">
   <i class="pi pi-spin pi-spinner"></i> Video list is loading...
 </div>
@@ -43,10 +57,10 @@
               </picture>	
             </div>
             <div class="video-image--info">
-              <!-- duration will be hard to get, as it is not in /playlist api call, but in individual video GET call -->
               <!--<p class="video-image--length">{{ video.duration }}</p>-->
-              <p class="video-image--new" *ngIf="video.rating === 0">New</p>
-              <p class="video-image--new-border" *ngIf="video.rating === 0"></p>
+              <p class="video-image--new" *ngIf="video.status !== 'published'">!!!</p>
+              <p class="video-image--new" *ngIf="video.rating === 0 && video.status === 'published'">New</p>
+              <p class="video-image--new-border" *ngIf="video.rating === 0 || video.status !== 'published'"></p>
             </div>
           </div>
           <div class="video-info">

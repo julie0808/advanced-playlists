@@ -2,12 +2,16 @@
 https://trello.com/b/sihPIKvw/fancyt
 
 ### P1
+- avoir le loading présent quand on sort / unsort
 - (1) controle de vue du lecture : fullscreen et cacher
-- (0.5) ajout à la doc tech comment utiliser l'outil avec lien dans readme
+- (0.5) ajout à la doc tech comment utiliser l'outil avec lien dans readme + maj readme
 - (0.25) suprimmer les jct ace
-- (0.5) supprimer un tag supprime ses liaisoms
-
-
+- (0.5) supprimer un tag supprime ses liaisons
+- (0.5) video indisponible quand on trie par nouveau et rate le video en court (idem si on change de playlist)
+- fonction pour flaguer les vidéos à ne pas montrer (Maze of memories doublons, age restricted...)
+- trier par... video non affiché (doublon, unavailable, non published...). mais ne pas les montrer par défaut dans la liste
+- (0.5) video test id quand on édite un video qui devient indisponible dans la liste actuelle
+- (1) big bug en allant modifié un tag après avoir loadé la liste de vidéo, trié par "new", et coté un vidéo. elle est pas à jour avec les nouveaux tags assigné en revenant du gestionnaire de tag. on devrait unsort les vidéos?
 
 ### P2-
 - avoir un filtre négatif pour retirer de la liste certains tags
@@ -17,19 +21,24 @@ https://trello.com/b/sihPIKvw/fancyt
 - contrôle vidéos pour next/previous
 - choisir plus d'un rating en même temps
 
-
-
 ### P3
 - enregistrer filtre actuel en session
 - enregistrer un groupe de filtre pour sélection rapide
 - voir la durée des vidéos
 - tri par date d'ajout à la playlist
 - option pour jouer de façon aléatoire
-- fonction pour flaguer les vidéos à ne pas montrer (Maze of memories doublons, age restricted...)
-- fonction pour consulter les vidéos retirés de youtube
-- utiliser l'authentification Youtube pour aller chercher la liste de mon choix
 - supprimer un vidéo de la playlist Youtube à même l'outil
+- faire les /edit avec le routing "popup"
+- avoir une façon de spotter les doublons
 
+
+
+
+# Release 1.3.0
+
+- Maintenant possible de choisir une différente playlist
+- Ajout d'un état "publié" ou "indisponible" aux vidéos pour supporter les vidéos privatisés ou supprimés par leur auteur
+- Ajout d'un filtre spécifique pour les artistes
 
 # Release 1.2.1
 
@@ -38,7 +47,6 @@ https://trello.com/b/sihPIKvw/fancyt
 - Choisir un filtre fait maintenant jouer le bon vidéo sur sélection
 - Les filtres s'additionnent lorsque sélectionnés plutôt que de filtrer selon un seul choix
 - Les couleurs des étoiles dans la sélection d'un filtre est corrigé
-
 
 # Release 1.2.0
 

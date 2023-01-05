@@ -11,20 +11,22 @@ export interface IVideo {
   rating: number;
   artists: ITag[]; 
   publishedBy: string; // original Channel name on which it was published
+  status: string;
   //ytPlaylists: {name: string, id: string, dateAdded: string}[]; // in which lists the video is in. might have duplicates
 }
 
 // créer une instance par défaut de vidéo
 export class IVideo {
-  title: string = 'Video test'; 
-  youtubeId: string = "12345678910";
-  duration: string = ''; 
-  thumbnailPath: string = '';
-  dateModified: string = ''; 
-  tags: ITag[] = [];
-  rating: number = 0;
-  artists: ITag[] = [];
-  publishedBy: string = '';
+  title = 'Video test'; 
+  youtubeId = "12345678910";
+  duration = ''; 
+  thumbnailPath = '';
+  dateModified = ''; 
+  tags = [] as ITag[];
+  rating = 0;
+  artists = [] as ITag[];
+  publishedBy = '';
+  status = 'published';
 }
 
 export interface IVideoForm extends FormGroup<{

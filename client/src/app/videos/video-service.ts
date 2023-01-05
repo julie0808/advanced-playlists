@@ -7,6 +7,7 @@ import { ITag } from "../tags/tag-model";
 import { IVideo } from "./video.model";
 import { ErrorService } from "../shared/error/error/error-service";
 import { TagService } from "../tags/tag-service";
+import { IPlaylist } from "./playlist.model";
 
 @Injectable({providedIn: 'root'})
 export class VideoService {
@@ -15,6 +16,7 @@ export class VideoService {
   youtubeApiUrl: string = "https://youtube.googleapis.com/youtube/v3";
   videoPlayListKPop: string = "PLwgftAdEcD4rXHmDdFTFI8Hch3BfWBQIt";
   apiRootURL: string = '/api/v1/video';
+  apiURL: string = '/api/v1';
 
   headers = new HttpHeaders()
     .set('content-Type', 'application/json');
@@ -26,8 +28,24 @@ export class VideoService {
   constructor(
     private http: HttpClient,
     private tagService: TagService,
-    private errorService: ErrorService) { }  
+    private errorService: ErrorService) { } 
+    
+  playlists$: Observable<IPlaylist[]> = this.http.get<any>(this.apiURL + '/playlist')
+    .pipe(
+      map( playlists => {
+        const finalPlaylistList: IPlaylist[] = playlists.map( (playlist: any) => {
+          const playlistInfo: IPlaylist = {
+            id: playlist.id,
+            title: playlist.title
+          };
+          return playlistInfo;
+        });
+        return finalPlaylistList;
+      }),
+      catchError(err => this.errorService.handleError(err))
+    );
 
+  // not used. I use the length of actual returned array
   videosFromPlaylistCount$ = this.http.get<any>(this.youtubeApiUrl + '/playlistItems', {params: {
     'key': this.youtubeApiKey,
     'playlistId': this.videoPlayListKPop,
@@ -41,11 +59,11 @@ export class VideoService {
       catchError(err => this.errorService.handleError(err))
     );
 
-  makeYoutubeAPICall(): Observable<IVideo[]> {
+  makeYoutubeAPICall(playlistId: string): Observable<IVideo[]> {
     return this.http
       .get<any>(this.youtubeApiUrl + '/playlistItems', {params: {
         'key': this.youtubeApiKey,
-        'playlistId': this.videoPlayListKPop,
+        'playlistId': playlistId,
         'maxResults': this.videosPerPage, 
         'part': 'snippet',
         'pageToken': this.nextPageToken
@@ -55,15 +73,25 @@ export class VideoService {
             this.nextPageToken = 'nextPageToken' in videos ? videos['nextPageToken'] : '';
 
             const formattedVideos = videos['items'].reduce(function(filteredVideos: IVideo[], video: any) {
-              if (video.snippet.description !== 'This video is unavailable.') {
+              if (video.snippet.description !== 'This video is unavailable.' &&
+                  video.snippet.description !== 'This video is private.') {
 
                   const formattedVideo: IVideo = new IVideo();
                   formattedVideo.title = video.snippet.title;
                   formattedVideo.youtubeId = video.snippet.resourceId.videoId;
-                  formattedVideo.thumbnailPath = video.snippet.thumbnails.default.url;
+                  formattedVideo.thumbnailPath = typeof video.snippet.thumbnails.default !== "undefined" ? video.snippet.thumbnails.default.url : '';
                   formattedVideo.publishedBy = video.snippet.videoOwnerChannelTitle;
 
                   filteredVideos.push(formattedVideo);
+              } else {
+                const formattedVideo: IVideo = new IVideo();
+
+                formattedVideo.status = video.snippet.description.includes('private') ? 'private' : 'unavailable';
+                formattedVideo.youtubeId = video.snippet.resourceId.videoId;
+                formattedVideo.title = `[${formattedVideo.status} - ${video.snippet.resourceId.videoId}]`;
+                
+                // we'll need that eventually when adding a filter for those videos. for now, hide them
+                // filteredVideos.push(formattedVideo);
               }
               return filteredVideos;
             }, []) as IVideo[];
@@ -78,12 +106,24 @@ export class VideoService {
         )
   }
 
-  videosFromPlaylist$ = this.makeYoutubeAPICall()
+  private playlistSelectedSubject = new Subject<IPlaylist>();
+  playlistSelectedAction$ = this.playlistSelectedSubject.asObservable();
+
+  sortAppByPlaylist(playlist: IPlaylist): void {
+    this.playlistSelectedSubject.next(playlist);
+  }
+
+  videosFromPlaylist$ = this.playlistSelectedAction$
     .pipe(
-      tap(() => this.isLoadingSubject.next(true)),
-      expand(() => this.makeYoutubeAPICall()),
-      takeWhile(() => this.nextPageToken !== '', true),
-      reduce((acc, curr) => acc.concat(curr))
+      switchMap( (playlistId: IPlaylist) => {
+        return this.makeYoutubeAPICall(playlistId.id)
+        .pipe(
+          tap(() => this.isLoadingSubject.next(true)),
+          expand(() => this.makeYoutubeAPICall(playlistId.id)),
+          takeWhile(() => this.nextPageToken !== '', true),
+          reduce((acc, curr) => acc.concat(curr))
+        );
+      })
     );
 
   getVideoDetail(videoListIds: string[]): Observable<any> {
@@ -130,6 +170,8 @@ export class VideoService {
         let artistsTags: ITag[] = [];
         let otherTags: ITag[] = [];
         const associatedVideoTags = videotags.find( (vt: any) => vt.youtube_id === video.youtubeId);
+        const associatedVideoInformation = videoinformation.find( (vt: any) => vt.youtube_id === video.youtubeId);
+        let videoRating: number = 0;
 
         if (typeof associatedVideoTags !== 'undefined') {
           associatedVideoTagsWithInfo = associatedVideoTags.tags.map( (avt: any) => {
@@ -145,18 +187,16 @@ export class VideoService {
           });
         }
 
-        let associatedVideoInformation: number = 1;
-        const findAssociatedVideoInformation = videoinformation.find( (vi: any) => vi.youtube_id === video.youtubeId);
-
-        if (typeof findAssociatedVideoInformation !== 'undefined') {
-          associatedVideoInformation = findAssociatedVideoInformation.rating;
+        if (video.status === 'published') {
+          videoRating = associatedVideoInformation.rating || 0;
         }
 
         const finalVideo: IVideo = ({
           ...video,
+          title: video.status !== 'published' ? `${video.title} ${associatedVideoInformation.title}` : video.title,
           tags: otherTags,
           artists: artistsTags,
-          rating: associatedVideoInformation
+          rating: videoRating
         }) as IVideo
 
         return finalVideo;
@@ -221,7 +261,7 @@ export class VideoService {
       tap(() => this.isLoadingSubject.next(true)),
       map(([videos, selectedTags, selectedRating, showOnlyNew]) => {
         
-        let sortedVideos = videos;
+        let sortedVideos: IVideo[] = videos;
 
         if(videos.length){
 
@@ -233,7 +273,8 @@ export class VideoService {
 
           if (selectedTags.length) {
             sortedVideos = sortedVideos.filter( (video: IVideo) => {
-              const videoTags = video.tags || [];
+              const combineTagTypes = video.tags.concat(video.artists);
+              const videoTags = combineTagTypes || [];
               if (videoTags.length){
                 return videoTags.some(videoTag => {
                   return selectedTags.some(selectedTag => selectedTag.id === videoTag.id);
@@ -250,7 +291,7 @@ export class VideoService {
           }
 
           // set default video to the first in the list
-          if ( this.videoPlayingSubject.getValue() === '' ) {
+          if ( this.videoPlayingSubject.getValue() === '' && sortedVideos.length ) {
             this.videoPlayingIdChanged(sortedVideos[0].youtubeId);
           }      
         }  

@@ -1,3 +1,27 @@
+.playlist-container {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+
+  .playlist-container--title {
+    font-weight: bold;
+    margin-right: 10px;
+  }
+
+  .playlist-container--dropdown {
+    max-width: 300px;
+    width: 100%;
+  }
+}
+
+
+
+
+
+/*********************************/
+/*      VIDEO LIST               */
+/*********************************/
+
 .video-manager {
   display: flex;
   justify-content: space-between;
@@ -232,8 +256,8 @@
 }
 
 .video-player--container {
-  width: 480px;
-  height: 320px;  
+  width: 720px;
+  height: 480px;  
   z-index: 2; 
 
   &.large {

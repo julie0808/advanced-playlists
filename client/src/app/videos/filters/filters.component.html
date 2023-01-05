@@ -10,8 +10,24 @@
         optionGroupLabel="title"
         optionGroupChildren="lst_children_tag_id"
         defaultLabel="Sort tags"> 
-        <ng-template let-country pTemplate="selectedItems">
+        <ng-template pTemplate="selectedItems">
           Sort by tag
+          <!-- custom "chips" codés -->
+        </ng-template>  
+      </p-multiSelect>
+    </div>
+    <div class="filter-sort filter-sort--artists">
+      <p-multiSelect 
+        [options]="artistTagList" 
+        [(ngModel)]="selectedTagList"
+        (onChange)="sortByTag()"
+        [group]="true"
+        optionLabel="title"
+        optionGroupLabel="title"
+        optionGroupChildren="lst_children_tag_id"
+        defaultLabel="Sort tags"> 
+        <ng-template pTemplate="selectedItems">
+          Sort by artist
           <!-- custom "chips" codés -->
         </ng-template>  
       </p-multiSelect>
