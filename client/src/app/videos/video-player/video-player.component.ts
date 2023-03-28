@@ -1,21 +1,33 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { EMPTY, Subject } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 import { VideoService } from '../video-service';
-import { IVideo } from '../video.model';
+import { IVideo, VideoPlayerFormats } from '../video.model';
+
+
 
 @Component({
   selector: 'app-video-player',
-  templateUrl: './video-player.component.html'
+  templateUrl: './video-player.component.html',
+  styleUrls: ['video-player.component.scss'],
+  encapsulation : ViewEncapsulation.None
+
 })
 export class VideoPlayerComponent implements OnInit {
 
   apiLoaded = false;
   currentVideoList!: IVideo[];
+  videoPlayerStatus: VideoPlayerFormats = VideoPlayerFormats.tiny;
+  videoIsPlaying: boolean = false;
+  videoPlayer: any;
 
   playerConfig = {
     controls: 1
+  } 
+
+  public get videoPlayerFormats(): typeof VideoPlayerFormats {
+    return VideoPlayerFormats; 
   }
 
   private errorMessageSubject = new Subject<string>();
@@ -40,6 +52,7 @@ export class VideoPlayerComponent implements OnInit {
   constructor(private videoService: VideoService) { }
 
   ngOnInit(): void {
+    
     if (!this.apiLoaded) {
       const tag = document.createElement("script");
       tag.src = "https://www.youtube.com/iframe_api";
@@ -50,6 +63,33 @@ export class VideoPlayerComponent implements OnInit {
     this.videoList$.subscribe( (videos: IVideo[]) => {
       this.currentVideoList = videos;
     });
+
+  }
+
+  videoReady(event: any) {
+    this.videoPlayer = event.target;
+  }
+
+  setPlayerFormat(selectedFormat: VideoPlayerFormats) {
+    this.videoPlayerStatus = selectedFormat;
+  }
+
+  playPreviousVideo() {
+    this.videoService.playPreviousVideo(this.currentVideoList);
+  }
+
+  playNextVideo() {
+    this.videoService.playNextVideo(this.currentVideoList);
+  }
+
+  pauseVideo() {
+    this.videoIsPlaying = false;
+    this.videoPlayer.pauseVideo();
+  }
+
+  playVideo() {
+    this.videoIsPlaying = true;
+    this.videoPlayer.playVideo();
   }
 
   followState(event: any) {
@@ -57,12 +97,15 @@ export class VideoPlayerComponent implements OnInit {
     switch(event.data) {
       case 0:
         // video has ended
-        console.log('follow atate');
         this.videoService.playNextVideo(this.currentVideoList);
+        this.videoIsPlaying = false;
         break;
       case -1:
         // video is unstarted
-        event.target.playVideo();
+        this.playVideo();
+        break;
+      case 2:
+        // video is paused
         break;
       case 5:
         // video is cued

@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { NonNullableFormBuilder, Validators } from '@angular/forms';
 import { EMPTY, Subject, Subscription } from 'rxjs';
@@ -6,11 +6,13 @@ import { EMPTY, Subject, Subscription } from 'rxjs';
 import { ITag, StatusCode, ITagForm } from '../tag-model';
 import { TagService } from '../tag-service';
 import { catchError, tap } from 'rxjs/operators';
-import { ConfirmationService, ConfirmEventType, MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-tag-edit',
-  templateUrl: './tag-edit.component.html'
+  templateUrl: './tag-edit.component.html',
+  styleUrls: ['tag-edit.component.scss'],
+  encapsulation : ViewEncapsulation.None
 })
 export class TagEditComponent implements OnInit, OnDestroy {
 
@@ -21,6 +23,7 @@ export class TagEditComponent implements OnInit, OnDestroy {
   tagForm: ITagForm = this.fb.group({
     title: this.fb.control('', Validators.required),
     color: this.fb.control('#777777'),
+    description: this.fb.control(''),
     parent_tag_id: this.fb.control(0)
   });
 
@@ -103,6 +106,7 @@ export class TagEditComponent implements OnInit, OnDestroy {
     this.tagForm.patchValue({
       title: tag.title,
       color: tag.color,
+      description: tag.description,
       parent_tag_id: tag.parent_tag_id
     })
   }
@@ -115,6 +119,7 @@ export class TagEditComponent implements OnInit, OnDestroy {
     const newTag: ITag = new ITag();
     newTag.title = this.tagForm.value['title']!;
     newTag.color = this.tagForm.value['color']!;
+    newTag.description = this.tagForm.value['description']!;
     newTag.parent_tag_id = this.tagForm.value['parent_tag_id']!;
     newTag.status = StatusCode.added;
     

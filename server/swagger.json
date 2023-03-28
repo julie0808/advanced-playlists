@@ -111,6 +111,17 @@
         }
       }
     },
+    "/tags/associations": {
+      "get": {
+        "tags": ["Tags"],
+        "summary": "Get all associations between tags and videos",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }       
+    }, 
     "/playlist": {
       "get": {
         "tags": ["Playlists"],
@@ -232,7 +243,7 @@
         "artist",
         "publishedBy"],
       "properties": {
-        "youtube_id": {
+        "youtubeId": {
           "type": "string",
           "uniqueItems": true
         },

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 
 import { EMPTY, Subject } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
@@ -9,7 +9,9 @@ import { VideoService } from '../video-service';
 
 @Component({
   selector: 'app-filters',
-  templateUrl: './filters.component.html'
+  templateUrl: './filters.component.html',
+  styleUrls: ['filters.component.scss'],
+  encapsulation : ViewEncapsulation.None
 })
 export class FiltersComponent implements OnInit {
 
@@ -35,26 +37,36 @@ export class FiltersComponent implements OnInit {
   }
 
   sortByTag(){
+    this.commonSortingAction();
     this.videoService.sortVideoListByTag(this.selectedTagList);
   }
 
   sortByRating(){
+    this.commonSortingAction();
     this.videoService.sortVideoListByRating(this.selectedRating);
   }
 
   sortByNewOnly(){
+    this.commonSortingAction();
     this.videoService.sortVideoListByNewOnly(this.showOnlyNew);
   }
 
   removeSortByRating(){
+    this.commonSortingAction();
     this.selectedRating = 0;
     this.sortByRating();
   }
 
   removeTagFromFilter(tagId: number) {
+    this.commonSortingAction();
+    
     const selectedTagListUpdated = this.selectedTagList.filter(t => t.id !== tagId);
     this.selectedTagList = selectedTagListUpdated;
     this.videoService.sortVideoListByTag(this.selectedTagList);
+  }
+
+  commonSortingAction() {
+    this.videoService.showLoadingRetroaction();
   }
 
 }

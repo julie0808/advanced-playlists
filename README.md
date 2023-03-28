@@ -10,25 +10,13 @@ Créer un système de "tags". En associant ces tags aux videos de mes listes d'ori
 
 - Créer / modifier / supprimer un tag
 - Ajouter / supprimer un tag à un video (multiple tags par vidéo possible)
-- Filtrer par tag
 - Lecture à même l'application, selon les filtres choisis
 - Branchement à l'authentification Youtube pour que l'app prenne en compte l'abonnement Youtube Premium
 - Connexion à l'API de Youtube pour obtenir la liste de lecture désirée (hardcodée pour le moment)
 
-## Avancement actuel du projet
+## Utilisation de l'outil
 
-Liste de vidéos + Édition des tags associés :
-![Video List](_doctech/videoList.jpg "Video list")
-
-Liste de tags + Édition des tags  :
-![Tag List](_doctech/tagList.jpg "Tag list")
-
-### Fonctionnalités désirée pour une release future
-
-- Enregistrement de filtres pour les réutiliser à une visite ultérieure
-- Filtrer les vidéos pour voir seulement ceux ajoutés depuis la dernière visite
-- Filtrer par Artiste
-- Jouer de façon aléatoire la liste en cours
+Il est seulement possible d'utiliser l'outil en environnement local. Voir la [documentation technique](_doctech/tech.md)
 
 
 ## Choix technologiques
@@ -37,7 +25,6 @@ Liste de tags + Édition des tags  :
 - Node.js pour le Backend
 - Postgres SQL
 - SCSS / SASS
-- Trello/Onenote pour la gestion des priorités et de l'avancement
 
 ## Info Angular
 

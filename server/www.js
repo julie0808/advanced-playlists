@@ -43,7 +43,7 @@ app.use(bodyParser.json());
 ///////////////////////////////////
 
 app.post(`${rootUrl}/tags`, (req, res) => {
-  const {id, parent_tag_id, title, color} = req.body;
+  const {id, parent_tag_id, title, color, description} = req.body;
  ;(async () => {
    const client = await pool.connect();
    try {
@@ -51,21 +51,24 @@ app.post(`${rootUrl}/tags`, (req, res) => {
        `INSERT INTO tag (
            title,
            parent_tag_id,
-           color
-       ) VALUES ($1, $2, $3)
+           color,
+           description
+       ) VALUES ($1, $2, $3, $4)
        RETURNING tag_id`,
-       [title, parent_tag_id, color]);
+       [title, parent_tag_id, color, description]);
      if (results.rowCount === 0) { 
        results = { 
          title,
          parent_tag_id,
-         color 
+         color,
+         description
        };
      }
      const newTag = {
        title: title,
        parent_tag_id: parent_tag_id,
        color: color,
+       description: description,
        id: results.rows[0].tag_id
      };
      res.status(201).json(newTag);
@@ -83,7 +86,7 @@ app.post(`${rootUrl}/tags`, (req, res) => {
 app.get(`${rootUrl}/tags`, (req, res) => {
   ;(async () => {
     const { rows } = await pool.query(`
-      SELECT tag_id as id, title, parent_tag_id, color
+      SELECT tag_id as id, title, parent_tag_id, color, description
       FROM tag
       ORDER BY title`
       )
@@ -93,8 +96,22 @@ app.get(`${rootUrl}/tags`, (req, res) => {
   })
 });
 
+app.get(`${rootUrl}/tags/associations`, (req, res) => {
+  ;(async () => {
+    const { rows } = await pool.query(`
+      SELECT 
+        tag_id, 
+        youtube_id as "youtubeId"
+      FROM video_tag`
+      )
+    res.json(rows);
+  })().catch(err => {
+    res.json(err.stack)
+  })
+});
+
 app.put(`${rootUrl}/tags`, (req, res) => {
-  const {id, title, parent_tag_id, color} = req.body;
+  const {id, title, parent_tag_id, color, description} = req.body;
  ;(async () => {
    const client = await pool.connect();
    try {
@@ -103,9 +120,10 @@ app.put(`${rootUrl}/tags`, (req, res) => {
         SET 
           title = ($1),
           parent_tag_id = ($2),
-          color = ($3)
-       WHERE tag_id = ($4) `,
-       [title, parent_tag_id, color, id]);
+          color = ($3),
+          description = ($4)
+       WHERE tag_id = ($5) `,
+       [title, parent_tag_id, color, description, id]);
      if (results.rowCount === 0) { 
        results = { 
          title,
@@ -131,6 +149,7 @@ app.delete(`${rootUrl}/tags/:id`, (req, res) => {
  ;(async () => {
    const client = await pool.connect();
    try {
+
      let results = await client.query(
        `DELETE FROM tag 
         WHERE tag_id = ($1)`,
@@ -185,16 +204,37 @@ app.post(`${rootUrl}/video/update`, (req, res) => {
   ;(async () => {
     const client = await pool.connect();
     try {  
-      
-      let rows = 'todo';
 
+      const rows = 'todo';
+
+      // TECHNICAL DEBT TODO batchinsert
       for (var k in videos){
-        if (videos.hasOwnProperty(k)) {
-          let insertQry = `INSERT INTO video (youtube_id, title) 
-                      VALUES ($1, $2)
-                      ON CONFLICT DO NOTHING`;
+        const field_youtubeId = videos[k].youtubeId;
+        const field_title = videos[k].title;
+        const field_uniqueYoutubeId = videos[k].uniqueYoutubeId;
 
-          await client.query(insertQry, [`${videos[k].youtubeId}`,`${videos[k].title}`]);
+        if (videos.hasOwnProperty(k)) {
+
+          console.log('are you coming here?');
+          let insertQry = `INSERT INTO video (youtube_id, title, unique_youtube_id) 
+                      VALUES ($1, $2, $3)
+                      ON CONFLICT DO NOTHING`;
+          
+          // if I need to do a mass update
+          /*let updateQry = 
+            `UPDATE video  
+            SET
+              unique_youtube_id = ($1)
+            WHERE youtube_id = ($2)`;*/
+
+            await client.query(insertQry, [
+            field_youtubeId,
+            field_title,
+            field_uniqueYoutubeId]);
+
+          /*await client.query(updateQry, [
+            field_uniqueYoutubeId,
+            field_youtubeId]);*/
         }
       }
 
@@ -264,7 +304,7 @@ app.get(`${rootUrl}/video/tags`, (req, res) => {
   ;(async () => {
     const { rows } = await pool.query(`
       SELECT DISTINCT 
-        vt.youtube_id, 
+        vt.youtube_id as "youtubeId", 
         ( SELECT jsonb_agg(json_ressource)
           FROM (
             SELECT
@@ -289,7 +329,7 @@ app.get(`${rootUrl}/video/information`, (req, res) => {
   ;(async () => {
     const { rows } = await pool.query(`
       SELECT  
-        v.youtube_id, 
+        v.youtube_id as "youtubeId", 
         v.rating,
         v.title
       FROM video v
@@ -299,6 +339,33 @@ app.get(`${rootUrl}/video/information`, (req, res) => {
     res.json(err.stack)
   })
 });
+
+
+app.delete(`${rootUrl}/video/:id`, (req, res) => {
+  const { id } = req.params;
+ ;(async () => {
+   const client = await pool.connect();
+   try {
+
+      let results = await client.query(
+       `DELETE FROM video 
+        WHERE unique_youtube_id = ($1)`,
+        [id]);
+
+     if (results.rowCount === 0) { 
+      console.log('no results')
+     }
+     res.status(201).json(results);
+   } finally {
+     client.release();
+   }
+  })().catch(err => {
+    res.status(500).json({
+      "code": err.code,
+      "message": err.message
+    });
+   });
+ });
 
 
 

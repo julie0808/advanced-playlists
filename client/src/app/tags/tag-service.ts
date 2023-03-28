@@ -14,17 +14,38 @@ export class TagService {
   headers = new HttpHeaders()
     .set('content-Type', 'application/json');
 
-  constructor(private http: HttpClient,
-              private errorService: ErrorService) {}
-
-  tags$: Observable<ITag[]> = this.http.get<ITag[]>(this.apiRootURL)
-    .pipe(
-      shareReplay(1),
-      catchError(err => this.errorService.handleError(err))
-    );
 
   private tagModifiedSubject: Subject<ITag> = new Subject<ITag>();
   tagModifiedAction$: Observable<ITag> = this.tagModifiedSubject.asObservable();
+  
+  private tagSelectedSubject = new BehaviorSubject<number>(0);
+  tagSelectedAction$ = this.tagSelectedSubject.asObservable();
+    
+
+  tagsFromDatabase$: Observable<ITag[]> = this.http.get<ITag[]>(this.apiRootURL)
+    .pipe(
+      catchError(err => this.errorService.handleError(err))
+    );
+
+  // would need to be updated if videos datastream is modified
+  // view playlistSelectedAction$ for implementation
+  tagsAssociations$: Observable<any> = this.http.get<ITag[]>(this.apiRootURL + '/associations')
+    .pipe(
+      catchError(err => this.errorService.handleError(err))
+    );
+
+  tags$: Observable<ITag[]> = combineLatest([
+    this.tagsFromDatabase$,
+    this.tagsAssociations$
+  ]).pipe(
+    map( ([tags, associations]) => {
+      return tags.map(tag => {
+        const associationArray = associations.filter((association: any) => association.tag_id === tag.id);
+        tag.nb_associated_videos = associationArray.length;
+        return tag;
+      })
+    })
+  );
 
   tagsModified$: Observable<ITag[]> = merge(
     this.tags$,
@@ -32,7 +53,7 @@ export class TagService {
       .pipe(
         concatMap(tag => this.saveTagToBackend(tag)),
         catchError(err => this.errorService.handleError(err))
-      )
+      ),
   )
     .pipe(
       // @ts-ignore - typescript a une haine pour "scan"
@@ -85,73 +106,13 @@ export class TagService {
         return finalTagList;
       })
     );
-
-    saveTagToBackend(tag: ITag): Observable<ITag> {
-      if (tag.status === StatusCode.added) {
-        const body = JSON.stringify(tag);
-        return this.http.post<ITag>(this.apiRootURL, body, { headers: this.headers })
-          .pipe(
-            map(tagReceived => {
-              tag.id = tagReceived.id;
-              return tag;
-            }),
-            catchError(err => this.errorService.handleError(err))
-          )
-      }
-      if (tag.status === StatusCode.deleted) {
-        return this.http.delete<ITag>(`${this.apiRootURL}/${tag.id}`, {headers: this.headers})
-          .pipe(
-            map(() => tag),
-            catchError(err => this.errorService.handleError(err))
-          );
-      }
-      if (tag.status === StatusCode.updated) {
-        const body = JSON.stringify(tag);
-        return this.http.put<ITag>(this.apiRootURL, body, { headers: this.headers })
-          .pipe(
-            map(() => tag),
-            catchError(err => this.errorService.handleError(err))
-          )
-      }
-      // fallback, return received tag
-      return of(tag);
-    }
-
-    adjustTagList(tags: ITag[], tag: ITag): ITag[] {
-      if (tag.status === StatusCode.added) {
-        return [
-          ...tags,
-          { ...tag, status: StatusCode.unchanged }
-        ];
-      }
-      if (tag.status === StatusCode.deleted) {
-        return tags.filter(t => t.id !== tag.id);
-      }
-      if (tag.status === StatusCode.updated) {
-        return tags.map(t => t.id === tag.id ?
-          { ...tag, status: StatusCode.unchanged } : t);
-      }
-      // fallback, return initial tag list
-      return tags;
-    }
   
-    addTag(newTag: ITag): void {
-      this.tagModifiedSubject.next(newTag);
-    }
-
-    updateTag(updatedTag: ITag): void {
-      this.tagModifiedSubject.next(updatedTag);
-    }
-
   validTagGroups$: Observable<ITag[]> = this.tagsModified$
-    .pipe(
-      map(tag => {
-        return tag.filter(tag => tag.parent_tag_id === 0 || tag.parent_tag_id === null);
-      })
-    );
-
-  private tagSelectedSubject = new BehaviorSubject<number>(0);
-  tagSelectedAction$ = this.tagSelectedSubject.asObservable();
+  .pipe(
+    map(tag => {
+      return tag.filter(tag => tag.parent_tag_id === 0 || tag.parent_tag_id === null);
+    })
+  );
 
   selectedTag$ = combineLatest([
     this.tagsModified$,
@@ -180,6 +141,68 @@ export class TagService {
     }),
     shareReplay(1)
   );
+
+
+
+  constructor(private http: HttpClient,
+    private errorService: ErrorService) {}
+    
+  saveTagToBackend(tag: ITag): Observable<ITag> {
+    if (tag.status === StatusCode.added) {
+      const body = JSON.stringify(tag);
+      return this.http.post<ITag>(this.apiRootURL, body, { headers: this.headers })
+        .pipe(
+          map(tagReceived => {
+            tag.id = tagReceived.id;
+            return tag;
+          }),
+          catchError(err => this.errorService.handleError(err))
+        )
+    }
+    if (tag.status === StatusCode.deleted) {
+      return this.http.delete<ITag>(`${this.apiRootURL}/${tag.id}`, {headers: this.headers})
+        .pipe(
+          map(() => tag),
+          catchError(err => this.errorService.handleError(err))
+        );
+    }
+    if (tag.status === StatusCode.updated) {
+      const body = JSON.stringify(tag);
+      return this.http.put<ITag>(this.apiRootURL, body, { headers: this.headers })
+        .pipe(
+          map(() => tag),
+          catchError(err => this.errorService.handleError(err))
+        )
+    }
+    // fallback, return received tag
+    return of(tag);
+  }
+
+  adjustTagList(tags: ITag[], tag: ITag): ITag[] {
+    if (tag.status === StatusCode.added) {
+      return [
+        ...tags,
+        { ...tag, status: StatusCode.unchanged }
+      ];
+    }
+    if (tag.status === StatusCode.deleted) {
+      return tags.filter(t => t.id !== tag.id);
+    }
+    if (tag.status === StatusCode.updated) {
+      return tags.map(t => t.id === tag.id ?
+        { ...tag, status: StatusCode.unchanged } : t);
+    }
+    // fallback, return initial tag list
+    return tags;
+  }
+  
+  addTag(newTag: ITag): void {
+    this.tagModifiedSubject.next(newTag);
+  }
+
+  updateTag(updatedTag: ITag): void {
+    this.tagModifiedSubject.next(updatedTag);
+  }
 
   selectedTagChanged(selectedTagId: number): void {
     this.tagSelectedSubject.next(selectedTagId);

@@ -1,12 +1,58 @@
-<section class="video-player">
+<section 
+  class="video-player"
+  *ngIf="video$ | async as video"
+  [ngClass]="videoPlayerStatus">
+  <div class="video-player--controls">    
+    <ul class="video-player--actions">
+      <li><i class="pi pi-step-backward" (click)="playPreviousVideo()"></i></li>
+      <li>
+        <i *ngIf="videoIsPlaying" class="pi pi-pause" (click)="pauseVideo()"></i>
+        <i *ngIf="!videoIsPlaying" class="pi pi-play" (click)="playVideo()"></i>
+      </li>
+      <li><i class="pi pi-step-forward" (click)="playNextVideo()"></i></li>
+    </ul>
+
+    <div class="video-player--format">
+      <p>Player format:</p>
+      <ul>
+        <li>
+          <button 
+            (click)="setPlayerFormat(videoPlayerFormats.minimized)" 
+            [ngClass]="{'active': videoPlayerStatus === videoPlayerFormats.minimized}">
+            Hide
+          </button>
+        </li>
+        <li>
+          <button 
+            (click)="setPlayerFormat(videoPlayerFormats.fullscreen)"
+            [ngClass]="{'active': videoPlayerStatus === videoPlayerFormats.fullscreen}">
+            Fullscreen
+          </button>
+        </li>
+        <li>
+          <button 
+            (click)="setPlayerFormat(videoPlayerFormats.medium)"
+            [ngClass]="{'active': videoPlayerStatus === videoPlayerFormats.medium}">
+            Medium
+          </button>
+        </li>
+        <li>
+          <button 
+            (click)="setPlayerFormat(videoPlayerFormats.tiny)"
+            [ngClass]="{'active': videoPlayerStatus === videoPlayerFormats.tiny}">
+            Tiny
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
   <div>
-    <div 
-    *ngIf="video$ | async as video"
-    class="video-player--container">
+    <div class="video-player--container">
       <youtube-player 
         videoId="{{ video.youtubeId }}" 
         suggestedQuality="highres"
         (stateChange)="followState($event)"
+        (ready)="videoReady($event)"
         [playerVars]="playerConfig">
       </youtube-player>
     </div>

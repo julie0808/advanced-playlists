@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { map, tap } from 'rxjs/operators';
 import { Subject, combineLatest, Observable } from 'rxjs';
+import { ConfirmationService, MessageService } from 'primeng/api';
 
 import { VideoService } from '../video-service';
 import { IVideo } from '../video.model';
@@ -9,7 +10,9 @@ import { IPlaylist } from '../playlist.model';
 
 @Component({
   selector: 'app-video-list',
-  templateUrl: './video-list.component.html'
+  templateUrl: './video-list.component.html',
+  styleUrls: ['video-list.component.scss'],
+  encapsulation : ViewEncapsulation.None
 })
 export class VideoListComponent {
 
@@ -56,6 +59,8 @@ export class VideoListComponent {
 
   constructor(private route: ActivatedRoute,
               private router: Router,
+              private messageService: MessageService,
+              private confirmationService: ConfirmationService,
               private videoService: VideoService) { }
 
   editTags(objectId: string) {
@@ -68,6 +73,25 @@ export class VideoListComponent {
 
   sortByPlaylist(): void {
     this.videoService.sortAppByPlaylist(this.selectedPlaylist);
+  }
+
+  deleteVideo(selectedForDeletion: IVideo): void {
+    this.videoService.deleteVideo(selectedForDeletion);
+  }
+
+  confirmDeletion(selectedForDeletion: IVideo) {
+    this.confirmationService.confirm({
+      message: 'Do you want to delete this video form the Youtube Playlist?',
+      header: 'Delete Confirmation',
+      icon: 'pi pi-info-circle',
+      accept: () => {
+        this.videoService.deleteVideo(selectedForDeletion);
+        this.messageService.add({severity:'info', summary:'Confirmed', detail:'Tag deleted.'});
+      },
+      reject: ( () => {
+        this.messageService.add({severity:'warn', summary:'Cancelled', detail:'Action was cancelled.'});
+      })
+    });
   }
 
 }

@@ -1,4 +1,4 @@
-%fill {
+.fill {
   position: absolute;
   top: 0;
   right: 0;
@@ -6,9 +6,9 @@
   left: 0;
 }
 
-%btn-look, .btn-look {
-  background: linear-gradient( $cAccent1, $cAccent2);
-  border: 1px solid $cMain1;
+.btn-look {
+  background: linear-gradient( var(--color-Accent1), var(--color-Accent2));
+  border: 1px solid var(--color-Main1);
   display: inline-block;
   padding: 10px 15px;
   text-transform: uppercase;
@@ -18,20 +18,20 @@
   font-size: 13px;
 
   &:hover {
-    background: $cAccent2;
+    background: var(--color-Accent2);
   }
 
   &.btn-warning {
-    background: linear-gradient( $cAlert1, $cAlert2);
+    background: linear-gradient( var(--color-Alert1), var(--color-Alert2));
 
     &:hover {
-      background: $cAlert2;
+      background: var(--color-Alert2);
     }
   }
 
 }
 
-%link-look, .link-look {
+.link-look {
   cursor: pointer;
   text-decoration: underline;
 }

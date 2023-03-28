@@ -33,6 +33,14 @@
           <p-colorPicker formControlName="color" ngDefaultControl></p-colorPicker>
           <a *ngIf="tagForm.get('color')!.value !== null && tagForm.get('color')!.value !== ''" (click)="removeColor()" class="action-link">Remove color</a>
         </div>
+        <div class="form-field">
+          <label for="title">Description :</label>
+          <textarea 
+            rows="5" 
+            pInputTextarea 
+            formControlName="description">
+          </textarea>
+        </div>
         <span 
             *ngIf="!tagForm.valid && tagForm.touched"
             >The form contains errors</span>

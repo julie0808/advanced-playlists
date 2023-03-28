@@ -1,0 +1,15 @@
+.tag-edit {
+  background: var(--color-Main2);
+  padding: 20px;
+
+  h2 {
+    margin-bottom: 20px;
+  }
+
+  .action-link {
+    color: #fff;
+    margin-left: 10px;
+    font-size: em(12);
+    cursor: pointer;
+  }
+}

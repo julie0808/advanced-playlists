@@ -1,5 +1,5 @@
 .main-menu {
-  background: $cMain1;
+  background: var(--color-Main1);
 
   div {
     display: flex;
@@ -8,9 +8,9 @@
   }
 
   .main-menu--item {
-    background: $cMain1;
-    border-right: 1px solid $cMain3;
-    border-left: 1px solid $cMain3;
+    background: var(--color-Main1);
+    border-right: 1px solid var(--color-Main3);
+    border-left: 1px solid var(--color-Main3);
     display: inline-block;
     padding: 12px 20px;
 

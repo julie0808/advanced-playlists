@@ -1,13 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EMPTY, Subject } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 import { TagService } from '../tag-service';
 
 @Component({
   selector: 'app-tag-list',
-  templateUrl: './tag-list.component.html'
+  templateUrl: './tag-list.component.html',
+  styleUrls: ['tag-list.component.scss'],
+  encapsulation : ViewEncapsulation.None
 })
 export class TagListComponent {
 

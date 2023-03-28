@@ -1,14 +1,16 @@
-$cMain1: #353f4d;
-$cMain2: #282f39;
-$cMain3: #4d5867;
+:root {
+  --color-Main1: #353f4d;
+  --color-Main2: #282f39;
+  --color-Main3: #4d5867;
 
-$cAccent1: #2FC4B5;
-$cAccent2: #24786D;
+  --color-Accent1: #2FC4B5;
+  --color-Accent2: #24786D;
 
-$cDarkBase1: #1a1f24;
+  --color-DarkBase1: #1a1f24;
 
-$cAlert1: #f17959;
-$cAlert2: #C75635;
+  --color-Alert1: #f17959;
+  --color-Alert2: #C75635;
+}
 
 
 .icon {

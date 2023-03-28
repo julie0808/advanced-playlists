@@ -58,9 +58,9 @@
             </div>
             <div class="video-image--info">
               <!--<p class="video-image--length">{{ video.duration }}</p>-->
-              <p class="video-image--new" *ngIf="video.status !== 'published'">!!!</p>
-              <p class="video-image--new" *ngIf="video.rating === 0 && video.status === 'published'">New</p>
-              <p class="video-image--new-border" *ngIf="video.rating === 0 || video.status !== 'published'"></p>
+              <p class="video-image--new" *ngIf="video.youtubeStatus !== 'published'">!!!</p>
+              <p class="video-image--new" *ngIf="video.rating === 0 && video.youtubeStatus === 'published'">New</p>
+              <p class="video-image--new-border" *ngIf="video.rating === 0 || video.youtubeStatus !== 'published'"></p>
             </div>
           </div>
           <div class="video-info">
@@ -97,6 +97,7 @@
                 </li>
               </ng-container>
               <li class="video-tag video-tag--view-all" (click)="editTags(video.youtubeId)"><p>Manage</p></li>
+              <!--<li class="video-tag video-tag--delete" (click)="confirmDeletion(video)"><p>Delete</p></li>-->
             </ul>
           </div>
         </li>
@@ -104,3 +105,6 @@
     </section>
   </p-scrollPanel>
 </section>
+
+<p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+<p-toast></p-toast>

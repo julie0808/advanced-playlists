@@ -1,0 +1,54 @@
+
+.tag-list {
+ 
+  a {
+    color: var(--color-Accent1);
+  }
+
+  .p-accordion .p-accordion-content {
+    padding: 0;
+  }
+
+  .p-accordion .p-accordion-header .p-accordion-header-link {
+    padding: 0 10px 0 0;
+    background: var(--color-Main1);
+  }
+
+  .p-accordion-header-link {
+    border:1px solid red;
+  }
+
+  .p-accordion p-accordiontab .p-accordion-tab {
+    margin-bottom: 10px;
+  }
+
+  .tag-label {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 14px;
+  }
+
+  .tag-parent {
+    background: var(--color-Main2);
+    display: flex;
+    justify-content: space-between;
+    width: calc(100% - 50px);
+    padding: 14px 20px;
+    font-size: em(14);
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  .tag-children {
+    background-color: var(--color-Main1);
+
+    .tag-label {
+      padding: 3px 14px;
+      font-size: em(12);
+      border-top: 1px solid rgb(83, 85, 90);
+    }
+  }
+
+}

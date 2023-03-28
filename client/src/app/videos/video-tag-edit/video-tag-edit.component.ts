@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { BehaviorSubject, EMPTY, Subject, Subscription } from 'rxjs';
 import { NonNullableFormBuilder } from '@angular/forms';
 import { catchError, map } from 'rxjs/operators';
@@ -11,7 +11,9 @@ import { ActivatedRoute, Params } from '@angular/router';
 
 @Component({
   selector: 'app-video-tag-edit',
-  templateUrl: './video-tag-edit.component.html'
+  templateUrl: './video-tag-edit.component.html',
+  styleUrls: ['video-tag-edit.component.scss'],
+  encapsulation : ViewEncapsulation.None
 })
 export class VideoTagEditComponent implements OnInit, OnDestroy {
 
@@ -28,10 +30,7 @@ export class VideoTagEditComponent implements OnInit, OnDestroy {
   private errorMessageSubject = new Subject<string>();
   errorMessage$ = this.errorMessageSubject.asObservable();
 
-  private videoSelectedSubject = new BehaviorSubject<number>(0); 
-  videoSelectedAction$ = this.videoSelectedSubject.asObservable();
-
-  video$ = this.videoService.selectedVideo$
+  video$ = this.videoService.editedVideo$
     .pipe(
       map(video => {
         return video;
@@ -82,7 +81,7 @@ export class VideoTagEditComponent implements OnInit, OnDestroy {
 
   } 
 
-  updateVideo(){
+  updateVideo(): void {
     if (this.videoTagForm.valid){
       this.currentlyEditedVideo.artists = this.videoTagForm.get('artists')?.value!;
       this.currentlyEditedVideo.tags = this.videoTagForm.get('tags')?.value!;

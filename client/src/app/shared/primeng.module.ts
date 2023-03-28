@@ -1,29 +1,31 @@
 import { NgModule } from '@angular/core';
 
+import { AccordionModule } from 'primeng/accordion';
+import { CheckboxModule } from 'primeng/checkbox';
 import { ColorPickerModule } from 'primeng/colorpicker';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
+import { InputTextareaModule } from 'primeng/inputtextarea';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { RatingModule } from 'primeng/rating';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
-import { CheckboxModule } from 'primeng/checkbox';
-import { AccordionModule } from 'primeng/accordion';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
 
 import { ConfirmationService, MessageService } from 'primeng/api';
 
 @NgModule({
   exports: [
+    AccordionModule,
+    CheckboxModule,
     ColorPickerModule,
+    ConfirmDialogModule,
     DropdownModule,
     InputTextModule,
+    InputTextareaModule,
     MultiSelectModule,
     RatingModule,
-    ScrollPanelModule,
-    CheckboxModule,
-    AccordionModule,
-    ConfirmDialogModule,
+    ScrollPanelModule,    
     ToastModule
   ],
   providers: [

@@ -7,12 +7,17 @@
   abbr {
     padding:0 2px;
     border:0 none !important;
-    color: $cAlert1;
+    color: var(--color-Alert1);
     cursor:help;
   }
 
   .erreur {
-    border: 1px solid $cAlert1;
+    border: 1px solid var(--color-Alert1);
+  }
+
+  textarea {
+    resize: none;
+    width: 100%;
   }
 
 }

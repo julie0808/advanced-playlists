@@ -1,0 +1,22 @@
+.tags {
+  padding-top: 14px;
+}
+
+.tags-manager {
+  display: flex;
+  justify-content: space-between;
+}
+
+.tags-list-container {
+  flex: 0 0 auto;
+  width: calc(60% - 14px);
+}
+
+.tags-edit-container {
+  flex: 0 0 auto;
+  width: 40%;
+}
+
+.tag-add {
+  margin-bottom: 14px;
+}

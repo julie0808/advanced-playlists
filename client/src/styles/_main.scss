@@ -1,12 +1,12 @@
 body {
   font-family: "Nunito", Arial, sans-serif;
   line-height: 1.4;
-  background: $cDarkBase1;
+  background: var(--color-DarkBase1);
   color: #fff;
 }
 
 a {
-  color: $cMain1;
+  color: var(--color-Main1);
 }
 
 .boxed-container {

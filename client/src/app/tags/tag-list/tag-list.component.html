@@ -23,7 +23,7 @@
               <li *ngFor="let tagchildren of tag.lst_children_tag_id"
               [ngStyle]="{'background': (tagchildren.parent_tag_id === 0 || tagchildren.parent_tag_id === null) && (tag.color !== null || tag.color !== '') ? tagchildren.color : '#353f4d' }">
                 <div class="tag-label">
-                  <span>{{ tagchildren.title }}</span>
+                  <span>{{ tagchildren.title }} ({{ tagchildren.nb_associated_videos }})</span>
                   <a class="link-look" (click)="editTag(tagchildren.id)">Edit</a>
                 </div>
               </li>

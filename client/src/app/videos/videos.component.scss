@@ -1,0 +1,15 @@
+.video-manager {
+  display: flex;
+  justify-content: space-between;
+}
+
+.video-list-container {
+  flex: 0 0 auto;
+  width: calc(60% - 14px);
+}
+
+.video-tag-container {
+  flex: 0 0 auto;
+  width: 40%;
+  padding-top: 63px;
+}
