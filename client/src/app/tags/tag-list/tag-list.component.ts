@@ -1,7 +1,9 @@
 import { Component, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subject } from 'rxjs';
+import { Store } from '@ngrx/store';
 
+import { Subject } from 'rxjs';
+import { State } from '../state/tag.reducer';
 import { TagService } from '../tag-service';
 
 @Component({
@@ -15,9 +17,10 @@ export class TagListComponent {
   private errorMessageSubject = new Subject<string>();
   errorMessage$ = this.errorMessageSubject.asObservable();
 
-  tagGroups$ = this.tagService.tagsFormatedForGrouping$;
+  tagGroups$ = this.tagService.tagsModified$;
 
   constructor(private route: ActivatedRoute,
+              private store: Store<State>,
               private tagService: TagService,
               private router: Router) { 
   }

@@ -27,12 +27,26 @@ export class TagService {
       catchError(err => this.errorService.handleError(err))
     );
 
+  getTagsFromDatabase(): Observable<ITag[]> {
+    return this.http.get<ITag[]>(this.apiRootURL)
+      .pipe(
+        catchError(err => this.errorService.handleError(err))
+      );
+  }
+
   // would need to be updated if videos datastream is modified
   // view playlistSelectedAction$ for implementation
   tagsAssociations$: Observable<any> = this.http.get<ITag[]>(this.apiRootURL + '/associations')
     .pipe(
       catchError(err => this.errorService.handleError(err))
     );
+
+  getTagAssociations(): Observable<any> {
+    return this.http.get<ITag[]>(this.apiRootURL + '/associations')
+    .pipe(
+      catchError(err => this.errorService.handleError(err))
+    );
+  }
 
   tags$: Observable<ITag[]> = combineLatest([
     this.tagsFromDatabase$,
@@ -63,6 +77,14 @@ export class TagService {
           return x.title.localeCompare(y.title);
         });
 
+        // mettre les tags sans parent (standalone) sous un parent fictif
+        // contrainte technique pour que le dropdown de PrimeNg fonctionne correctement
+        const otherTagGroup: ITag = new ITag();
+        otherTagGroup.title = 'Other';   
+        otherTagGroup.color = '#000000'; 
+        tags.push(otherTagGroup);
+
+        // associer la couleur du tag parent au tag enfant
         tags.map(tag => {
           if ( tag.parent_tag_id > 0 ) {
             const parentTag = tags.find(t => t.id === tag.parent_tag_id);
@@ -72,39 +94,19 @@ export class TagService {
           }
         });
 
+        // associer les enfants aux parents
         const tagsWithChildren = alphaSortedArray.map(tag => {
           tag.lst_children_tag_id = tags.filter(t => t.parent_tag_id === tag.id);
           return tag;
-        });
+        });        
 
-        return tagsWithChildren;
+        // retourner seulement les parents pour avoir la bonne hiérarchie
+        const tagsFilteredForGrouping = tagsWithChildren.filter(t => t.lst_children_tag_id.length > 0);
+
+        return tagsFilteredForGrouping;
       }),
       shareReplay(1),
       catchError(err => this.errorService.handleError(err))
-    );
-
-  tagsFormatedForGrouping$: Observable<ITag[]> = this.tagsModified$
-    .pipe(
-      map(tag => {
-        const finalTagList: ITag[] = [];
-
-        // standalone parents need to be put under "Other" 
-        // tag group for multiselect from PrimeNg to work properly
-        const otherTagGroup: ITag = new ITag();
-        otherTagGroup.title = 'Other';   
-        otherTagGroup.color = '#000000';     
-
-        tag.map(t => {
-          if ( t.lst_children_tag_id.length > 0 ){
-            finalTagList.push(t); 
-          } else if ( t.parent_tag_id === 0 || t.parent_tag_id === null) {
-            otherTagGroup.lst_children_tag_id.push(t);
-          }
-        });
-
-        finalTagList.push(otherTagGroup);
-        return finalTagList;
-      })
     );
   
   validTagGroups$: Observable<ITag[]> = this.tagsModified$

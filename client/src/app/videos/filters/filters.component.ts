@@ -1,11 +1,14 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-
-import { EMPTY, Subject } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import {  Subject } from 'rxjs';
 
 import { ITag } from 'src/app/tags/tag-model';
 import { TagService } from 'src/app/tags/tag-service';
 import { VideoService } from '../video-service';
+
+import { Store } from '@ngrx/store';
+import { State } from '../../tags/state/tag.reducer';
+import { TagApiActions, TagPageActions } from 'src/app/tags/state/actions';
+import { getTags } from 'src/app/tags/state';
 
 @Component({
   selector: 'app-filters',
@@ -24,9 +27,10 @@ export class FiltersComponent implements OnInit {
   private errorMessageSubject = new Subject<string>();
   errorMessage$ = this.errorMessageSubject.asObservable();
 
-  tags$ = this.tagService.tagsFormatedForGrouping$;
+  tags$ = this.tagService.tagsModified$;
 
   constructor(private tagService: TagService,
+              private store: Store<State>,
               private videoService: VideoService) { }
 
   ngOnInit(): void {

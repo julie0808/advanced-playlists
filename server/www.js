@@ -86,7 +86,12 @@ app.post(`${rootUrl}/tags`, (req, res) => {
 app.get(`${rootUrl}/tags`, (req, res) => {
   ;(async () => {
     const { rows } = await pool.query(`
-      SELECT tag_id as id, title, parent_tag_id, color, description
+      SELECT 
+        tag_id as id, 
+        title, 
+        CASE WHEN parent_tag_id is null THEN 0 ELSE parent_tag_id END as parent_tag_id, 
+        color, 
+        description
       FROM tag
       ORDER BY title`
       )
@@ -215,7 +220,6 @@ app.post(`${rootUrl}/video/update`, (req, res) => {
 
         if (videos.hasOwnProperty(k)) {
 
-          console.log('are you coming here?');
           let insertQry = `INSERT INTO video (youtube_id, title, unique_youtube_id) 
                       VALUES ($1, $2, $3)
                       ON CONFLICT DO NOTHING`;

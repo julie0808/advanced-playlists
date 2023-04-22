@@ -41,7 +41,7 @@ export class VideoTagEditComponent implements OnInit, OnDestroy {
       })
     )
     
-  tags$ = this.tagService.tagsFormatedForGrouping$
+  tags$ = this.tagService.tagsModified$
     .pipe(
       map(tags => {
         return tags.filter(tag => tag.id !== 55);
