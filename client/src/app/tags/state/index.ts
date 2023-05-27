@@ -32,6 +32,11 @@ export const getTagsAssociations = createSelector(
 );
 
 export const getTags = createSelector(
+  getTagFeatureState,
+  state => state.tags
+);
+
+/*export const getTags = createSelector(
     getTagFeatureState,
     getTagsAssociations,
     (state, tagAssociations) => {
@@ -41,7 +46,7 @@ export const getTags = createSelector(
         return tag;
       })
     }
-);
+);*/
 
 export const getError = createSelector(
   getTagFeatureState,

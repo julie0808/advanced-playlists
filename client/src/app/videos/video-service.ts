@@ -13,7 +13,7 @@ import { CACHEABLE } from "../shared/cache.interceptor";
 @Injectable({providedIn: 'root'})
 export class VideoService {
 
-  testMode: boolean = false; // va charger une seule page de l'api
+  testMode: boolean = true; // va charger une seule page de l'api
   testModeMaxItems: number = 10; // max 50, car on va chercher une seule page 
 
   nextPageToken: string = '';

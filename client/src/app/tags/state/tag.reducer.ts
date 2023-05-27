@@ -20,7 +20,7 @@ const initialState: TagState = {
   currentTagId: null,
   tags: [],
   tagAssociations: [],
-  error: ''
+  error: 'allo?'
 };
 
 export const tagReducer = createReducer<TagState>(
@@ -60,6 +60,7 @@ export const tagReducer = createReducer<TagState>(
   on(TagApiActions.updateTagSuccess, (state, action): TagState => {
     const updatedTags = state.tags.map(
       item => action.tag.id === item.id ? action.tag : item);
+      
     return {
       ...state,
       tags: updatedTags,

@@ -1,6 +1,11 @@
 ## TODOS
 https://trello.com/b/sihPIKvw/fancyt
 
+####### WHERE AM AT?
+tag-list -> typescript boque sur tagGroups3. me demande si cest une limitation de typescript ou une erreur légitime
+
+
+
 comment ajouter et publier un tag :
 git tag -a v1.3.0 -m "Filtre pour artiste et choix de playlist"
 git push origin v1.3.0
@@ -9,8 +14,10 @@ git push origin v1.3.0
 - FEATURE Raccourci pour scroller au vidéo actuellement lu dans videoList
 - HOTFIX duplication enum StatusCode
 - HOTFIX fermer la fenêtre d'édition quand le vidéo édité disparait de la liste (après avoir coté un vidéo)
+- revérifier le best practive des class/ interface names (ITag ou Tag?)
+
+### 1.6 prep
 - avoir une loading bar précise? possible avec interceptor?
-- avoir une commande unique pour start les 2 serveurs?
 
 #### NGRX?  1.5? should be 2.0 ?
 - HOTFIX rater un video, alors il disparait de la liste et le videoplaying devient inexistant
@@ -115,7 +122,10 @@ git push origin v1.3.0
 
 
 
-#####
+
+
+
+##### théorie rxjs
 - valider si jutilise switchMap seulement por des request annulable comme une Recherche. 
 - concatMap, attend la complétion avant de passer au prochain. safest pour CRUD quand lordre importe
 - mergeMap: en parallèle, plus performant mais garanti pas l'ordre (utiliser pour CRUD)
