@@ -28,7 +28,20 @@
     "/tags": {
       "get": {
         "tags": ["Tags"],
-        "summary": "Get all tags",
+        "summary": "Get all tags by playlist",
+        "parameters": [
+          {
+            "name": "playlist_id",
+            "in": "query",
+            "description": "The playlist ID",
+            "schema": {
+              "type": "string"
+            },
+            "example": {
+              "playlist_id": "PLwgftAdEcD4rXHmDdFTFI8Hch3BfWBQIt"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",

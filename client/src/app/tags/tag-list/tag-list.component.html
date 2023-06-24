@@ -2,6 +2,7 @@
   <p-accordion *ngIf="tagGroups$ | async as tags">
     <ng-container *ngFor="let tag of tags">
       <p-accordionTab>
+
         <ng-template pTemplate="header">
           <div 
             [ngStyle]="{'background-color': tag.color !== null || tag.color !== '' ? tag.color : '#282f39' }" 
@@ -15,6 +16,7 @@
             </a>
           </div>
         </ng-template>
+
         <ng-template pTemplate="content">
           <p-scrollPanel [style]="{width: '100%', height: '200px'}">
             <ul 
@@ -30,6 +32,7 @@
             </ul>
           </p-scrollPanel>
         </ng-template>
+
       </p-accordionTab>
     </ng-container>
   </p-accordion>

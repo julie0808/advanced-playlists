@@ -43,7 +43,7 @@ app.use(bodyParser.json());
 ///////////////////////////////////
 
 app.post(`${rootUrl}/tags`, (req, res) => {
-  const {id, parent_tag_id, title, color, description} = req.body;
+  const {id, parent_tag_id, title, color, description, playlist_id} = req.body;
  ;(async () => {
    const client = await pool.connect();
    try {
@@ -52,16 +52,18 @@ app.post(`${rootUrl}/tags`, (req, res) => {
            title,
            parent_tag_id,
            color,
-           description
-       ) VALUES ($1, $2, $3, $4)
+           description,
+           playlist_id
+       ) VALUES ($1, $2, $3, $4, $5)
        RETURNING tag_id`,
-       [title, parent_tag_id, color, description]);
+       [title, parent_tag_id, color, description, playlist_id]);
      if (results.rowCount === 0) { 
        results = { 
          title,
          parent_tag_id,
          color,
-         description
+         description,
+         playlist_id
        };
      }
      const newTag = {
@@ -69,6 +71,7 @@ app.post(`${rootUrl}/tags`, (req, res) => {
        parent_tag_id: parent_tag_id,
        color: color,
        description: description,
+       playlist_id: playlist_id,
        id: results.rows[0].tag_id
      };
      res.status(201).json(newTag);
@@ -84,13 +87,33 @@ app.post(`${rootUrl}/tags`, (req, res) => {
  });
 
 app.get(`${rootUrl}/tags`, (req, res) => {
+  const {playlist_id} = req.query;
   ;(async () => {
-    const { rows } = await pool.query(`
-      SELECT tag_id as id, title, parent_tag_id, color, description
-      FROM tag
-      ORDER BY title`
-      )
-    res.json(rows);
+    qry = `
+    SELECT 
+      tag_id as id, 
+      title, 
+      CASE WHEN parent_tag_id is null THEN 0 ELSE parent_tag_id END as parent_tag_id, 
+      color, 
+      description,
+      playlist_id
+    FROM tag 
+    `;
+
+    if (playlist_id !== 'none'){
+      qry += `WHERE playlist_id = ($1) `;
+    }
+
+    qry += `ORDER BY title `;
+
+    if (playlist_id !== 'none'){
+      const { rows } = await pool.query(qry, [playlist_id]);
+      res.json(rows);
+    } else {
+      const { rows } = await pool.query(qry);
+      res.json(rows);
+    }
+    
   })().catch(err => {
     res.json(err.stack)
   })
@@ -102,8 +125,8 @@ app.get(`${rootUrl}/tags/associations`, (req, res) => {
       SELECT 
         tag_id, 
         youtube_id as "youtubeId"
-      FROM video_tag`
-      )
+      FROM video_tag
+      `)
     res.json(rows);
   })().catch(err => {
     res.json(err.stack)
@@ -215,7 +238,6 @@ app.post(`${rootUrl}/video/update`, (req, res) => {
 
         if (videos.hasOwnProperty(k)) {
 
-          console.log('are you coming here?');
           let insertQry = `INSERT INTO video (youtube_id, title, unique_youtube_id) 
                       VALUES ($1, $2, $3)
                       ON CONFLICT DO NOTHING`;

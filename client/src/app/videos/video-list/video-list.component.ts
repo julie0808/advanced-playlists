@@ -79,6 +79,12 @@ export class VideoListComponent {
     this.videoService.deleteVideo(selectedForDeletion);
   }
 
+  scrollToCurrentlyPlaying(videoList: any): void {
+    // get current id of video playing
+    // get its top position
+    // use .scrollTop(value)
+  }
+
   confirmDeletion(selectedForDeletion: IVideo) {
     this.confirmationService.confirm({
       message: 'Do you want to delete this video form the Youtube Playlist?',

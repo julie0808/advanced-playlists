@@ -1,5 +1,19 @@
 <section class="tags">
   <div class="boxed-container">
+    <div 
+      class="playlist-container"
+      *ngIf="playlistList$ | async as playlistList">
+        <p class="playlist-container--title">Current playlist: </p>
+        <p-dropdown 
+          [options]="playlistList" 
+          [(ngModel)]="selectedPlaylist"
+          (onChange)="sortByPlaylist()"
+          placeholder="Choose a playlist"
+          autoWidth="false"
+          class="playlist-container--dropdown"
+          optionLabel="title"></p-dropdown>
+    </div>
+
     <button class="btn-look tag-add" (click)="addNewTag()">Add new</button>
 
     <div class="tags-manager">

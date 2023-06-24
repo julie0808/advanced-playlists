@@ -9,6 +9,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { RatingModule } from 'primeng/rating';
+import { ScrollerModule } from 'primeng/scroller';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
 import { ToastModule } from 'primeng/toast';
 
@@ -25,6 +26,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
     InputTextareaModule,
     MultiSelectModule,
     RatingModule,
+    ScrollerModule,
     ScrollPanelModule,    
     ToastModule
   ],

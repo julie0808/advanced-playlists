@@ -1,5 +1,6 @@
 import { FormGroup, FormControl } from "@angular/forms";
 import { ITag } from "../tags/tag-model";
+import { StatusCode } from "../shared/global-model";
 
 export interface IVideo {
   title: string; 
@@ -38,14 +39,7 @@ export interface IVideoForm extends FormGroup<{
   tags: FormControl<ITag[]>;
   rating: FormControl<number>;
 }> {}
-
-export enum StatusCode {
-  unchanged,
-  added,
-  deleted,
-  updated
-}
-
+ 
 export enum VideoPlayerFormats {
   tiny = 'tiny',
   medium = 'medium',

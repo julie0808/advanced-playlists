@@ -1,4 +1,5 @@
 import { FormControl, FormGroup } from "@angular/forms";
+import { StatusCode } from "../shared/global-model";
 
 export interface ITag {
   id: number;
@@ -8,6 +9,7 @@ export interface ITag {
   parent_tag_id: number;
   lst_children_tag_id: ITag[];
   nb_associated_videos: number;
+  playlist_id: string;
   status?: StatusCode;
 }
 
@@ -19,14 +21,7 @@ export class ITag {
     lst_children_tag_id = [] as ITag[];
     parent_tag_id = 0;
     nb_associated_videos = 0;
-}
-
-// to handle CRUD operations
-export enum StatusCode {
-  unchanged,
-  added,
-  deleted,
-  updated
+    playlist_id = '';
 }
 
 export interface ITagForm extends FormGroup<{

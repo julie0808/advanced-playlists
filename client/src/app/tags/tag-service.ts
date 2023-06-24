@@ -1,31 +1,62 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, combineLatest, merge, Observable, Subject, of, empty } from 'rxjs';
-import { catchError, concatMap, map, scan, tap, shareReplay, filter } from 'rxjs/operators';
+import { catchError, concatMap, map, scan, tap, shareReplay, filter, switchMap } from 'rxjs/operators';
 
-import { ITag, StatusCode } from './tag-model';
+import { ITag } from './tag-model';
 import { ErrorService } from '../shared/error/error/error-service';
+import { StatusCode } from '../shared/global-model';
+import { IPlaylist } from '../videos/playlist.model';
 
 @Injectable({providedIn: 'root'})
 export class TagService {
 
   apiRootURL: string = '/api/v1/tags';
+  apiURL: string = '/api/v1';
   
   headers = new HttpHeaders()
     .set('content-Type', 'application/json');
 
+  private playlistSelectedSubject = new BehaviorSubject<IPlaylist>(new IPlaylist());
+  playlistSelectedAction$ = this.playlistSelectedSubject.asObservable();
 
   private tagModifiedSubject: Subject<ITag> = new Subject<ITag>();
   tagModifiedAction$: Observable<ITag> = this.tagModifiedSubject.asObservable();
   
   private tagSelectedSubject = new BehaviorSubject<number>(0);
-  tagSelectedAction$ = this.tagSelectedSubject.asObservable();
-    
+  tagSelectedAction$ = this.tagSelectedSubject.asObservable();    
 
-  tagsFromDatabase$: Observable<ITag[]> = this.http.get<ITag[]>(this.apiRootURL)
+  playlists$: Observable<IPlaylist[]> = this.http.get<any>(this.apiURL + '/playlist')
     .pipe(
+      map( playlists => {
+        const finalPlaylistList: IPlaylist[] = playlists.map( (playlist: any) => {
+          const playlistInfo: IPlaylist = {
+            id: playlist.id,
+            title: playlist.title
+          };
+          return playlistInfo;
+        });
+        return finalPlaylistList;
+      }),
       catchError(err => this.errorService.handleError(err))
     );
+
+  tagsFromDatabase$: Observable<ITag[]> = this.playlistSelectedAction$
+    .pipe(
+      switchMap( (playlistId: IPlaylist) => {
+        return this.http.get<ITag[]>(this.apiRootURL, {
+          params: {
+            'playlist_id' : playlistId.id 
+          }
+        })
+          .pipe(
+            catchError(err => this.errorService.handleError(err))
+          );
+      })
+    );
+
+
+
 
   // would need to be updated if videos datastream is modified
   // view playlistSelectedAction$ for implementation
@@ -39,11 +70,14 @@ export class TagService {
     this.tagsAssociations$
   ]).pipe(
     map( ([tags, associations]) => {
-      return tags.map(tag => {
-        const associationArray = associations.filter((association: any) => association.tag_id === tag.id);
+      const newTagArray = tags.map((tag: ITag) => {
+        const associationArray = associations.filter((association: any) => {
+          return association.tag_id === tag.id
+        });
         tag.nb_associated_videos = associationArray.length;
         return tag;
       })
+      return newTagArray;
     })
   );
 
@@ -57,11 +91,18 @@ export class TagService {
   )
     .pipe(
       // @ts-ignore - typescript a une haine pour "scan"
-      scan((tags: ITag[], tag: ITag) => this.adjustTagList(tags, tag)),
+      scan((tags: ITag[], tag: ITag) => {
+        if (tag instanceof Array) {
+          return [...tag];
+        } else {
+          return this.adjustTagList(tags, tag);
+        }
+      }),
       map((tags: ITag[]) => {
         const alphaSortedArray = tags.sort( (x: ITag, y: ITag) => {
           return x.title.localeCompare(y.title);
         });
+        
 
         tags.map(tag => {
           if ( tag.parent_tag_id > 0 ) {
@@ -103,6 +144,7 @@ export class TagService {
         });
 
         finalTagList.push(otherTagGroup);
+
         return finalTagList;
       })
     );
@@ -142,23 +184,23 @@ export class TagService {
     shareReplay(1)
   );
 
-
-
   constructor(private http: HttpClient,
     private errorService: ErrorService) {}
     
   saveTagToBackend(tag: ITag): Observable<ITag> {
     if (tag.status === StatusCode.added) {
       const body = JSON.stringify(tag);
+
       return this.http.post<ITag>(this.apiRootURL, body, { headers: this.headers })
-        .pipe(
-          map(tagReceived => {
-            tag.id = tagReceived.id;
-            return tag;
-          }),
-          catchError(err => this.errorService.handleError(err))
-        )
+      .pipe(
+        map(tagReceived => {
+          tag.id = tagReceived.id;
+          return tag;
+        }),
+        catchError(err => this.errorService.handleError(err))
+      )
     }
+
     if (tag.status === StatusCode.deleted) {
       return this.http.delete<ITag>(`${this.apiRootURL}/${tag.id}`, {headers: this.headers})
         .pipe(
@@ -206,6 +248,10 @@ export class TagService {
 
   selectedTagChanged(selectedTagId: number): void {
     this.tagSelectedSubject.next(selectedTagId);
+  }
+
+  sortAppByPlaylist(playlist: IPlaylist): void {
+    this.playlistSelectedSubject.next(playlist);
   }
 
 }

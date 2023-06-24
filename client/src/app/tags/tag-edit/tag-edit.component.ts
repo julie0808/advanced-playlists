@@ -3,10 +3,12 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 import { NonNullableFormBuilder, Validators } from '@angular/forms';
 import { EMPTY, Subject, Subscription } from 'rxjs';
 
-import { ITag, StatusCode, ITagForm } from '../tag-model';
+import { ITag, ITagForm } from '../tag-model';
 import { TagService } from '../tag-service';
 import { catchError, tap } from 'rxjs/operators';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { StatusCode } from 'src/app/shared/global-model';
+import { IPlaylist } from 'src/app/videos/playlist.model';
 
 @Component({
   selector: 'app-tag-edit',
@@ -19,6 +21,7 @@ export class TagEditComponent implements OnInit, OnDestroy {
   private idSub!: Subscription;
   tag!: ITag;
   editMode: boolean = false;
+  selectedPlaylist!: IPlaylist;
   
   tagForm: ITagForm = this.fb.group({
     title: this.fb.control('', Validators.required),
@@ -47,6 +50,8 @@ export class TagEditComponent implements OnInit, OnDestroy {
       })
     )
 
+  selectedPlaylist$ = this.tagService.playlistSelectedAction$;
+
   constructor(private route: ActivatedRoute,
               private router: Router,
               private fb: NonNullableFormBuilder,
@@ -60,6 +65,10 @@ export class TagEditComponent implements OnInit, OnDestroy {
     this.selectedTag$.subscribe(tag => {
       this.displayTag(tag);
     })
+
+    this.selectedPlaylist$.subscribe(playlist => {
+      this.selectedPlaylist = playlist;
+    })
     
     this.idSub = this.route.params 
       .subscribe(
@@ -72,6 +81,7 @@ export class TagEditComponent implements OnInit, OnDestroy {
           }
         }
       )
+
   }
 
   removeColor() {
@@ -122,6 +132,7 @@ export class TagEditComponent implements OnInit, OnDestroy {
     newTag.description = this.tagForm.value['description']!;
     newTag.parent_tag_id = this.tagForm.value['parent_tag_id']!;
     newTag.status = StatusCode.added;
+    newTag.playlist_id = this.selectedPlaylist.id;
     
     this.tagService.addTag(newTag);
     this.resetPage();

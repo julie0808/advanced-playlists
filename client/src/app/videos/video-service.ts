@@ -4,11 +4,12 @@ import { catchError, concatMap, map, shareReplay, tap, scan, expand, takeWhile, 
 import { HttpClient, HttpHeaders, HttpParams, HttpContext } from '@angular/common/http';
 
 import { ITag } from "../tags/tag-model";
-import { IVideo, StatusCode } from "./video.model";
+import { IVideo } from "./video.model";
 import { ErrorService } from "../shared/error/error/error-service";
 import { TagService } from "../tags/tag-service";
 import { IPlaylist } from "./playlist.model";
 import { CACHEABLE } from "../shared/cache.interceptor";
+import { StatusCode } from "../shared/global-model";
 
 @Injectable({providedIn: 'root'})
 export class VideoService {
@@ -129,16 +130,22 @@ export class VideoService {
     
         if (typeof associatedVideoTags !== 'undefined') {
           associatedVideoTagsWithInfo = associatedVideoTags.tags.map( (avt: any) => {
-            return tagsinformation.find(ti => ti.id === avt.id) as ITag;
-          });
+            const checkForTags = tagsinformation.find(ti => ti.id === avt.id) as ITag;
 
-          artistsTags = associatedVideoTagsWithInfo.filter(tag => {
-            if ( tag.parent_tag_id === 55 ) {
-              return true;
-            } else {
-              otherTags.push(tag);
+            if (typeof checkForTags !== 'undefined') {
+              return checkForTags;
             }
           });
+
+          if (typeof associatedVideoTagsWithInfo.length) {
+            artistsTags = associatedVideoTagsWithInfo.filter(tag => {
+              if ( tag.parent_tag_id === 55 ) {
+                return true;
+              } else {
+                otherTags.push(tag);
+              }
+            });
+          }
         }
 
         const videoInfoFromBD: IVideo = ({
@@ -197,7 +204,12 @@ export class VideoService {
         ).pipe(
           // @ts-ignore - typescript a une haine pour "scan"
           scan((acc: IVideo[], video: IVideo) => {
-            return this.adjustVideoList(acc, video);
+            if (video instanceof Array) {
+              return [...video];
+            } else {
+              return this.adjustVideoList(acc, video);
+            }
+            
           }),
           // needed to return correctly an IVideo[] type
           tap((videos: IVideo[]) => {

@@ -5,58 +5,72 @@ comment ajouter et publier un tag :
 git tag -a v1.3.0 -m "Filtre pour artiste et choix de playlist"
 git push origin v1.3.0
 
+## FOCUS
+enregistrer les tags de video doit pas écraser ceux de dautres playlist
+
+
 ### 1.5 prep
--  big bug en allant modifier un tag après avoir loadé la liste de vidéo, trié par "new", et coté un vidéo. elle est pas à jour avec les nouveaux tags assigné en revenant du gestionnaire de tag. on devrait unsort les vidéos?
+- FEATURE Raccourci pour scroller au vidéo actuellement lu dans videoList
+ disparait de la liste (après avoir coté un vidéo)
+- revérifier le best practice des class/ interface names (ITag ou Tag?)
+
+### 1.6 prep
+- avoir une loading bar précise? possible avec interceptor?
+
+#### NGRX?  1.5? should be 2.0 ?
+- HOTFIX rater un video, alors il disparait de la liste et le videoplaying devient inexistant
+- HOTFIX big bug en allant modifier un tag après avoir loadé la liste de vidéo, trié par "new", et coté un vidéo. elle est pas à jour avec les nouveaux tags assigné en revenant du gestionnaire de tag. on devrait unsort les vidéos?
 
 
-### Quick wins
+### lineup
+- HOTFIX associated count to tag is not updated after modifying a video 
+- FEATURE HOTFIX avoir le loading présent quand on sort / unsort + régler autre bogue de quand il n'apparait pas
+- FEATURE choisir plus d'un rating en même temps
+- FEATURE REFACTOR faire les /edit avec le routing "popup"
+- FEATURE fonction pour flaguer les vidéos à ne pas montrer (Maze of memories doublons?, age restricted...)
+- FEATURE trier par... video non affiché (unavailable, non published...). mais ne pas les montrer par défaut dans la liste
+- FEATURE avoir sous-playlist avec ordre custom (ex: bts story line)
 
-- Raccourci pour scroller au vidéo actuellement lu dans videoList
-- mettre un commentaire à un video (ex : video dentrainement)
+- FEATURE ngrx for states : current filters
+--- set user details on login
+--- would nb of linked video to a tag be a state?
+--- currently playing video
+--- videos list
+--- tags list
+--- form states currently edited vs new with default value
 
-### P1
- 
-- Latence quand on combine les infos de vidéos... peut pas les chercher on time, car on doit tout avoir pour trier / afficher dans videolist
-- associated count to tag is not updated after modifying a video 
-- updateNewVideos() -> problématique si + de 50 vidéos
-- (semble y avoir un gros problème de performance quand on unsort, ou arrive de la section "tags management") -> pas du au get mais bien au multiple combine sur 800 entrées... faire du "on request" à la place au lieu de join tout le data au début?
-
-### P2-
-- (0.5) il reste un "video inexistant", mais la logique de videoPlaying est flawed
-- avoir le loading présent quand on sort / unsort + régler autre bogue de quand il n'apparait pas
-- avoir un filtre négatif pour retirer de la liste certains tags
-- choisir plus d'un rating en même temps
-- faire les /edit avec le routing "popup"
-- bug : rater un video, alos il disparait de la liste et le videoplaying devient inexistant
-- duplication enum StatusCode
-- fonction pour flaguer les vidéos à ne pas montrer (Maze of memories doublons?, age restricted...)
-- trier par... video non affiché (unavailable, non published...). mais ne pas les montrer par défaut dans la liste
 
 ### Backlog
-- avoir sous-playlist avec ordre custom (ex: bts story line)
-- les @extends fonctionnent pas comme prévu avec l'encapsulation
-- vérifier tous les TODO TECHNICAL DEBT
-- ajouter à la doc tech comment créer la base de données
-- enregistrer filtre actuel en session
-- enregistrer un groupe de filtre pour sélection rapide
-- voir la durée des vidéos
-- option pour jouer de façon aléatoire
-- avoir une loading bar précise
-- hébergé l'app en ligne
-- demander confirmer pour supprimer les jct si on supprime un vidéo (si on supprime un vidéo qui n'était pas un doublon)
-- supprimer un video de la playlist - rendu à faire la suppresion de ma BD. api youtube testé, mais semble quil me faut une autre authentification dans lapp pour y accéder
+- duplication de code au choix de playlist dans tag manager
+- HOTFIX updateNewVideos() -> problématique si + de 50 vidéos
+- FEATURE mettre un commentaire à un video (ex : video dentrainement)
+- HOTFIX REFACTOR Latence en général. 850 vidéos... problème avec les observable ou normal? possibilité de lazy load?
+- HOTFIX les @extends fonctionnent pas comme prévu avec l'encapsulation
+- DOC ajouter à la doc tech comment créer la base de données
+- FEATURE enregistrer filtre actuel en session pour l'avoir encore en revenant de la page Tag Manager
+- FEATURE enregistrer un groupe de filtre pour sélection rapide
+- FEATURE voir la durée des vidéos
+- FEATURE option pour jouer de façon aléatoire
+- FEATURE supprimer un video de la playlist - rendu à faire la suppresion de ma BD. api youtube testé, mais semble quil me faut une autre authentification dans lapp pour y accéder
+- HOTFIX vérifier tous les TODO TECHNICAL DEBT
+- FEATURE héberger l'app en ligne
+- FEATURE error handling avec interface et +
 
 
 
 
-# WIP Release 1.4.0 
+# WIP Release 1.5.0
+
+
+
+# Release 1.4.0 
 
 ## Ajouté
 - Ajouté système rudimentaire de gestion de la cache
 - Ajouté le nombre de vidéos liés à un tag pour référence
 - Ajouté un champ description pour les tags
 - Ajouté doc technique sur l'utilisation (ébauche)
-- Ajouté plusieurs formats différents pour la lecteur de vidéo
+- Ajouté plusieurs formats différents pour le lecteur de vidéo
 - Ajouté contrôle de base pour le lecteur (jouer vidéo suivant/précédent, pause, jouer) 
 
 ## Modifié
@@ -107,3 +121,53 @@ git push origin v1.3.0
 - Ajout ou suppression de tag assigné à un vidéo
 
 
+
+
+
+
+##### théorie rxjs
+- valider si jutilise switchMap seulement por des request annulable comme une Recherche. 
+- concatMap, attend la complétion avant de passer au prochain. safest pour CRUD quand lordre importe
+- mergeMap: en parallèle, plus performant mais garanti pas l'ordre (utiliser pour CRUD)
+- exhaudMap: ignore tout requête avant complétion de la première (ex: login) 
+
+
+###### ng rx instructions
+- ng add @ngrx/store
+- ng add @ngrx/store-devtools
+- ng add @ngrx/effects + new file in state subfolder 
+
+- check thats its added to NgModule of AppModule
+- add to Components .module
+- create reducers in componentsin subfoler "state" for each
+- create interfaces for store in reducers
+- create app.state in "state" subfoler at root app folder
+- define initial state const for every property in reducers
+- ?? create "selectors" in reducers (1 exported fct for each property, 1 private const for each slice de store)
+- create "actions"
+- handle error in states
+
+- presentational / container refactor + push strategy
+-index.ts file
+
+
+
+## course notes
+- Store should be organized by component at 1st level of object
+- each .module will have StoreModule as import
+- slice up the store by having a different reducer for video data and video list??
+- lazyloaded modules wont work in app state : use extends AppState in compoenent reducers 
+- selector are query/stored procedure like to strongly type and avoid errors (like an API)
+--- slector are functions assigned to a const
+--- you need a const as a getter
+--- than a const exported to act as a function to do manipulation with the data before return
+- action creation
+--- la fct "dispatch" dans le component trigger l'action
+--- props are metadata needed for the action
+--- action should have their own file in state subfolder
+- Effects (keep component pure of side effects)
+--- entre autre pour async stuff (http requests)
+- go further with @ngrx/entity (crud operations)
+--- @ngrx/schematics cli generate entity/container/feature
+--- @ngrx/router-store dispatch router navigation through store
+--- mgrx/data abstract ngrx entity code (moins intéressnat car moins de custom control)
