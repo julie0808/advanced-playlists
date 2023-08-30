@@ -1,6 +1,5 @@
 <section 
   class="video-player"
-  *ngIf="video$ | async as video"
   [ngClass]="videoPlayerStatus">
   <div class="video-player--controls">    
     <ul class="video-player--actions">
@@ -49,7 +48,7 @@
   <div>
     <div class="video-player--container">
       <youtube-player 
-        videoId="{{ video.youtubeId }}" 
+        videoId="{{ selectedVideo.youtubeId }}" 
         suggestedQuality="highres"
         (stateChange)="followState($event)"
         (ready)="videoReady($event)"

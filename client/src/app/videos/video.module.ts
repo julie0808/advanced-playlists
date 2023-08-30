@@ -9,6 +9,9 @@ import { VideoPlayerComponent } from './video-player/video-player.component';
 import { VideoTagEditComponent } from './video-tag-edit/video-tag-edit.component';
 import { VideosComponent } from './videos.component';
 
+import { StoreModule } from '@ngrx/store';
+import { videoReducer } from './state/video.reducer';
+
 @NgModule({
   imports: [
     SharedModule,
@@ -24,7 +27,8 @@ import { VideosComponent } from './videos.component';
           }
         ]
       }      
-    ])
+    ]),
+    StoreModule.forFeature('videos', videoReducer)
   ],
   declarations: [
     VideosComponent,

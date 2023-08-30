@@ -5,6 +5,10 @@ import { catchError } from 'rxjs/operators';
 import { VideoService } from '../video-service';
 import { IVideo, VideoPlayerFormats } from '../video.model';
 
+import { Store } from '@ngrx/store';
+import { State, getCurrentVideo } from '../state/video.reducer';
+
+import { ActionCode, StatusCode } from 'src/app/shared/global-model';
 
 
 @Component({
@@ -18,9 +22,11 @@ export class VideoPlayerComponent implements OnInit {
 
   apiLoaded = false;
   currentVideoList!: IVideo[];
-  videoPlayerStatus: VideoPlayerFormats = VideoPlayerFormats.tiny;
+  videoPlayerStatus: VideoPlayerFormats = VideoPlayerFormats.hidden;
   videoIsPlaying: boolean = false;
   videoPlayer: any;
+
+  selectedVideo: IVideo = new IVideo();
 
   playerConfig = {
     controls: 1
@@ -32,6 +38,7 @@ export class VideoPlayerComponent implements OnInit {
 
   private errorMessageSubject = new Subject<string>();
   errorMessage$ = this.errorMessageSubject.asObservable();
+  
 
   video$ = this.videoService.videoPlaying$
     .pipe(
@@ -49,7 +56,9 @@ export class VideoPlayerComponent implements OnInit {
       })
     );
 
-  constructor(private videoService: VideoService) { }
+  constructor(
+    private store: Store<State>,
+    private videoService: VideoService) { }
 
   ngOnInit(): void {
     
@@ -64,10 +73,23 @@ export class VideoPlayerComponent implements OnInit {
       this.currentVideoList = videos;
     });
 
+    this.store.select(getCurrentVideo).subscribe(
+      currentVideo => {
+        this.selectedVideo = currentVideo;
+        if ( this.videoIsValid(this.selectedVideo) && this.videoPlayerStatus === VideoPlayerFormats.hidden ) {
+          this.videoPlayerStatus = VideoPlayerFormats.tiny
+        }
+      }
+    );
+
   }
 
   videoReady(event: any) {
     this.videoPlayer = event.target;
+  }
+
+  videoIsValid(video: IVideo) {
+    return video.status !== StatusCode.invalid;
   }
 
   setPlayerFormat(selectedFormat: VideoPlayerFormats) {
@@ -75,11 +97,11 @@ export class VideoPlayerComponent implements OnInit {
   }
 
   playPreviousVideo() {
-    this.videoService.playPreviousVideo(this.currentVideoList);
+    this.videoService.playVideoAction(this.currentVideoList, ActionCode.previous);
   }
 
   playNextVideo() {
-    this.videoService.playNextVideo(this.currentVideoList);
+    this.videoService.playVideoAction(this.currentVideoList, ActionCode.next);
   }
 
   pauseVideo() {
@@ -97,7 +119,7 @@ export class VideoPlayerComponent implements OnInit {
     switch(event.data) {
       case 0:
         // video has ended
-        this.videoService.playNextVideo(this.currentVideoList);
+        this.videoService.playVideoAction(this.currentVideoList, ActionCode.next);
         this.videoIsPlaying = false;
         break;
       case -1:

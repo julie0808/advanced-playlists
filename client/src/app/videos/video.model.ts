@@ -31,7 +31,7 @@ export class IVideo {
   artists = [] as ITag[];
   publishedBy = '';
   youtubeStatus = 'published';
-  status = StatusCode.unchanged;
+  status = StatusCode.invalid;
 }
 
 export interface IVideoForm extends FormGroup<{
@@ -44,5 +44,6 @@ export enum VideoPlayerFormats {
   tiny = 'tiny',
   medium = 'medium',
   minimized = 'minimized',
-  fullscreen = 'fullscreen'
+  fullscreen = 'fullscreen',
+  hidden = 'hidden'
 }

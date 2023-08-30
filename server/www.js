@@ -238,25 +238,27 @@ app.post(`${rootUrl}/video/update`, (req, res) => {
 
         if (videos.hasOwnProperty(k)) {
 
-          let insertQry = `INSERT INTO video (youtube_id, title, unique_youtube_id) 
-                      VALUES ($1, $2, $3)
+          let insertQry = `INSERT INTO video 
+                      (youtube_id, title, unique_youtube_id, youtube_active) 
+                      VALUES ($1, $2, $3, true)
                       ON CONFLICT DO NOTHING`;
-          
-          // if I need to do a mass update
-          /*let updateQry = 
-            `UPDATE video  
-            SET
-              unique_youtube_id = ($1)
-            WHERE youtube_id = ($2)`;*/
 
-            await client.query(insertQry, [
+          await client.query(insertQry, [
             field_youtubeId,
             field_title,
             field_uniqueYoutubeId]);
 
-          /*await client.query(updateQry, [
-            field_uniqueYoutubeId,
-            field_youtubeId]);*/
+          // if I need to update which videos are active on Youtube
+          // first, set manually in db youtube_active to false, then
+          // in video-service, this.updateNewVideos(videos)
+          // ERROR PAYLOAD TOO LARGE
+          /*let updateYoutubeActive = `
+            UPDATE video SET youtube_active = true 
+            WHERE youtube_id = ($1)`
+
+          await client.query(updateYoutubeActive, [field_youtubeId]);*/
+          
+        
         }
       }
 
@@ -346,6 +348,46 @@ app.get(`${rootUrl}/video/tags`, (req, res) => {
   })
 });
 
+app.get(`${rootUrl}/video/full`, (req, res) => {
+  ;(async () => {
+    const { rows } = await pool.query(`
+      SELECT DISTINCT 
+        vt.youtube_id as "youtubeId", 
+        ( SELECT jsonb_agg(json_ressource)
+          FROM (
+            SELECT
+              -- map to ITag model
+              t.tag_id as id,
+              t.title
+              FROM 		video_tag vt_agg
+              LEFT JOIN 	tag t ON t.tag_id = vt_agg.tag_id
+            WHERE 		vt_agg.youtube_id = vt.youtube_id
+              AND     t.parent_tag_id <> 55
+          ) json_ressource
+        ) as tags,
+        ( SELECT jsonb_agg(json_ressource)
+          FROM (
+            SELECT
+              -- map to ITag model
+              t.tag_id as id,
+              t.title
+              FROM 		video_tag vt_agg
+              LEFT JOIN 	tag t ON t.tag_id = vt_agg.tag_id
+            WHERE 		vt_agg.youtube_id = vt.youtube_id
+              AND     t.parent_tag_id = 55
+          ) json_ressource
+        ) as artists
+
+        v.rating,
+        v.title
+      FROM video_tag vt
+      LEFT JOIN video v ON v.youtube_id = vt.youtube_id
+    `)
+    res.json(rows);
+  })().catch(err => {
+    res.json(err.stack)
+  })
+});
 
 app.get(`${rootUrl}/video/information`, (req, res) => {
   ;(async () => {

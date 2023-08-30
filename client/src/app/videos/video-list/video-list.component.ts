@@ -8,6 +8,11 @@ import { VideoService } from '../video-service';
 import { IVideo } from '../video.model';
 import { IPlaylist } from '../playlist.model';
 
+import { Store } from '@ngrx/store';
+import { State } from '../state/video.reducer';
+import * as VideoActions from "../state/video.action";
+
+
 @Component({
   selector: 'app-video-list',
   templateUrl: './video-list.component.html',
@@ -58,16 +63,22 @@ export class VideoListComponent {
   )  
 
   constructor(private route: ActivatedRoute,
+              private store: Store<State>,
               private router: Router,
               private messageService: MessageService,
               private confirmationService: ConfirmationService,
               private videoService: VideoService) { }
 
-  editTags(objectId: string) {
+  updateFromYoutube(): void {
+    // to do
+  }
+  
+              editTags(objectId: string) {
     this.router.navigate([objectId, 'edit-tag'], {relativeTo: this.route, queryParamsHandling: 'preserve'});
   }
 
   playVideo(video: IVideo) {
+    this.store.dispatch(VideoActions.setCurrentVideo({ video }));
     this.videoService.videoPlayingIdChanged(video.youtubeId);
   }
 

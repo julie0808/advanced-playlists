@@ -1,15 +1,21 @@
 import { Injectable } from "@angular/core";
-import { BehaviorSubject, combineLatest, forkJoin, merge, Observable, of, Subject } from 'rxjs';
+import { BehaviorSubject, combineLatest, merge, Observable, of, Subject } from 'rxjs';
 import { catchError, concatMap, map, shareReplay, tap, scan, expand, takeWhile, reduce, switchMap } from "rxjs/operators";
 import { HttpClient, HttpHeaders, HttpParams, HttpContext } from '@angular/common/http';
+import { CACHEABLE } from "../shared/cache.interceptor";
+import { ErrorService } from "../shared/error/error/error-service";
 
 import { ITag } from "../tags/tag-model";
 import { IVideo } from "./video.model";
-import { ErrorService } from "../shared/error/error/error-service";
+
 import { TagService } from "../tags/tag-service";
 import { IPlaylist } from "./playlist.model";
-import { CACHEABLE } from "../shared/cache.interceptor";
-import { StatusCode } from "../shared/global-model";
+
+import { StatusCode, ActionCode } from "../shared/global-model";
+
+import { Store } from '@ngrx/store';
+import { State } from './state/video.reducer';
+import * as VideoActions from "./state/video.action";
 
 @Injectable({providedIn: 'root'})
 export class VideoService {
@@ -114,6 +120,14 @@ export class VideoService {
         catchError(err => this.errorService.handleError(err))
       );
 
+  videoInfosFromDBFull$: Observable<IVideo[]> = this.http.get<IVideo[]>(`${this.apiRootURL}/information`, {
+    context: new HttpContext().set(CACHEABLE, true)
+  })
+    .pipe(
+      ///// map videos to objects?
+      catchError(err => this.errorService.handleError(err))
+    );
+
   tagsInfoFromDB$: Observable<ITag[]> = this.tagService.tagsModified$;
 
   allInfoFromDB$: Observable<IVideo[]> = combineLatest([
@@ -161,7 +175,7 @@ export class VideoService {
 
     })
   );
-  
+
   videosWithTags$: Observable<IVideo[]> = combineLatest([
     this.videosFromPlaylist$,
     this.allInfoFromDB$
@@ -172,9 +186,14 @@ export class VideoService {
       const videoWithAllInfo = videos.map((video: IVideo) => {
 
         const checkForDuplicates = videos.filter(checkForVideo => checkForVideo.youtubeId === video.youtubeId);
+
         if( checkForDuplicates.length > 1 ){ console.warn('Duplicate found: ', video.youtubeId, video.title)}
 
-        const mergedDataVideo: IVideo = {...video, ...infoFromDB.find(i=> i.youtubeId === video.youtubeId)}
+        const mergedDataVideo: IVideo = {
+          ...video, 
+          status: StatusCode.unchanged,
+          ...infoFromDB.find(i=> i.youtubeId === video.youtubeId)
+        }
 
         const findInDB = infoFromDB.find( (videoInDB: any) => videoInDB.youtubeId === video.youtubeId);
 
@@ -193,6 +212,9 @@ export class VideoService {
     })
   );
 
+  // previously was v...d$: = this.videosWithTags$ -- so I get updated info from YT
+  // I've chosen to do that on demande now instead
+  // alternative to use db info instead of youtube's = videoInfosFromDBFull$
   videoTagsModified$: Observable<IVideo[]> = this.videosWithTags$
     .pipe(
       switchMap( (videosWithTags: IVideo[]) => merge(
@@ -262,6 +284,7 @@ export class VideoService {
 
           // set default video to the first in the list
           if ( this.videoPlayingSubject.getValue() === '' && sortedVideos.length ) {
+            this.store.dispatch(VideoActions.setCurrentVideo({ video: sortedVideos[0] }));
             this.videoPlayingIdChanged(sortedVideos[0].youtubeId);
           }      
         }  
@@ -321,6 +344,7 @@ export class VideoService {
 
   constructor(
     private http: HttpClient,
+    private store: Store<State>,
     private tagService: TagService,
     private errorService: ErrorService) { }     
 
@@ -458,24 +482,26 @@ export class VideoService {
 
   selectedVideoIdChanged(selectedVideoId: string): void {
     this.videoSelectedSubject.next(selectedVideoId);
-  }
+  } 
 
-  playNextVideo(videoList: IVideo[]) {
+  playVideoAction( videoList: IVideo[], action: ActionCode){
     const currentVideoPosition = videoList.findIndex( (v: IVideo) => {
       return v.youtubeId === this.videoPlayingSubject.getValue();
     });
-    const videosSortedLength = videoList.length;
-    const nextVideoPosition = videosSortedLength - 1 === currentVideoPosition ? 0 : currentVideoPosition + 1;
-    this.videoPlayingIdChanged(videoList[nextVideoPosition].youtubeId);
-  }
 
-  playPreviousVideo(videoList: IVideo[]) {
-    const currentVideoPosition = videoList.findIndex( (v: IVideo) => {
-      return v.youtubeId === this.videoPlayingSubject.getValue();
-    });
     const videosSortedLength = videoList.length;
-    const previousVideoPosition = currentVideoPosition === 0 ? videosSortedLength - 1 : currentVideoPosition - 1;
-    this.videoPlayingIdChanged(videoList[previousVideoPosition].youtubeId);
+    let newVideoPosition = 0;
+
+    if ( action === ActionCode.previous) {
+      newVideoPosition = currentVideoPosition === 0 ? videosSortedLength - 1 : currentVideoPosition - 1;
+
+    } else if ( action === ActionCode.next ) {
+      newVideoPosition = videosSortedLength - 1 === currentVideoPosition ? 0 : currentVideoPosition + 1;
+    }
+
+    this.store.dispatch(VideoActions.setCurrentVideo({ video: videoList[newVideoPosition] }));
+    this.videoPlayingIdChanged(videoList[newVideoPosition].youtubeId);
+
   }
 
   saveVideoTagsToBackend(video: IVideo): Observable<IVideo> {

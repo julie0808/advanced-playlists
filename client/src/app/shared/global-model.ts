@@ -3,5 +3,12 @@ export enum StatusCode {
   unchanged,
   added,
   deleted,
-  updated
+  updated,
+  invalid
 }
+
+export enum ActionCode {
+  previous,
+  next
+}
+

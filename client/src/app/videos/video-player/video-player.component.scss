@@ -8,6 +8,10 @@
   padding: 5px;
   background: #000;
 
+  &.hidden {
+    display: none;
+  }
+
   .video-player--container {
     width: 720px;
     height: 480px; 

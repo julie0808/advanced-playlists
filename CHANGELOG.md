@@ -5,6 +5,16 @@ comment ajouter et publier un tag :
 git tag -a v1.3.0 -m "Filtre pour artiste et choix de playlist"
 git push origin v1.3.0
 
+## NGRX
+ajouter les unsubscribe (pas encore vu dans le course)
+je vais avoir le même problème avec tout ce qui est loadé en async (+ side effect dans le cas de liste de video)
+
+quand le storing de la liste des videos sera faite, je pourrais considérer faire un selecteur combiné; currentVideoPlaying devenant seulement le youtubeuniqueid pour alléger
+
+autre non side effect : currentPlaylist, isLoading, all the sorting params, videoSelect (edit), selectedTag (edit)
+avec side effect : videoList, tagList...
+app.state: isLoading
+
 ## FOCUS
 enregistrer les tags de video doit pas écraser ceux de dautres playlist
 
@@ -18,12 +28,12 @@ enregistrer les tags de video doit pas écraser ceux de dautres playlist
 - avoir une loading bar précise? possible avec interceptor?
 
 #### NGRX?  1.5? should be 2.0 ?
-- HOTFIX rater un video, alors il disparait de la liste et le videoplaying devient inexistant
 - HOTFIX big bug en allant modifier un tag après avoir loadé la liste de vidéo, trié par "new", et coté un vidéo. elle est pas à jour avec les nouveaux tags assigné en revenant du gestionnaire de tag. on devrait unsort les vidéos?
 
 
 ### lineup
 - HOTFIX associated count to tag is not updated after modifying a video 
+- HOTFIX les requêtes dans le www.js devrait considérer la playlist pour être moins lourd (tags associations et peut-être +)
 - FEATURE HOTFIX avoir le loading présent quand on sort / unsort + régler autre bogue de quand il n'apparait pas
 - FEATURE choisir plus d'un rating en même temps
 - FEATURE REFACTOR faire les /edit avec le routing "popup"
@@ -57,10 +67,30 @@ enregistrer les tags de video doit pas écraser ceux de dautres playlist
 - FEATURE error handling avec interface et +
 
 
+# WIP Release 2.1.0
+
+## Ajouté
+- Implantation du Store NgRx sur la liste de vidéos
+
+
+# WIP Release 2.0.0
+
+## Ajouté
+- Implantation du Store NgRx sur le lecteur de vidéo et le gestionnaire de tags
+
+
+
+# WIP Release 1.6.0
+--- update to angular 16?
 
 
 # WIP Release 1.5.0
 
+## Ajouté
+- Trier par playlist
+
+## Modifié
+- Améliorations / optimisations diverses au code
 
 
 # Release 1.4.0 
@@ -131,43 +161,3 @@ enregistrer les tags de video doit pas écraser ceux de dautres playlist
 - mergeMap: en parallèle, plus performant mais garanti pas l'ordre (utiliser pour CRUD)
 - exhaudMap: ignore tout requête avant complétion de la première (ex: login) 
 
-
-###### ng rx instructions
-- ng add @ngrx/store
-- ng add @ngrx/store-devtools
-- ng add @ngrx/effects + new file in state subfolder 
-
-- check thats its added to NgModule of AppModule
-- add to Components .module
-- create reducers in componentsin subfoler "state" for each
-- create interfaces for store in reducers
-- create app.state in "state" subfoler at root app folder
-- define initial state const for every property in reducers
-- ?? create "selectors" in reducers (1 exported fct for each property, 1 private const for each slice de store)
-- create "actions"
-- handle error in states
-
-- presentational / container refactor + push strategy
--index.ts file
-
-
-
-## course notes
-- Store should be organized by component at 1st level of object
-- each .module will have StoreModule as import
-- slice up the store by having a different reducer for video data and video list??
-- lazyloaded modules wont work in app state : use extends AppState in compoenent reducers 
-- selector are query/stored procedure like to strongly type and avoid errors (like an API)
---- slector are functions assigned to a const
---- you need a const as a getter
---- than a const exported to act as a function to do manipulation with the data before return
-- action creation
---- la fct "dispatch" dans le component trigger l'action
---- props are metadata needed for the action
---- action should have their own file in state subfolder
-- Effects (keep component pure of side effects)
---- entre autre pour async stuff (http requests)
-- go further with @ngrx/entity (crud operations)
---- @ngrx/schematics cli generate entity/container/feature
---- @ngrx/router-store dispatch router navigation through store
---- mgrx/data abstract ngrx entity code (moins intéressnat car moins de custom control)
