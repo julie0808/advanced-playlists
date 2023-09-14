@@ -91,20 +91,42 @@ app.get(`${rootUrl}/tags`, (req, res) => {
   ;(async () => {
     qry = `
     SELECT 
-      tag_id as id, 
-      title, 
-      CASE WHEN parent_tag_id is null THEN 0 ELSE parent_tag_id END as parent_tag_id, 
-      color, 
-      description,
-      playlist_id
-    FROM tag 
+      t.tag_id as id, 
+      t.title, 
+      t.color,
+      CASE WHEN parent_tag_id is null 
+        THEN 0 
+        ELSE parent_tag_id 
+        END as parent_tag_id, 
+      ( SELECT jsonb_agg(json_ressource)
+        FROM (
+          SELECT
+            tt.tag_id as id, 
+            tt.title, 
+            t.color, -- parent's color
+            tt.parent_tag_id, 
+            null as lst_children_tag,
+            tt.description,
+            tt.playlist_id,
+            'unchanged' as status
+          FROM 		  tag tt
+          WHERE 		tt.parent_tag_id = t.tag_id
+          ORDER BY  tt.title
+        ) json_ressource
+      ) as lst_children_tag,
+      t.description,
+      t.playlist_id,
+      'unchanged' as status
+    FROM    tag t
+    WHERE   t.parent_tag_id is null
+      OR    t.parent_tag_id = 0
     `;
 
     if (playlist_id !== 'none'){
-      qry += `WHERE playlist_id = ($1) `;
+      qry += ` AND playlist_id = ($1) `;
     }
 
-    qry += `ORDER BY title `;
+    qry += `ORDER BY t.title `;
 
     if (playlist_id !== 'none'){
       const { rows } = await pool.query(qry, [playlist_id]);

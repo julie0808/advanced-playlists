@@ -5,10 +5,10 @@ import { HttpClient, HttpHeaders, HttpParams, HttpContext } from '@angular/commo
 import { CACHEABLE } from "../shared/cache.interceptor";
 import { ErrorService } from "../shared/error/error/error-service";
 
-import { ITag } from "../tags/tag-model";
+import { ITag } from "../tags/tag.model";
 import { IVideo } from "./video.model";
 
-import { TagService } from "../tags/tag-service";
+import { TagService } from "../tags/tag.service";
 import { IPlaylist } from "./playlist.model";
 
 import { StatusCode, ActionCode } from "../shared/global-model";
@@ -141,16 +141,21 @@ export class VideoService {
         let associatedVideoTagsWithInfo: ITag[] = [];
         let artistsTags: ITag[] = [];
         let otherTags: ITag[] = [];
+
+        console.log('ass',associatedVideoTags, videoTagAssociation, tagsinformation);
     
         if (typeof associatedVideoTags !== 'undefined') {
+          console.log(1);
           associatedVideoTagsWithInfo = associatedVideoTags.tags.map( (avt: any) => {
             const checkForTags = tagsinformation.find(ti => ti.id === avt.id) as ITag;
-
+            console.log(1.5, checkForTags);
             if (typeof checkForTags !== 'undefined') {
+              console.log(2);
               return checkForTags;
             }
           });
 
+          console.log(associatedVideoTagsWithInfo);
           if (typeof associatedVideoTagsWithInfo.length) {
             artistsTags = associatedVideoTagsWithInfo.filter(tag => {
               if ( tag.parent_tag_id === 55 ) {

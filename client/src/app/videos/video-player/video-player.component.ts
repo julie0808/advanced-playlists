@@ -2,7 +2,7 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { EMPTY, Subject } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
-import { VideoService } from '../video-service';
+import { VideoService } from '../video.service';
 import { IVideo, VideoPlayerFormats } from '../video.model';
 
 import { Store } from '@ngrx/store';

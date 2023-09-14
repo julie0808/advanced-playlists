@@ -1,8 +1,12 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
-import { TagService } from '../tag-service';
+import { ITag } from '../tag.model';
+
+import { Store } from '@ngrx/store';
+import { State, getTags } from '../state/tag.reducer';
+import * as TagActions from '../state/tag.action';
 
 @Component({
   selector: 'app-tag-list',
@@ -10,19 +14,26 @@ import { TagService } from '../tag-service';
   styleUrls: ['tag-list.component.scss'],
   encapsulation : ViewEncapsulation.None
 })
-export class TagListComponent {
+export class TagListComponent implements OnInit {
 
   private errorMessageSubject = new Subject<string>();
   errorMessage$ = this.errorMessageSubject.asObservable();
 
-  tagGroups$ = this.tagService.tagsFormatedForGrouping$;
+  tagGroups$!: Observable<ITag[]>;
 
-  constructor(private route: ActivatedRoute,
-              private tagService: TagService,
-              private router: Router) { 
+  constructor(
+    private route: ActivatedRoute,
+    private store: Store<State>,
+    private router: Router) { 
+  }
+
+  ngOnInit(): void {
+    this.tagGroups$ = this.store.select(getTags);
+    this.store.dispatch(TagActions.loadTags());
   }
 
   editTag(objectId: number) {
+    this.store.dispatch(TagActions.setCurrentTag({ tagId: objectId }));
     this.router.navigate([objectId, 'edit'], {relativeTo: this.route, queryParamsHandling: 'preserve'});
   }
 

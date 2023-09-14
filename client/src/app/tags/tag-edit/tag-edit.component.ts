@@ -1,14 +1,18 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { NonNullableFormBuilder, Validators } from '@angular/forms';
-import { EMPTY, Subject, Subscription } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
 
-import { ITag, ITagForm } from '../tag-model';
-import { TagService } from '../tag-service';
-import { catchError, tap } from 'rxjs/operators';
+import { ITag, ITagForm } from '../tag.model';
+import { TagService } from '../tag.service';
+import { tap } from 'rxjs/operators';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { StatusCode } from 'src/app/shared/global-model';
 import { IPlaylist } from 'src/app/videos/playlist.model';
+
+import { Store } from '@ngrx/store';
+import { State, getCurrentTag, getParentTags } from '../state/tag.reducer';
+import * as TagActions from '../state/tag.action';
 
 @Component({
   selector: 'app-tag-edit',
@@ -20,7 +24,6 @@ export class TagEditComponent implements OnInit, OnDestroy {
 
   private idSub!: Subscription;
   tag!: ITag;
-  editMode: boolean = false;
   selectedPlaylist!: IPlaylist;
   
   tagForm: ITagForm = this.fb.group({
@@ -33,27 +36,13 @@ export class TagEditComponent implements OnInit, OnDestroy {
   private errorMessageSubject = new Subject<string>();
   errorMessage$ = this.errorMessageSubject.asObservable();
 
-  lstValidTagGroup$ = this.tagService.validTagGroups$
-    .pipe(
-      tap(tags => {
-        const noneOption = new ITag();
-        noneOption.title = 'None';
-        tags.unshift(noneOption)
-      })
-    );
-
-  selectedTag$ = this.tagService.selectedTag$
-    .pipe(
-      catchError(err => {
-        this.errorMessageSubject.next(err);
-        return EMPTY;
-      })
-    )
+  tagGroupChoices$!: Observable<ITag[]>;
 
   selectedPlaylist$ = this.tagService.playlistSelectedAction$;
 
   constructor(private route: ActivatedRoute,
               private router: Router,
+              private store: Store<State>,
               private fb: NonNullableFormBuilder,
               private messageService: MessageService,
               private confirmationService: ConfirmationService,
@@ -62,9 +51,18 @@ export class TagEditComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
 
-    this.selectedTag$.subscribe(tag => {
-      this.displayTag(tag);
-    })
+    this.store.select(getCurrentTag)
+      .subscribe(tag => {
+        this.displayTag(tag);
+      })
+
+    this.tagGroupChoices$ = this.store.select(getParentTags).pipe(
+      tap(tags => {
+        const noneOption = new ITag();
+        noneOption.title = 'None';
+        tags.unshift(noneOption)
+      })
+    );
 
     this.selectedPlaylist$.subscribe(playlist => {
       this.selectedPlaylist = playlist;
@@ -73,21 +71,50 @@ export class TagEditComponent implements OnInit, OnDestroy {
     this.idSub = this.route.params 
       .subscribe(
         (params: Params) => {
-          this.resetForm();
           const id = +params['id'];
           if ( id !== 0 ){
-            this.setSelectedTag(id);
-            this.editMode = id !== 0;
+            this.store.dispatch(TagActions.setCurrentTag({ tagId: id }));
+          } else {
+            this.store.dispatch(TagActions.setCurrentTag({ tagId: 0 }));
+            this.resetForm();
           }
         }
       )
 
   }
 
-  removeColor() {
+  displayTag(tag: ITag){
+    this.tag = tag;
+
     this.tagForm.patchValue({
-      color: ''
+      title: tag.title,
+      color: tag.color,
+      description: tag.description,
+      parent_tag_id: tag.parent_tag_id
     })
+  }
+
+  addTag() {
+    const newTag: ITag = new ITag();
+    newTag.title = this.tagForm.value['title']!;
+    newTag.color = this.tagForm.value['color']!;
+    newTag.description = this.tagForm.value['description']!;
+    newTag.parent_tag_id = this.tagForm.value['parent_tag_id']!;
+    newTag.status = StatusCode.added;
+    newTag.playlist_id = this.selectedPlaylist.id;
+    
+    this.store.dispatch(TagActions.createTag({ tag: newTag }));
+    this.resetPage();
+  }
+
+  updateTag() {
+    console.log('UPDATE');
+    if (this.tagForm.valid){
+      const updatedTag = {...this.tag, ...this.tagForm.value};
+      updatedTag.status = StatusCode.updated;
+      this.store.dispatch(TagActions.updateTag({ tag: updatedTag }));
+      this.resetPage();
+    }
   }
 
   confirmDeletion() {
@@ -105,65 +132,30 @@ export class TagEditComponent implements OnInit, OnDestroy {
     });
   }
 
-  displayTag(tag: ITag){
-
-    if (this.tagForm) {
-      this.tagForm.reset();
-    }
-
-    this.tag = tag;
-
-    this.tagForm.patchValue({
-      title: tag.title,
-      color: tag.color,
-      description: tag.description,
-      parent_tag_id: tag.parent_tag_id
-    })
-  }
-
-  setSelectedTag(id: number): void {
-    this.tagService.selectedTagChanged(id);
-  }
-
-  addTag() {
-    const newTag: ITag = new ITag();
-    newTag.title = this.tagForm.value['title']!;
-    newTag.color = this.tagForm.value['color']!;
-    newTag.description = this.tagForm.value['description']!;
-    newTag.parent_tag_id = this.tagForm.value['parent_tag_id']!;
-    newTag.status = StatusCode.added;
-    newTag.playlist_id = this.selectedPlaylist.id;
-    
-    this.tagService.addTag(newTag);
-    this.resetPage();
-  }
-
-  updateTag() {
-    if (this.tagForm.valid){
-      const updatedTag = {...this.tag, ...this.tagForm.value};
-      updatedTag.status = StatusCode.updated;
-      this.tagService.updateTag(updatedTag);
-      this.resetPage();
-    }
-  }
-
   deleteTag() {
-    const deletedTag = this.tag;
-    deletedTag.status = StatusCode.deleted;
+    const deletedTag = {
+      ...this.tag,
+      status: StatusCode.deleted
+    };
 
-    this.tagService.updateTag(deletedTag);
+    this.store.dispatch(TagActions.deleteTag({ tagId: deletedTag.id }));
     this.resetPage();
   }
 
   resetForm(){
     this.tagForm.reset();
-    this.editMode = false;
   }
 
   resetPage(){
     this.resetForm();
-    //this.router.navigate(['/tags']);
+    this.store.dispatch(TagActions.setCurrentTag({ tagId: 0 }));
     this.router.navigate(['../../'], {relativeTo: this.route})
+  }
+
+  removeColor() {
+    this.tagForm.patchValue({
+      color: ''
+    })
   }
 
   ngOnDestroy(): void {

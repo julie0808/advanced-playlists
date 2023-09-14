@@ -4,7 +4,7 @@ import { map, tap } from 'rxjs/operators';
 import { Subject, combineLatest, Observable } from 'rxjs';
 import { ConfirmationService, MessageService } from 'primeng/api';
 
-import { VideoService } from '../video-service';
+import { VideoService } from '../video.service';
 import { IVideo } from '../video.model';
 import { IPlaylist } from '../playlist.model';
 

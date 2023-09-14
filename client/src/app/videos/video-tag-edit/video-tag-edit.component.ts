@@ -3,9 +3,9 @@ import { BehaviorSubject, EMPTY, Subject, Subscription } from 'rxjs';
 import { NonNullableFormBuilder } from '@angular/forms';
 import { catchError, map } from 'rxjs/operators';
 
-import { TagService } from 'src/app/tags/tag-service';
-import { VideoService } from '../video-service';
-import { ITag } from '../../tags/tag-model';
+import { TagService } from 'src/app/tags/tag.service';
+import { VideoService } from '../video.service';
+import { ITag } from '../../tags/tag.model';
 import { IVideo, IVideoForm } from '../video.model';
 import { ActivatedRoute, Params } from '@angular/router';
 

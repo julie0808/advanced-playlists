@@ -1,7 +1,7 @@
 <section class="tag-edit">
   <div>
-    <h2 *ngIf="editMode">Edit tag</h2>
-    <h2 *ngIf="!editMode">Add tag</h2>
+    <h2 *ngIf="tag.id !== 0">Edit tag</h2>
+    <h2 *ngIf="tag.id === 0">Add tag</h2>
     <form [formGroup]="tagForm" (ngSubmit)="updateTag()" class="form" novalidate>
       <fieldset>
         <div class="form-field">
@@ -17,10 +17,10 @@
             </span>
         </div>
 
-        <div class="form-field" *ngIf="lstValidTagGroup$ | async as lstValidTagGroup">
+        <div class="form-field" *ngIf="tagGroupChoices$ | async as tagGroupChoices">
           <label for="color">Group : </label>
           <p-dropdown 
-            [options]="lstValidTagGroup" 
+            [options]="tagGroupChoices" 
             formControlName="parent_tag_id" 
             optionValue="id"
             placeholder="Select Item"
@@ -46,9 +46,9 @@
             >The form contains errors</span>
       </fieldset>
       <div class="form-action">
-        <button *ngIf="editMode" class="btn-look" type="submit">Save</button>
-        <button *ngIf="editMode" class="btn-look btn-warning" (click)="confirmDeletion()" type="button">Delete</button>
-        <button *ngIf="!editMode" class="btn-look" (click)="addTag()" type="button">Add</button>
+        <button *ngIf="tag.id !== 0" class="btn-look" type="submit">Save</button>
+        <button *ngIf="tag.id !== 0" class="btn-look btn-warning" (click)="confirmDeletion()" type="button">Delete</button>
+        <button *ngIf="tag.id === 0" class="btn-look" (click)="addTag()" type="button">Add</button>
       </div>
     </form>
   </div>

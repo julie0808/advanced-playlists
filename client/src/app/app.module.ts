@@ -12,6 +12,7 @@ import { SocialLoginModule, SocialAuthServiceConfig, GoogleLoginProvider } from 
 import { CacheInterceptor } from './shared/cache.interceptor';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { EffectsModule } from '@ngrx/effects';
 
 
 @NgModule({
@@ -26,7 +27,8 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
     HttpClientModule,
     SocialLoginModule,
     StoreModule.forRoot({}, {}),
-    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: !isDevMode() })
+    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: !isDevMode() }),
+    EffectsModule.forRoot([])
   ],
   providers: [
     { 

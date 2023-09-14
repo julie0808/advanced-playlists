@@ -7,25 +7,22 @@
           <div 
             [ngStyle]="{'background-color': tag.color !== null || tag.color !== '' ? tag.color : '#282f39' }" 
             class="tag-parent">
-            <p>{{ tag.title }}</p>
+            <p>{{ tag.title }} <span *ngIf="tag.lst_children_tag != null">({{ tag.lst_children_tag.length }})</span></p>
             <a 
               class="link-look" 
-              *ngIf="tag.title !== 'Other'"
               (click)="editTag(tag.id)">
               Edit
             </a>
           </div>
         </ng-template>
 
-        <ng-template pTemplate="content">
+        <ng-template pTemplate="content" *ngIf="tag.lst_children_tag != null && tag.lst_children_tag.length">
           <p-scrollPanel [style]="{width: '100%', height: '200px'}">
-            <ul 
-              *ngIf="tag.lst_children_tag_id.length"
-              class="tag-children">
-              <li *ngFor="let tagchildren of tag.lst_children_tag_id"
+            <ul class="tag-children">
+              <li *ngFor="let tagchildren of tag.lst_children_tag"
               [ngStyle]="{'background': (tagchildren.parent_tag_id === 0 || tagchildren.parent_tag_id === null) && (tag.color !== null || tag.color !== '') ? tagchildren.color : '#353f4d' }">
                 <div class="tag-label">
-                  <span>{{ tagchildren.title }} ({{ tagchildren.nb_associated_videos }})</span>
+                  <span>{{ tagchildren.title }} <span *ngIf="tagchildren.nb_associated_videos > 0">({{ tagchildren.nb_associated_videos }})</span></span>
                   <a class="link-look" (click)="editTag(tagchildren.id)">Edit</a>
                 </div>
               </li>

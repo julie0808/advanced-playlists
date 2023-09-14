@@ -23,8 +23,6 @@ const initialState: VideoState = {
 
 
 
-
-
 // selectors
 const getVideoFeatureState = createFeatureSelector<VideoState>('videos');
 
@@ -35,14 +33,11 @@ export const getCurrentVideo = createSelector(
 
 
 
-
-
 // functions
 export const videoReducer = createReducer<VideoState>(
   initialState,
   on(
     VideoActions.setCurrentVideo,
-    // "action" below corresponds to the Actions data (props)
     (state, action): VideoState => {
       return {
         ...state,

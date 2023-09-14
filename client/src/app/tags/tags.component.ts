@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { Observable, tap } from 'rxjs';
 
 import { IPlaylist } from '../videos/playlist.model';
-import { TagService } from './tag-service';
+import { TagService } from './tag.service';
 
 @Component({
   selector: 'app-tags',

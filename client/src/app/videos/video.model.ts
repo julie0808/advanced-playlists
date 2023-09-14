@@ -1,5 +1,5 @@
 import { FormGroup, FormControl } from "@angular/forms";
-import { ITag } from "../tags/tag-model";
+import { ITag } from "../tags/tag.model";
 import { StatusCode } from "../shared/global-model";
 
 export interface IVideo {

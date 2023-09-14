@@ -6,6 +6,11 @@ import { TagEditComponent } from './tag-edit/tag-edit.component';
 import { TagListComponent } from './tag-list/tag-list.component';
 import { TagsComponent } from './tags.component';
 
+import { StoreModule } from '@ngrx/store';
+import { tagReducer } from './state/tag.reducer';
+import { EffectsModule } from '@ngrx/effects';
+import { TagEffects } from './state/tag.effect';
+
 @NgModule({
   imports: [
     SharedModule,
@@ -20,7 +25,9 @@ import { TagsComponent } from './tags.component';
           }
         ]
       }
-    ])
+    ]),
+    StoreModule.forFeature('tags', tagReducer),
+    EffectsModule.forFeature([TagEffects])
   ],
   declarations: [
     TagListComponent,

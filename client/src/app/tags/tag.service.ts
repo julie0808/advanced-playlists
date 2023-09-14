@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, combineLatest, merge, Observable, Subject, of, empty } from 'rxjs';
 import { catchError, concatMap, map, scan, tap, shareReplay, filter, switchMap } from 'rxjs/operators';
 
-import { ITag } from './tag-model';
+import { ITag } from './tag.model';
 import { ErrorService } from '../shared/error/error/error-service';
 import { StatusCode } from '../shared/global-model';
 import { IPlaylist } from '../videos/playlist.model';
@@ -23,9 +23,6 @@ export class TagService {
   private tagModifiedSubject: Subject<ITag> = new Subject<ITag>();
   tagModifiedAction$: Observable<ITag> = this.tagModifiedSubject.asObservable();
   
-  private tagSelectedSubject = new BehaviorSubject<number>(0);
-  tagSelectedAction$ = this.tagSelectedSubject.asObservable();    
-
   playlists$: Observable<IPlaylist[]> = this.http.get<any>(this.apiURL + '/playlist')
     .pipe(
       map( playlists => {
@@ -114,7 +111,7 @@ export class TagService {
         });
 
         const tagsWithChildren = alphaSortedArray.map(tag => {
-          tag.lst_children_tag_id = tags.filter(t => t.parent_tag_id === tag.id);
+          tag.lst_children_tag = tags.filter(t => t.parent_tag_id === tag.id);
           return tag;
         });
 
@@ -124,98 +121,91 @@ export class TagService {
       catchError(err => this.errorService.handleError(err))
     );
 
-  tagsFormatedForGrouping$: Observable<ITag[]> = this.tagsModified$
-    .pipe(
-      map(tag => {
-        const finalTagList: ITag[] = [];
+    // still used in videoList. will come to disappear
+  tagsFormatedForGrouping$: Observable<ITag[]> = this.tagsModified$;
 
-        // standalone parents need to be put under "Other" 
-        // tag group for multiselect from PrimeNg to work properly
-        const otherTagGroup: ITag = new ITag();
-        otherTagGroup.title = 'Other';   
-        otherTagGroup.color = '#000000';     
 
-        tag.map(t => {
-          if ( t.lst_children_tag_id.length > 0 ){
-            finalTagList.push(t); 
-          } else if ( t.parent_tag_id === 0 || t.parent_tag_id === null) {
-            otherTagGroup.lst_children_tag_id.push(t);
-          }
-        });
-
-        finalTagList.push(otherTagGroup);
-
-        return finalTagList;
-      })
-    );
-  
-  validTagGroups$: Observable<ITag[]> = this.tagsModified$
-  .pipe(
-    map(tag => {
-      return tag.filter(tag => tag.parent_tag_id === 0 || tag.parent_tag_id === null);
-    })
-  );
-
-  selectedTag$ = combineLatest([
-    this.tagsModified$,
-    this.tagSelectedAction$
-  ]).pipe(
-    map( ([tags, selectedTagId]) => {
-      if ( selectedTagId !== 0 ){
-        const tagFound = tags.find( tag => tag.id === selectedTagId);
-        
-        if (tagFound !== undefined){
-          return tagFound;
-        } else {
-          // this.errorService.handleError("Tag inexistant")
-          // todo - handle error correctly. function is expecting a ITag...
-          // but we should redirect to homepage with correct error message
-          const emptyTag: ITag = new ITag();
-          emptyTag.status = StatusCode.unchanged;
-          return emptyTag;
-        }
-      } else {
-        // todo instanciate ITag correctly...
-        const emptyTag: ITag = new ITag();
-        emptyTag.status = StatusCode.unchanged;
-        return emptyTag;
-      }     
-    }),
-    shareReplay(1)
-  );
 
   constructor(private http: HttpClient,
     private errorService: ErrorService) {}
-    
-  saveTagToBackend(tag: ITag): Observable<ITag> {
-    if (tag.status === StatusCode.added) {
-      const body = JSON.stringify(tag);
 
-      return this.http.post<ITag>(this.apiRootURL, body, { headers: this.headers })
+  getTags(): Observable<ITag[]> {
+    return this.playlistSelectedAction$
+    .pipe(
+      switchMap( (playlistId: IPlaylist) => {
+        return this.http.get<ITag[]>(this.apiRootURL, {
+          params: {
+            'playlist_id' : playlistId.id 
+          }
+        })
+          .pipe(
+            catchError(err => this.errorService.handleError(err))
+          );
+      })
+    );
+  }
+
+  getPlaylists(): Observable<IPlaylist[]> {
+    return this.http.get<any>(this.apiURL + '/playlist')
+    .pipe(
+      map( playlists => {
+        const finalPlaylistList: IPlaylist[] = playlists.map( (playlist: any) => {
+          const playlistInfo: IPlaylist = {
+            id: playlist.id,
+            title: playlist.title
+          };
+          return playlistInfo;
+        });
+        return finalPlaylistList;
+      }),
+      catchError(err => this.errorService.handleError(err))
+    );
+  }
+
+  createTag(tag: ITag): Observable<ITag> {
+    const body = JSON.stringify(tag);
+
+    return this.http.post<ITag>(this.apiRootURL, body, { headers: this.headers })
       .pipe(
         map(tagReceived => {
-          tag.id = tagReceived.id;
-          return tag;
+          const updatedTag: ITag = { ...tag, ...tagReceived };
+          return updatedTag;
         }),
         catchError(err => this.errorService.handleError(err))
       )
+  }
+
+  updateTag(tag: ITag): Observable<ITag> {
+    const body = JSON.stringify(tag);
+
+    return this.http.put<ITag>(this.apiRootURL, body, { headers: this.headers })
+      .pipe(
+        map(() => tag),
+        catchError(err => this.errorService.handleError(err))
+      )
+  }
+
+  deleteTag(id: number): Observable<number> {
+    return this.http.delete<ITag>(`${this.apiRootURL}/${id}`, {headers: this.headers})
+      .pipe(
+        map(() => id),
+        catchError(err => this.errorService.handleError(err))
+      );
+  }
+    
+  saveTagToBackend(tag: ITag): Observable<ITag> {
+    if (tag.status === StatusCode.added) {
+      return this.createTag(tag)
     }
 
     if (tag.status === StatusCode.deleted) {
-      return this.http.delete<ITag>(`${this.apiRootURL}/${tag.id}`, {headers: this.headers})
-        .pipe(
-          map(() => tag),
-          catchError(err => this.errorService.handleError(err))
-        );
+      return this.deleteTag(tag.id).pipe(map(()=> tag));
     }
+
     if (tag.status === StatusCode.updated) {
-      const body = JSON.stringify(tag);
-      return this.http.put<ITag>(this.apiRootURL, body, { headers: this.headers })
-        .pipe(
-          map(() => tag),
-          catchError(err => this.errorService.handleError(err))
-        )
+      return this.updateTag(tag);
     }
+
     // fallback, return received tag
     return of(tag);
   }
@@ -240,14 +230,6 @@ export class TagService {
   
   addTag(newTag: ITag): void {
     this.tagModifiedSubject.next(newTag);
-  }
-
-  updateTag(updatedTag: ITag): void {
-    this.tagModifiedSubject.next(updatedTag);
-  }
-
-  selectedTagChanged(selectedTagId: number): void {
-    this.tagSelectedSubject.next(selectedTagId);
   }
 
   sortAppByPlaylist(playlist: IPlaylist): void {

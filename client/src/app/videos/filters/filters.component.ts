@@ -1,11 +1,14 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 
-import { EMPTY, Subject } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
 
-import { ITag } from 'src/app/tags/tag-model';
-import { TagService } from 'src/app/tags/tag-service';
-import { VideoService } from '../video-service';
+import { ITag } from 'src/app/tags/tag.model';
+import { VideoService } from '../video.service';
+
+import { Store } from '@ngrx/store';
+import { State, getTags } from '../../tags/state/tag.reducer';
+import * as TagActions from '../../tags/state/tag.action';
+import { TagService } from 'src/app/tags/tag.service';
 
 @Component({
   selector: 'app-filters',
@@ -24,12 +27,25 @@ export class FiltersComponent implements OnInit {
   private errorMessageSubject = new Subject<string>();
   errorMessage$ = this.errorMessageSubject.asObservable();
 
+  //tags$!: Observable<ITag[]>;
+
   tags$ = this.tagService.tagsFormatedForGrouping$;
 
-  constructor(private tagService: TagService,
-              private videoService: VideoService) { }
+  constructor(
+    private store: Store<State>,
+    private tagService: TagService,
+    private videoService: VideoService) { }
 
   ngOnInit(): void {
+    /*UNFINISHED (and not working)
+    this.store.select(getTags).subscribe(
+      tags => {
+        this.tagList = tags.filter(tag => tag.id !== 55);
+        this.artistTagList = tags.filter(tag => tag.id === 55);
+      }
+    );*/
+    this.store.dispatch(TagActions.loadTags());
+
     this.tags$.subscribe(tags => {
       this.tagList = tags.filter(tag => tag.id !== 55);
       this.artistTagList = tags.filter(tag => tag.id === 55);

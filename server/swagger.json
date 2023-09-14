@@ -230,13 +230,41 @@
   },
   "definitions": {
     "Tag": {
-      "required": ["id", "title"],
+      "required": [
+        "id", 
+        "title",
+        "color",
+        "description",
+        "parent_tag_id",
+        "lst_children_tag",
+        "playlist_id",
+        "status"
+      ],
       "properties": {
         "id": {
           "type": "integer",
           "uniqueItems": true
         },
         "title": {
+          "type": "string"
+        },
+        "color": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "parent_tag_id": {
+          "type": "integer"
+        },
+        "lst_children_tag": {
+          "type": "array",
+          "$ref": "#/definitions/Tag"
+        },
+        "playslist_id": {
+          "type": "integer"
+        },
+        "status": {
           "type": "string"
         }
       }

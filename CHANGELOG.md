@@ -6,14 +6,20 @@ git tag -a v1.3.0 -m "Filtre pour artiste et choix de playlist"
 git push origin v1.3.0
 
 ## NGRX
-ajouter les unsubscribe (pas encore vu dans le course)
-je vais avoir le même problème avec tout ce qui est loadé en async (+ side effect dans le cas de liste de video)
+- finish integration in tag manager
+- prendre une décision sur la nomenclature ITag, IPlaylist
 
-quand le storing de la liste des videos sera faite, je pourrais considérer faire un selecteur combiné; currentVideoPlaying devenant seulement le youtubeuniqueid pour alléger
+ajouter les unsubscribe (pas encore vu dans le course)
 
 autre non side effect : currentPlaylist, isLoading, all the sorting params, videoSelect (edit), selectedTag (edit)
 avec side effect : videoList, tagList...
 app.state: isLoading
+
+## NGRX videolist
+- video player : redo the datastream for selectedvideo quand on va loader la liste complète des vidéos
+- quand le storing de la liste des videos sera faite, je pourrais considérer faire un selecteur combiné; currentVideoPlaying devenant seulement le youtubeuniqueid pour alléger
+
+
 
 ## FOCUS
 enregistrer les tags de video doit pas écraser ceux de dautres playlist
@@ -32,6 +38,7 @@ enregistrer les tags de video doit pas écraser ceux de dautres playlist
 
 
 ### lineup
+- HOTFIX tester ce qui arrive si je supprime un tag parent qui a des parents, ou donne un parent à un tag qui a des enfants
 - HOTFIX associated count to tag is not updated after modifying a video 
 - HOTFIX les requêtes dans le www.js devrait considérer la playlist pour être moins lourd (tags associations et peut-être +)
 - FEATURE HOTFIX avoir le loading présent quand on sort / unsort + régler autre bogue de quand il n'apparait pas
@@ -67,16 +74,26 @@ enregistrer les tags de video doit pas écraser ceux de dautres playlist
 - FEATURE error handling avec interface et +
 
 
+
+
+
 # WIP Release 2.1.0
 
 ## Ajouté
 - Implantation du Store NgRx sur la liste de vidéos
+
+## Modifié
+- Ajuster le vidéo sélectionné pour utiliser un ID plutôt qu'un objet vidéo
+
 
 
 # WIP Release 2.0.0
 
 ## Ajouté
 - Implantation du Store NgRx sur le lecteur de vidéo et le gestionnaire de tags
+
+## Retiré
+- Tag manager : compte des vidéos ayant le tag associé
 
 
 
