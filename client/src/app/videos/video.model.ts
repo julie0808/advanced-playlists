@@ -1,17 +1,17 @@
 import { FormGroup, FormControl } from "@angular/forms";
-import { ITag } from "../tags/tag.model";
+import { Tag } from "../tags/tag.model";
 import { StatusCode } from "../shared/global-model";
 
-export interface IVideo {
+export interface Video {
   title: string; 
   youtubeId: string;
   uniqueYoutubeId: string; // identifiant unique d'un item dans une playlist
   duration: string; // should be valid time format. // not included in "playlistItems" / snippet, view https://developers.google.com/youtube/v3/docs/videos/list
   thumbnailPath: string;
   dateModified: string; // for any change to tags. should be a valid date format. correspond to date it was modified by ME in this app
-  tags: ITag[];
+  tags: Tag[];
   rating: number;
-  artists: ITag[]; 
+  artists: Tag[]; 
   publishedBy: string; // original Channel name on which it was published
   youtubeStatus: string;
   status: StatusCode;
@@ -19,24 +19,24 @@ export interface IVideo {
 }
 
 // créer une instance par défaut de vidéo
-export class IVideo {
+export class Video {
   title = 'Video test'; 
   youtubeId = '12345678910';
   uniqueYoutubeId = '';
   duration = ''; 
   thumbnailPath = '';
   dateModified = ''; 
-  tags = [] as ITag[];
+  tags = [] as Tag[];
   rating = 0;
-  artists = [] as ITag[];
+  artists = [] as Tag[];
   publishedBy = '';
   youtubeStatus = 'published';
   status = StatusCode.invalid;
 }
 
-export interface IVideoForm extends FormGroup<{
-  artists: FormControl<ITag[]>;
-  tags: FormControl<ITag[]>;
+export interface VideoForm extends FormGroup<{
+  artists: FormControl<Tag[]>;
+  tags: FormControl<Tag[]>;
   rating: FormControl<number>;
 }> {}
  

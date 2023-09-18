@@ -2,10 +2,10 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, Subject } from 'rxjs';
 
-import { ITag } from '../tag.model';
+import { Tag } from '../tag.model';
 
 import { Store } from '@ngrx/store';
-import { State, getTags } from '../state/tag.reducer';
+import { State, getAllTags } from '../state/tag.reducer';
 import * as TagActions from '../state/tag.action';
 
 @Component({
@@ -19,7 +19,7 @@ export class TagListComponent implements OnInit {
   private errorMessageSubject = new Subject<string>();
   errorMessage$ = this.errorMessageSubject.asObservable();
 
-  tagGroups$!: Observable<ITag[]>;
+  tagGroups$: Observable<Tag[]> = this.store.select(getAllTags);
 
   constructor(
     private route: ActivatedRoute,
@@ -28,7 +28,6 @@ export class TagListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.tagGroups$ = this.store.select(getTags);
     this.store.dispatch(TagActions.loadTags());
   }
 

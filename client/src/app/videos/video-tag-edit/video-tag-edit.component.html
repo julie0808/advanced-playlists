@@ -3,21 +3,23 @@
 
   <form [formGroup]="videoTagForm" (ngSubmit)="updateVideo()" class="form" novalidate>
     <fieldset>
-      <div class="form-field" *ngIf="artistsTags$ | async as artistTagList">
-        <label for="artistsTagIds">Artists :</label>
+      <div class="form-field" *ngIf="artistTagList$ | async as artistTagList">
+        <label for="artistTagList">Artists :</label>
         <p-multiSelect 
           [options]="artistTagList"
           formControlName="artists"
+          dataKey="id"
           optionLabel="title"
           defaultLabel="Select artists"
           display="chip">   
         </p-multiSelect>
       </div>
-      <div class="form-field" *ngIf="tags$ | async as tagList">
+      <div class="form-field" *ngIf="tagList$ | async as tagList">
         <label for="tagIds">Tags :</label>
         <p-multiSelect 
           [options]="tagList" 
           formControlName="tags"
+          dataKey="id"
           [group]="true"
           optionLabel="title"
           optionGroupLabel="title"

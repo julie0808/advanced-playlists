@@ -1,4 +1,4 @@
-<div 
+<!--<div 
   class="playlist-container"
   *ngIf="playlistList$ | async as playlistList">
     <p class="playlist-container--title">Current playlist: </p>
@@ -10,14 +10,13 @@
       autoWidth="false"
       class="playlist-container--dropdown"
       optionLabel="title"></p-dropdown>
-    <!--<a (click)="updateFromYoutube()" href="">Update from Youtube</a>-->
-</div>
+</div>-->
 
-<div *ngIf="(isLoading$ | async) === true">
+<!--<div *ngIf="(isLoading$ | async) === true">
   <i class="pi pi-spin pi-spinner"></i> Video list is loading...
-</div>
+</div>-->
 
-<section *ngIf="(isLoading$ | async) === false">
+<section>
   <div 
     class="video--total-count"
     *ngIf="vm$ | async as vm">
@@ -29,10 +28,10 @@
       *ngIf="vm.sortedVideos.length === vm.allVideos.length">
       {{ vm.allVideos.length }} videos in list
     </span>
-    <p 
+    <!--<p 
       *ngIf="currentlyPlayingVideoPosition$ | async as currentlyPlayingVideoPosition">
       Currently playing : {{ currentlyPlayingVideoPosition }}
-    </p>
+    </p>-->
     <p><a href="#" (click)="scrollToCurrentlyPlaying(videoList)"></a></p>
   </div>
 
@@ -92,7 +91,6 @@
     
             <ul class="video-info--tag-list">
               <ng-container *ngFor="let tag of video.tags">
-                <!---->
                 <li 
                 *ngIf="selectedPlaylist.id === tag.playlist_id"
                   [ngStyle]="{'background': tag.color !== null || tag.color !== '' ? tag.color : '#282f39' }"

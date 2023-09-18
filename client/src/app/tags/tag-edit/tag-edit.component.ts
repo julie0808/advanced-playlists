@@ -3,7 +3,7 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 import { NonNullableFormBuilder, Validators } from '@angular/forms';
 import { Observable, Subject, Subscription } from 'rxjs';
 
-import { ITag, ITagForm } from '../tag.model';
+import { Tag, TagForm } from '../tag.model';
 import { TagService } from '../tag.service';
 import { tap } from 'rxjs/operators';
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -23,10 +23,10 @@ import * as TagActions from '../state/tag.action';
 export class TagEditComponent implements OnInit, OnDestroy {
 
   private idSub!: Subscription;
-  tag!: ITag;
-  selectedPlaylist!: IPlaylist;
+  tag!: Tag;
+  playlistHardcoded = 'PLwgftAdEcD4rXHmDdFTFI8Hch3BfWBQIt';
   
-  tagForm: ITagForm = this.fb.group({
+  tagForm: TagForm = this.fb.group({
     title: this.fb.control('', Validators.required),
     color: this.fb.control('#777777'),
     description: this.fb.control(''),
@@ -36,9 +36,7 @@ export class TagEditComponent implements OnInit, OnDestroy {
   private errorMessageSubject = new Subject<string>();
   errorMessage$ = this.errorMessageSubject.asObservable();
 
-  tagGroupChoices$!: Observable<ITag[]>;
-
-  selectedPlaylist$ = this.tagService.playlistSelectedAction$;
+  tagGroupChoices$!: Observable<Tag[]>;
 
   constructor(private route: ActivatedRoute,
               private router: Router,
@@ -58,15 +56,11 @@ export class TagEditComponent implements OnInit, OnDestroy {
 
     this.tagGroupChoices$ = this.store.select(getParentTags).pipe(
       tap(tags => {
-        const noneOption = new ITag();
+        const noneOption = new Tag();
         noneOption.title = 'None';
         tags.unshift(noneOption)
       })
     );
-
-    this.selectedPlaylist$.subscribe(playlist => {
-      this.selectedPlaylist = playlist;
-    })
     
     this.idSub = this.route.params 
       .subscribe(
@@ -83,7 +77,7 @@ export class TagEditComponent implements OnInit, OnDestroy {
 
   }
 
-  displayTag(tag: ITag){
+  displayTag(tag: Tag){
     this.tag = tag;
 
     this.tagForm.patchValue({
@@ -95,20 +89,19 @@ export class TagEditComponent implements OnInit, OnDestroy {
   }
 
   addTag() {
-    const newTag: ITag = new ITag();
+    const newTag: Tag = new Tag();
     newTag.title = this.tagForm.value['title']!;
     newTag.color = this.tagForm.value['color']!;
     newTag.description = this.tagForm.value['description']!;
     newTag.parent_tag_id = this.tagForm.value['parent_tag_id']!;
     newTag.status = StatusCode.added;
-    newTag.playlist_id = this.selectedPlaylist.id;
+    newTag.playlist_id = this.playlistHardcoded;
     
     this.store.dispatch(TagActions.createTag({ tag: newTag }));
     this.resetPage();
   }
 
   updateTag() {
-    console.log('UPDATE');
     if (this.tagForm.valid){
       const updatedTag = {...this.tag, ...this.tagForm.value};
       updatedTag.status = StatusCode.updated;

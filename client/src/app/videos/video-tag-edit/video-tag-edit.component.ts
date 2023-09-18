@@ -1,13 +1,18 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { BehaviorSubject, EMPTY, Subject, Subscription } from 'rxjs';
+import { EMPTY, Subject, Subscription } from 'rxjs';
 import { NonNullableFormBuilder } from '@angular/forms';
 import { catchError, map } from 'rxjs/operators';
-
-import { TagService } from 'src/app/tags/tag.service';
-import { VideoService } from '../video.service';
-import { ITag } from '../../tags/tag.model';
-import { IVideo, IVideoForm } from '../video.model';
 import { ActivatedRoute, Params } from '@angular/router';
+
+import { VideoService } from '../video.service';
+import { Tag } from '../../tags/tag.model';
+import { Video, VideoForm } from '../video.model';
+
+import { Store } from '@ngrx/store';
+import { State, getArtistTags, getOtherTagsForPrimeNg } from '../../tags/state/tag.reducer';
+import * as TagActions from '../../tags/state/tag.action';
+import * as VideoActions from '../state/video.action';
+import { getCurrentVideoEdited } from '../state/video.reducer';
 
 @Component({
   selector: 'app-video-tag-edit',
@@ -19,46 +24,26 @@ export class VideoTagEditComponent implements OnInit, OnDestroy {
 
   idSub!: Subscription;
   videoId!: string;
-  currentlyEditedVideo!: IVideo;
+  currentlyEditedVideo!: Video;
 
-  videoTagForm: IVideoForm = this.fb.group({
-    artists: this.fb.control( [] as ITag[]),
-    tags: this.fb.control( [] as ITag[]),
+  videoTagForm: VideoForm = this.fb.group({
+    artists: this.fb.control( [] as Tag[]),
+    tags: this.fb.control( [] as Tag[]),
     rating: this.fb.control(1)
   });
 
   private errorMessageSubject = new Subject<string>();
   errorMessage$ = this.errorMessageSubject.asObservable();
 
-  video$ = this.videoService.editedVideo$
-    .pipe(
-      map(video => {
-        return video;
-      }),
-      catchError(err => {
-        this.errorMessageSubject.next(err);
-        return EMPTY;
-      })
-    )
+  video$ = this.store.select(getCurrentVideoEdited);
+  tagList$ = this.store.select(getOtherTagsForPrimeNg);
+  artistTagList$ = this.store.select(getArtistTags);
     
-  tags$ = this.tagService.tagsFormatedForGrouping$
-    .pipe(
-      map(tags => {
-        return tags.filter(tag => tag.id !== 55);
-      })
-    );
-
-  artistsTags$ = this.tagService.tagsModified$
-    .pipe(
-      map(tags => {
-        return tags.filter(tag => tag.parent_tag_id === 55);
-      })
-    );
-
-  constructor(private tagService: TagService,
-              private videoService: VideoService,
-              private route: ActivatedRoute,
-              private fb: NonNullableFormBuilder) { }
+  constructor(
+    private videoService: VideoService,
+    private store: Store<State>,
+    private route: ActivatedRoute,
+    private fb: NonNullableFormBuilder) { }
 
   ngOnInit() {
     
@@ -66,11 +51,11 @@ export class VideoTagEditComponent implements OnInit, OnDestroy {
       .subscribe(
         (params: Params) => {
           this.videoId = params['id'];
-          this.videoService.selectedVideoIdChanged(params['id']);
+          this.store.dispatch(VideoActions.setCurrentVideoEditedId({ videoId: params['id'] }))
         }
       )
 
-    this.video$.subscribe( (video: IVideo) => {
+    this.video$.subscribe( (video: Video) => {
       this.currentlyEditedVideo = video;
       this.videoTagForm.patchValue({
         artists:  video?.artists || [],
@@ -79,15 +64,23 @@ export class VideoTagEditComponent implements OnInit, OnDestroy {
       })
     });
 
+    this.store.dispatch(TagActions.loadTags());
+
   } 
 
   updateVideo(): void {
     if (this.videoTagForm.valid){
-      this.currentlyEditedVideo.artists = this.videoTagForm.get('artists')?.value!;
-      this.currentlyEditedVideo.tags = this.videoTagForm.get('tags')?.value!;
-      this.currentlyEditedVideo.rating = this.videoTagForm.get('rating')?.value!;
 
-      this.videoService.updateVideo(this.currentlyEditedVideo);
+      const updatedVideo = {
+        ...this.currentlyEditedVideo,
+        artists: this.videoTagForm.get('artists')?.value!,
+        tags: this.videoTagForm.get('tags')?.value!,
+        rating: this.videoTagForm.get('rating')?.value!
+      }
+
+      this.currentlyEditedVideo = updatedVideo;
+
+      this.store.dispatch(VideoActions.updateVideo({ video: this.currentlyEditedVideo }));
     }
   }
 

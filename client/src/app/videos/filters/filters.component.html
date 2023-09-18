@@ -1,11 +1,12 @@
 <section class="filter-list">
   <div class="boxed-container filter-group">
-    <div class="filter-sort filter-sort--tags">
+    <div class="filter-sort filter-sort--tags" *ngIf="tagList$ | async as tagList">
       <p-multiSelect 
         [options]="tagList" 
         [(ngModel)]="selectedTagList"
         (onChange)="sortByTag()"
         [group]="true"
+        dataKey="id"
         optionLabel="title"
         optionGroupLabel="title"
         optionGroupChildren="lst_children_tag"
@@ -16,15 +17,13 @@
         </ng-template>  
       </p-multiSelect>
     </div>
-    <div class="filter-sort filter-sort--artists">
+    <div class="filter-sort filter-sort--artists" *ngIf="artistTagList$ | async as artistTagList">
       <p-multiSelect 
         [options]="artistTagList" 
         [(ngModel)]="selectedTagList"
         (onChange)="sortByTag()"
-        [group]="true"
+        dataKey="id"
         optionLabel="title"
-        optionGroupLabel="title"
-        optionGroupChildren="lst_children_tag"
         defaultLabel="Sort tags"> 
         <ng-template pTemplate="selectedItems">
           Sort by artist

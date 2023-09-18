@@ -13,13 +13,13 @@ export interface State extends AppState.State {
 
 export interface PlaylistState {
   playlists: IPlaylist[];
-  currentPlaylistId: string | null;
+  currentPlaylistId: string;
   error: string;
 }
 
 const initialState: PlaylistState = {
   playlists: [],
-  currentPlaylistId: null,
+  currentPlaylistId: 'PLwgftAdEcD4rXHmDdFTFI8Hch3BfWBQIt',
   error: ''
 }
 

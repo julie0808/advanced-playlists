@@ -1,14 +1,12 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { EMPTY, Subject } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
-import { VideoService } from '../video.service';
-import { IVideo, VideoPlayerFormats } from '../video.model';
+import { Video, VideoPlayerFormats } from '../video.model';
 
 import { Store } from '@ngrx/store';
 import { State, getCurrentVideo } from '../state/video.reducer';
-
-import { ActionCode, StatusCode } from 'src/app/shared/global-model';
+import * as VideoActions from "../state/video.action";
 
 
 @Component({
@@ -21,12 +19,11 @@ import { ActionCode, StatusCode } from 'src/app/shared/global-model';
 export class VideoPlayerComponent implements OnInit {
 
   apiLoaded = false;
-  currentVideoList!: IVideo[];
   videoPlayerStatus: VideoPlayerFormats = VideoPlayerFormats.hidden;
   videoIsPlaying: boolean = false;
   videoPlayer: any;
 
-  selectedVideo: IVideo = new IVideo();
+  selectedVideo$: Observable<Video> = this.store.select(getCurrentVideo);
 
   playerConfig = {
     controls: 1
@@ -39,28 +36,12 @@ export class VideoPlayerComponent implements OnInit {
   private errorMessageSubject = new Subject<string>();
   errorMessage$ = this.errorMessageSubject.asObservable();
   
-
-  video$ = this.videoService.videoPlaying$
-    .pipe(
-      catchError(err => {
-        this.errorMessageSubject.next(err);
-        return EMPTY;
-      })
-    );
-
-  videoList$ = this.videoService.videosSorted$
-    .pipe(
-      catchError(err => {
-        this.errorMessageSubject.next(err);
-        return EMPTY;
-      })
-    );
-
   constructor(
-    private store: Store<State>,
-    private videoService: VideoService) { }
+    private store: Store<State>) { }
 
   ngOnInit(): void {
+
+    this.store.dispatch(VideoActions.loadVideos());
     
     if (!this.apiLoaded) {
       const tag = document.createElement("script");
@@ -69,27 +50,25 @@ export class VideoPlayerComponent implements OnInit {
       this.apiLoaded = true;
     }
 
-    this.videoList$.subscribe( (videos: IVideo[]) => {
-      this.currentVideoList = videos;
-    });
-
-    this.store.select(getCurrentVideo).subscribe(
-      currentVideo => {
-        this.selectedVideo = currentVideo;
-        if ( this.videoIsValid(this.selectedVideo) && this.videoPlayerStatus === VideoPlayerFormats.hidden ) {
+    this.selectedVideo$.subscribe(
+      video => {
+        if ( this.videoIsValid(video) && this.videoPlayerStatus === VideoPlayerFormats.hidden ) {
           this.videoPlayerStatus = VideoPlayerFormats.tiny
         }
       }
-    );
+    )
 
   }
 
   videoReady(event: any) {
     this.videoPlayer = event.target;
+    this.playVideo();
   }
 
-  videoIsValid(video: IVideo) {
-    return video.status !== StatusCode.invalid;
+  videoIsValid(video: Video) {
+    // disabled; à voir si encore utile après avoir retiré videoModified
+    // return video.status !== StatusCode.invalid;
+    return true;
   }
 
   setPlayerFormat(selectedFormat: VideoPlayerFormats) {
@@ -97,11 +76,11 @@ export class VideoPlayerComponent implements OnInit {
   }
 
   playPreviousVideo() {
-    this.videoService.playVideoAction(this.currentVideoList, ActionCode.previous);
+    //this.videoService.playVideoAction(this.currentVideoList, ActionCode.previous);
   }
 
   playNextVideo() {
-    this.videoService.playVideoAction(this.currentVideoList, ActionCode.next);
+    //this.videoService.playVideoAction(this.currentVideoList, ActionCode.next);
   }
 
   pauseVideo() {
@@ -110,6 +89,7 @@ export class VideoPlayerComponent implements OnInit {
   }
 
   playVideo() {
+    console.log('playyyyy');
     this.videoIsPlaying = true;
     this.videoPlayer.playVideo();
   }
@@ -119,7 +99,7 @@ export class VideoPlayerComponent implements OnInit {
     switch(event.data) {
       case 0:
         // video has ended
-        this.videoService.playVideoAction(this.currentVideoList, ActionCode.next);
+        //this.videoService.playVideoAction(this.currentVideoList, ActionCode.next);
         this.videoIsPlaying = false;
         break;
       case -1:

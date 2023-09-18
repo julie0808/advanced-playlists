@@ -1,6 +1,6 @@
 import { createAction, props } from "@ngrx/store";
 
-import { ITag } from "../tag.model";
+import { Tag } from "../tag.model";
 
 export const setCurrentTag = createAction(
   '[Tag] Set current tag',
@@ -17,15 +17,13 @@ export const initializeCurrentTag = createAction(
 
 
 
-//////////// CRUD
-
 export const loadTags = createAction(
   '[Tag] Load'
 );
 
 export const loadTagsSuccess = createAction(
   '[Tag] Load Success',
-  props<{ tags: ITag[] }>() 
+  props<{ tags: Tag[] }>() 
 );
 
 export const loadTagsFailure = createAction(
@@ -37,12 +35,12 @@ export const loadTagsFailure = createAction(
 
 export const updateTag = createAction(
   '[Tag] Update Tag',
-  props<{ tag: ITag }>()
+  props<{ tag: Tag }>()
 );
 
 export const updateTagSuccess = createAction(
   '[Tag] Update Tag Success',
-  props<{ tag: ITag }>()
+  props<{ tag: Tag }>()
 );
 
 export const updateTagFailure = createAction(
@@ -54,12 +52,12 @@ export const updateTagFailure = createAction(
 
 export const createTag = createAction(
   '[Tag] Create Tag',
-  props<{ tag: ITag }>()
+  props<{ tag: Tag }>()
 );
 
 export const createTagSuccess = createAction(
   '[Tag] Create Tag Success',
-  props<{ tag: ITag }>()
+  props<{ tag: Tag }>()
 );
 
 export const createTagFailure = createAction(

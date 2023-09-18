@@ -124,17 +124,6 @@
         }
       }
     },
-    "/tags/associations": {
-      "get": {
-        "tags": ["Tags"],
-        "summary": "Get all associations between tags and videos",
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }       
-    }, 
     "/playlist": {
       "get": {
         "tags": ["Playlists"],
@@ -205,28 +194,17 @@
         }
       }       
     },
-    "/video/tags": {
+    "/video": {
       "get": {
         "tags": ["Videos"],
-        "summary": "Get all associated tags to all videos",
+        "summary": "Get all informations associated to videos",
         "responses": {
           "200": {
             "description": "OK"
           }
         }
       }       
-    },
-    "/video/information": {
-      "get": {
-        "tags": ["Videos"],
-        "summary": "Get informations associated to videos",
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }       
-    }       
+    }     
   },
   "definitions": {
     "Tag": {

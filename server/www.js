@@ -88,6 +88,7 @@ app.post(`${rootUrl}/tags`, (req, res) => {
 
 app.get(`${rootUrl}/tags`, (req, res) => {
   const {playlist_id} = req.query;
+  
   ;(async () => {
     qry = `
     SELECT 
@@ -122,6 +123,7 @@ app.get(`${rootUrl}/tags`, (req, res) => {
       OR    t.parent_tag_id = 0
     `;
 
+    // not yet coded and saved in database
     if (playlist_id !== 'none'){
       qry += ` AND playlist_id = ($1) `;
     }
@@ -136,20 +138,6 @@ app.get(`${rootUrl}/tags`, (req, res) => {
       res.json(rows);
     }
     
-  })().catch(err => {
-    res.json(err.stack)
-  })
-});
-
-app.get(`${rootUrl}/tags/associations`, (req, res) => {
-  ;(async () => {
-    const { rows } = await pool.query(`
-      SELECT 
-        tag_id, 
-        youtube_id as "youtubeId"
-      FROM video_tag
-      `)
-    res.json(rows);
   })().catch(err => {
     res.json(err.stack)
   })
@@ -218,7 +206,7 @@ app.delete(`${rootUrl}/tags/:id`, (req, res) => {
 
 
 ///////////////////////////////////
-//// PLAYSLIST ////////////////////
+//// PLAYLIST ////////////////////
 ///////////////////////////////////
 
 app.get(`${rootUrl}/playlist/`, (req, res) => {
@@ -346,41 +334,22 @@ app.put(`${rootUrl}/video/tags/update/:id`, (req, res) => {
   })
 });
 
-app.get(`${rootUrl}/video/tags`, (req, res) => {
+app.get(`${rootUrl}/video`, (req, res) => {
+  const {playlist_id} = req.query;
   ;(async () => {
-    const { rows } = await pool.query(`
-      SELECT DISTINCT 
-        vt.youtube_id as "youtubeId", 
-        ( SELECT jsonb_agg(json_ressource)
-          FROM (
-            SELECT
-              -- map to ITag model
-              t.tag_id as id,
-              t.title
-              FROM 		video_tag vt_agg
-              LEFT JOIN 	tag t ON t.tag_id = vt_agg.tag_id
-            WHERE 		vt_agg.youtube_id = vt.youtube_id
-          ) json_ressource
-        ) as tags
-      FROM video_tag vt
-    `)
-    res.json(rows);
-  })().catch(err => {
-    res.json(err.stack)
-  })
-});
 
-app.get(`${rootUrl}/video/full`, (req, res) => {
-  ;(async () => {
-    const { rows } = await pool.query(`
+    const req = `
       SELECT DISTINCT 
         vt.youtube_id as "youtubeId", 
         ( SELECT jsonb_agg(json_ressource)
           FROM (
             SELECT
-              -- map to ITag model
+              -- map to Tag model
               t.tag_id as id,
-              t.title
+              t.title,
+              t.parent_tag_id,
+              t.color,
+              t.playlist_id
               FROM 		video_tag vt_agg
               LEFT JOIN 	tag t ON t.tag_id = vt_agg.tag_id
             WHERE 		vt_agg.youtube_id = vt.youtube_id
@@ -390,42 +359,35 @@ app.get(`${rootUrl}/video/full`, (req, res) => {
         ( SELECT jsonb_agg(json_ressource)
           FROM (
             SELECT
-              -- map to ITag model
+              -- map to Tag model
               t.tag_id as id,
-              t.title
+              t.title,
+              t.parent_tag_id,
+              t.color,
+              t.playlist_id
               FROM 		video_tag vt_agg
               LEFT JOIN 	tag t ON t.tag_id = vt_agg.tag_id
             WHERE 		vt_agg.youtube_id = vt.youtube_id
               AND     t.parent_tag_id = 55
           ) json_ressource
-        ) as artists
+        ) as artists,
 
         v.rating,
         v.title
       FROM video_tag vt
       LEFT JOIN video v ON v.youtube_id = vt.youtube_id
-    `)
+    `;
+
+    /*if (playlist_id !== 'none'){
+      qry += ` AND playlist_id = ($1) `;
+    }*/
+
+    const { rows } = await pool.query(req);
     res.json(rows);
   })().catch(err => {
     res.json(err.stack)
   })
 });
-
-app.get(`${rootUrl}/video/information`, (req, res) => {
-  ;(async () => {
-    const { rows } = await pool.query(`
-      SELECT  
-        v.youtube_id as "youtubeId", 
-        v.rating,
-        v.title
-      FROM video v
-    `)
-    res.json(rows);
-  })().catch(err => {
-    res.json(err.stack)
-  })
-});
-
 
 app.delete(`${rootUrl}/video/:id`, (req, res) => {
   const { id } = req.params;

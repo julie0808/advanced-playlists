@@ -1,15 +1,15 @@
 import { Component, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { map, tap } from 'rxjs/operators';
-import { Subject, combineLatest, Observable } from 'rxjs';
+import { Subject, Observable, combineLatest } from 'rxjs';
 import { ConfirmationService, MessageService } from 'primeng/api';
 
 import { VideoService } from '../video.service';
-import { IVideo } from '../video.model';
+import { Video } from '../video.model';
 import { IPlaylist } from '../playlist.model';
 
 import { Store } from '@ngrx/store';
-import { State } from '../state/video.reducer';
+import { State, getVideos, getCurrentVideo, getSortedVideos } from '../state/video.reducer';
 import * as VideoActions from "../state/video.action";
 
 
@@ -26,13 +26,7 @@ export class VideoListComponent {
   private errorMessageSubject = new Subject<string>();
   errorMessage$ = this.errorMessageSubject.asObservable();
 
-  videos$ = this.videoService.videosSorted$;
-  allVideos$ = this.videoService.videoTagsModified$;
-  videoPlaying$ = this.videoService.videoPlaying$;
-
   selectedPlaylist!: IPlaylist;
-
-  isLoading$ = this.videoService.isLoadingAction$;
 
   playlistList$: Observable<IPlaylist[]> = this.videoService.playlists$
     .pipe( 
@@ -42,52 +36,53 @@ export class VideoListComponent {
       })
     );
 
-  currentlyPlayingVideoPosition$: Observable<number> = combineLatest([
-      this.videos$,
-      this.videoPlaying$
-    ])
-    .pipe(
-      map( ([videoList, currentVideoPlaying]) => {
-        const videoPositionInList: number = videoList.indexOf(currentVideoPlaying);
-        return videoPositionInList + 1;
-      })
-    );
+  fullVideoData$ = this.store.select(getVideos);
+  videosSorted$ = this.store.select(getSortedVideos);
+  currentVideoPlaying$ = this.store.select(getCurrentVideo);
 
   vm$ = combineLatest([
-    this.videos$,
-    this.allVideos$,
-    this.videoPlaying$
+    this.videosSorted$,
+    this.fullVideoData$,
+    this.currentVideoPlaying$,
+    this.playlistList$
   ]).pipe(
-    map(([sortedVideos, allVideos, videoPlaying]) =>
-        ({ sortedVideos, allVideos, videoPlaying }))
+    map(([sortedVideos, allVideos, videoPlaying, playlistList]) =>
+        ({ sortedVideos, allVideos, videoPlaying, playlistList}))
   )  
 
-  constructor(private route: ActivatedRoute,
-              private store: Store<State>,
-              private router: Router,
-              private messageService: MessageService,
-              private confirmationService: ConfirmationService,
-              private videoService: VideoService) { }
-
-  updateFromYoutube(): void {
-    // to do
-  }
+  constructor(
+    private route: ActivatedRoute,
+    private store: Store<State>,
+    private router: Router,
+    private messageService: MessageService,
+    private confirmationService: ConfirmationService,
+    private videoService: VideoService) { }
   
-              editTags(objectId: string) {
+  ngOnInit(): void {
+    // cant do this. infinite loop when sorting
+   /* this.videosSorted$.subscribe(
+      videos => {
+        if (videos.length){
+          this.store.dispatch(VideoActions.setCurrentVideo({ videoId: videos[0].youtubeId }));
+        }
+      }
+    )*/
+  }
+
+  editTags(objectId: string) {
     this.router.navigate([objectId, 'edit-tag'], {relativeTo: this.route, queryParamsHandling: 'preserve'});
   }
 
-  playVideo(video: IVideo) {
-    this.store.dispatch(VideoActions.setCurrentVideo({ video }));
-    this.videoService.videoPlayingIdChanged(video.youtubeId);
+  playVideo(video: Video) {
+    this.store.dispatch(VideoActions.setCurrentVideo({ videoId: video.youtubeId }));
   }
 
   sortByPlaylist(): void {
     this.videoService.sortAppByPlaylist(this.selectedPlaylist);
   }
 
-  deleteVideo(selectedForDeletion: IVideo): void {
-    this.videoService.deleteVideo(selectedForDeletion);
+  deleteVideo(selectedForDeletion: Video): void {
+    // will be a store dispatch eventually. unfinished
   }
 
   scrollToCurrentlyPlaying(videoList: any): void {
@@ -96,13 +91,13 @@ export class VideoListComponent {
     // use .scrollTop(value)
   }
 
-  confirmDeletion(selectedForDeletion: IVideo) {
+  confirmDeletion(selectedForDeletion: Video) {
     this.confirmationService.confirm({
       message: 'Do you want to delete this video form the Youtube Playlist?',
       header: 'Delete Confirmation',
       icon: 'pi pi-info-circle',
       accept: () => {
-        this.videoService.deleteVideo(selectedForDeletion);
+        this.deleteVideo(selectedForDeletion);
         this.messageService.add({severity:'info', summary:'Confirmed', detail:'Tag deleted.'});
       },
       reject: ( () => {

@@ -1,5 +1,6 @@
 <section 
   class="video-player"
+  *ngIf="selectedVideo$ | async as selectedVideo"
   [ngClass]="videoPlayerStatus">
   <div class="video-player--controls">    
     <ul class="video-player--actions">

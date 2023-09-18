@@ -9,7 +9,7 @@ import { TagsComponent } from './tags.component';
 import { StoreModule } from '@ngrx/store';
 import { tagReducer } from './state/tag.reducer';
 import { EffectsModule } from '@ngrx/effects';
-import { TagEffects } from './state/tag.effect';
+import { TagEffects } from './state/tag.effects';
 
 @NgModule({
   imports: [

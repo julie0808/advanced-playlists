@@ -4,7 +4,7 @@ import * as AppState from "../../state/app.state";
 import * as TagActions from "./tag.action";
 import * as TagHelperFunc from "./tag-helper-func";
 
-import { ITag } from "../tag.model";
+import { Tag } from "../tag.model";
 
 
 
@@ -14,7 +14,7 @@ export interface State extends AppState.State {
 
 export interface TagState {
   currentTagId: number | null;
-  tags: ITag[];
+  tags: Tag[];
   error: string;
 }
 
@@ -28,9 +28,30 @@ const initialState: TagState = {
 
 const getTagFeatureState = createFeatureSelector<TagState>('tags');
 
-export const getTags = createSelector(
+export const getAllTags = createSelector(
   getTagFeatureState,
   state => state.tags
+)
+
+export const getOtherTagsForPrimeNg = createSelector(
+  getTagFeatureState,
+  state => {
+    const formattedTags = TagHelperFunc.sortTagsForPrimeNg(state.tags);
+    return formattedTags;
+  }
+)
+
+export const getArtistTags = createSelector(
+  getTagFeatureState,
+  state => {
+    const artistGroup = state.tags.find((tag: Tag) => tag.id === 55) || new Tag();
+    let formattedTags: Tag[] = [];
+
+    if (artistGroup.id !== 0) {
+      formattedTags = artistGroup.lst_children_tag ? artistGroup.lst_children_tag : [];
+    }
+    return formattedTags;
+  }
 )
 
 export const getCurrentTagId = createSelector(
@@ -43,7 +64,7 @@ export const getCurrentTag = createSelector(
   getCurrentTagId, 
   (state, currentTagId) => {
     if (currentTagId !== 0){
-      let searchForTag = state.tags.find(p => p.id === currentTagId) || new ITag();
+      let searchForTag = state.tags.find(p => p.id === currentTagId) || new Tag();
 
       if (searchForTag.id === 0) {
 
@@ -53,7 +74,7 @@ export const getCurrentTag = createSelector(
               if (p.id === currentTagId){
                 return true;
               }
-            }) || new ITag();
+            }) || new Tag();
   
             if (searchForTag.id !== 0){ break; };
           }
@@ -61,7 +82,7 @@ export const getCurrentTag = createSelector(
       }
       return searchForTag;
     } else {
-      return new ITag();
+      return new Tag();
     }
 
   }

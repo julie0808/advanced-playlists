@@ -10,7 +10,13 @@ import { VideoTagEditComponent } from './video-tag-edit/video-tag-edit.component
 import { VideosComponent } from './videos.component';
 
 import { StoreModule } from '@ngrx/store';
+import { EffectsModule } from '@ngrx/effects';
+
 import { videoReducer } from './state/video.reducer';
+import { tagReducer } from '../tags/state/tag.reducer';
+import { TagEffects } from '../tags/state/tag.effects';
+import { VideoEffects } from './state/video.effects';
+
 
 @NgModule({
   imports: [
@@ -28,7 +34,10 @@ import { videoReducer } from './state/video.reducer';
         ]
       }      
     ]),
-    StoreModule.forFeature('videos', videoReducer)
+    StoreModule.forFeature('videos', videoReducer),
+    EffectsModule.forFeature([VideoEffects]),
+    StoreModule.forFeature('tags', tagReducer),
+    EffectsModule.forFeature([TagEffects])
   ],
   declarations: [
     VideosComponent,
