@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
-import { BehaviorSubject, combineLatest, merge, Observable, of, Subject } from 'rxjs';
-import { catchError, concatMap, map, shareReplay, tap, scan, expand, takeWhile, reduce, switchMap } from "rxjs/operators";
+import { Observable, Subject } from 'rxjs';
+import { catchError, map, tap, expand, takeWhile, reduce } from "rxjs/operators";
 import { HttpClient, HttpHeaders, HttpParams, HttpContext } from '@angular/common/http';
 import { CACHEABLE } from "../shared/cache.interceptor";
 import { ErrorService } from "../shared/error/error/error-service";
@@ -177,7 +177,7 @@ export class VideoService {
 
   updateNewVideos(videos: Video[]): Observable<Video[]> {
     const body = JSON.stringify(videos);
- 
+
     return this.http.post<Video[]>(`${this.apiRootURL}/update`, body, {
       headers: this.headers
     })
@@ -201,26 +201,6 @@ export class VideoService {
         catchError(err => this.errorService.handleError(err))
       )
   }
-
-  /*playVideoAction( videoList: Video[], action: ActionCode){
-    const currentVideoPosition = videoList.findIndex( (v: Video) => {
-      return v.youtubeId === this.videoPlayingSubject.getValue();
-    });
-
-    const videosSortedLength = videoList.length;
-    let newVideoPosition = 0;
-
-    if ( action === ActionCode.previous) {
-      newVideoPosition = currentVideoPosition === 0 ? videosSortedLength - 1 : currentVideoPosition - 1;
-
-    } else if ( action === ActionCode.next ) {
-      newVideoPosition = videosSortedLength - 1 === currentVideoPosition ? 0 : currentVideoPosition + 1;
-    }
-
-    this.store.dispatch(VideoActions.setCurrentVideo({ videoId: videoList[newVideoPosition].youtubeId }));
-    this.videoPlayingIdChanged(videoList[newVideoPosition].youtubeId);
-
-  }*/
 
 }
 

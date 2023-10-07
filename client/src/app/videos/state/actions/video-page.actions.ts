@@ -1,6 +1,6 @@
 import { createAction, props } from "@ngrx/store";
 
-import { Video } from "../video.model";
+import { Video } from "../../video.model";
 import { Tag } from "src/app/tags/tag.model";
 
 export const setCurrentVideo = createAction(
@@ -28,35 +28,12 @@ export const setSortingSelectedNew = createAction(
   props<{ isNew: boolean }>() 
 );
 
-
-
 export const loadVideos = createAction(
   '[Video] Load All '
 );
-
-export const loadVideosSuccess = createAction(
-  '[Video] Load Success',
-  props<{ videos: Video[] }>() 
-);
-
-export const loadVideosFailure = createAction(
-  '[Video] Load Failure',
-  props<{ error: string }>() 
-);
-
-
 
 export const updateVideo = createAction(
   '[Video] Update Video',
   props<{ video: Video }>()
 );
 
-export const updateVideoSuccess = createAction(
-  '[Video] Update Video Success',
-  props<{ video: Video }>()
-);
-
-export const updateVideoFailure = createAction(
-  '[Video] Update Video Failure',
-  props<{ error: string }>()
-);

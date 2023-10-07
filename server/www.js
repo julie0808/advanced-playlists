@@ -277,6 +277,7 @@ app.post(`${rootUrl}/video/update`, (req, res) => {
       client.release();
     }
   })().catch(err => {
+    console.log('err', err);
     res.json(err.stack)
   })
 });
@@ -339,8 +340,11 @@ app.get(`${rootUrl}/video`, (req, res) => {
   ;(async () => {
 
     const req = `
-      SELECT DISTINCT 
-        vt.youtube_id as "youtubeId", 
+      SELECT 
+        v.rating,
+        v.title,
+        v.youtube_id as "youtubeId", 
+
         ( SELECT jsonb_agg(json_ressource)
           FROM (
             SELECT
@@ -352,10 +356,11 @@ app.get(`${rootUrl}/video`, (req, res) => {
               t.playlist_id
               FROM 		video_tag vt_agg
               LEFT JOIN 	tag t ON t.tag_id = vt_agg.tag_id
-            WHERE 		vt_agg.youtube_id = vt.youtube_id
+            WHERE 		vt_agg.youtube_id = v.youtube_id
               AND     t.parent_tag_id <> 55
           ) json_ressource
         ) as tags,
+
         ( SELECT jsonb_agg(json_ressource)
           FROM (
             SELECT
@@ -367,15 +372,12 @@ app.get(`${rootUrl}/video`, (req, res) => {
               t.playlist_id
               FROM 		video_tag vt_agg
               LEFT JOIN 	tag t ON t.tag_id = vt_agg.tag_id
-            WHERE 		vt_agg.youtube_id = vt.youtube_id
+            WHERE 		vt_agg.youtube_id = v.youtube_id
               AND     t.parent_tag_id = 55
           ) json_ressource
-        ) as artists,
+        ) as artists
 
-        v.rating,
-        v.title
-      FROM video_tag vt
-      LEFT JOIN video v ON v.youtube_id = vt.youtube_id
+      FROM video v
     `;
 
     /*if (playlist_id !== 'none'){

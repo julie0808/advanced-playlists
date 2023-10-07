@@ -1,11 +1,10 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, combineLatest, merge, Observable, Subject, of, empty } from 'rxjs';
-import { catchError, concatMap, map, scan, tap, shareReplay, filter, switchMap } from 'rxjs/operators';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 import { Tag } from './tag.model';
 import { ErrorService } from '../shared/error/error/error-service';
-import { StatusCode } from '../shared/global-model';
 import { IPlaylist } from '../videos/playlist.model';
 
 @Injectable({providedIn: 'root'})

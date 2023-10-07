@@ -1,10 +1,10 @@
 import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
-import { forkJoin, of } from "rxjs";
+import { forkJoin, merge, of } from "rxjs";
 import { mergeMap, map, catchError, concatMap, tap, switchMap } from "rxjs/operators";
 
 import { VideoService } from "../video.service";
-import * as VideoActions from "./video.action";
+import { VideoApiActions, VideoPageActions } from "./actions";
 import { Video } from "../video.model";
 
 
@@ -20,15 +20,17 @@ export class VideoEffects {
   loadVideos$ = createEffect( () => {
     return this.actions$
       .pipe(
-        ofType(VideoActions.loadVideos),
+        ofType(VideoPageActions.loadVideos),
         switchMap(() => {
-          return forkJoin([
+          const allData = forkJoin([
             this.videoService.getVideosFromYoutube(),
             this.videoService.getVideosFromDatabase()
           ])
+          return allData;
         }),
         mergeMap( data => {
           const [dataFromYoutube, dataFromDatabase] = data;
+          const newVideosNotInDB: Video[] = [];
 
           const videos = dataFromYoutube.map((video: Video) => {
 
@@ -45,41 +47,58 @@ export class VideoEffects {
               ...dataFromDatabase.find(i=> i.youtubeId === video.youtubeId)
             }        
 
-            //const findInDB = videosFromDatabase.find( (videoInDB: any) => {
-            //  return videoInDB.youtubeId === video.youtubeId;
-            //});
+            const findInDB = dataFromDatabase.find( videoInDB => {
+              const findVideo = videoInDB.youtubeId === video.youtubeId || false;
+              return findVideo;
+            });
 
-            //if (typeof findInDB === 'undefined') {
-            //    newVideosNotInDB.push(video);
-            //} 
+            if (!findInDB) {
+              newVideosNotInDB.push(video);
+            }
         
             return mergedDataVideo;
           });
         
-          // TECHNICAL DEBT TODO i don't need the observable, but I need to subscribe to it to have the code run
-          // for now, only used to save original video titles, in case it becomes unavailable on youtube
-          //this.updateNewVideos(newVideosNotInDB).subscribe((videos: Video[]) => videos);
+          const allData = forkJoin([of(videos), of(newVideosNotInDB)]);
+          return allData;
+
+        }),
+        mergeMap( data => {
+          const [finalList, newVideoList] = data;
           
-          return of(VideoActions.loadVideosSuccess({ videos }));
+          // there is a possibility of bug if over 50 videos
+          const actionResultat = this.videoService.updateNewVideos(newVideoList)
+            .pipe(
+              map(() => {
+                return VideoApiActions.loadVideosSuccess({ videos: finalList });
+              }),
+              catchError(error => {
+                throw new Error(error);
+              })
+            );
+
+            return actionResultat;
         }),
         catchError( error => {
-          return of(VideoActions.loadVideosFailure({ error }))
+          return of(VideoApiActions.loadVideosFailure({ error }))
         })
       )
   });
 
   updateVideos$ = createEffect( () => {
     return this.actions$.pipe(
-      ofType(VideoActions.updateVideo),
+      ofType(VideoPageActions.updateVideo),
       concatMap(action => {
-        return this.videoService.updateVideo(action.video).pipe(
-          map(video => {
-            return VideoActions.updateVideoSuccess({ video });
-          }),
-          catchError(error => {
-            return of(VideoActions.updateVideoFailure({ error }));
-          })
-        )
+        const actionResultat = this.videoService.updateVideo(action.video)
+          .pipe(
+            map(video => {
+              return VideoApiActions.updateVideoSuccess({ video });
+            }),
+            catchError(error => {
+              return of(VideoApiActions.updateVideoFailure({ error }));
+            })
+          )
+        return actionResultat;
       })
     )
   });

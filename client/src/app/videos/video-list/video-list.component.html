@@ -28,10 +28,9 @@
       *ngIf="vm.sortedVideos.length === vm.allVideos.length">
       {{ vm.allVideos.length }} videos in list
     </span>
-    <!--<p 
-      *ngIf="currentlyPlayingVideoPosition$ | async as currentlyPlayingVideoPosition">
-      Currently playing : {{ currentlyPlayingVideoPosition }}
-    </p>-->
+    <p *ngIf="vm.currentVideoPosition !== 0">
+      Currently playing : {{ vm.currentVideoPosition }}
+    </p>
     <p><a href="#" (click)="scrollToCurrentlyPlaying(videoList)"></a></p>
   </div>
 

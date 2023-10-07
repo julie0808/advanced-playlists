@@ -5,8 +5,8 @@ import { Observable, Subject } from 'rxjs';
 import { Tag } from '../tag.model';
 
 import { Store } from '@ngrx/store';
-import { State, getAllTags } from '../state/tag.reducer';
-import * as TagActions from '../state/tag.action';
+import { State, getAllTags } from '../state';
+import { TagPageActions } from '../state/actions';
 
 @Component({
   selector: 'app-tag-list',
@@ -28,11 +28,11 @@ export class TagListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.store.dispatch(TagActions.loadTags());
+    this.store.dispatch(TagPageActions.loadTags());
   }
 
   editTag(objectId: number) {
-    this.store.dispatch(TagActions.setCurrentTag({ tagId: objectId }));
+    this.store.dispatch(TagPageActions.setCurrentTag({ tagId: objectId }));
     this.router.navigate([objectId, 'edit'], {relativeTo: this.route, queryParamsHandling: 'preserve'});
   }
 

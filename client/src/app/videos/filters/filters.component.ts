@@ -6,9 +6,9 @@ import { Tag } from 'src/app/tags/tag.model';
 import { VideoService } from '../video.service';
 
 import { Store } from '@ngrx/store';
-import { State, getArtistTags, getOtherTagsForPrimeNg } from '../../tags/state/tag.reducer';
-import * as TagActions from '../../tags/state/tag.action';
-import { setSortingSelectedNew, setSortingSelectedTags, setSortingSelectedRatings } from '../state/video.action';
+import { State, getArtistTags, getOtherTagsForPrimeNg } from '../../tags/state';
+import { TagPageActions } from '../../tags/state/actions';
+import { VideoPageActions } from '../state/actions';
 
 
 @Component({
@@ -36,22 +36,22 @@ export class FiltersComponent implements OnInit {
     private videoService: VideoService) { }
 
   ngOnInit(): void {
-    this.store.dispatch(TagActions.loadTags());
+    this.store.dispatch(TagPageActions.loadTags());
   }
 
   sortByTag(){
-    this.store.dispatch(setSortingSelectedTags({ tags: this.selectedTagList }));
+    this.store.dispatch(VideoPageActions.setSortingSelectedTags({ tags: this.selectedTagList }));
   }
 
   sortByRating(){
     // temp, until ratings are made multi selectable
     const ratingAsArray = [this.selectedRating];
 
-    this.store.dispatch(setSortingSelectedRatings({ ratings: ratingAsArray }));
+    this.store.dispatch(VideoPageActions.setSortingSelectedRatings({ ratings: ratingAsArray }));
   }
 
   sortByNewOnly(){
-    this.store.dispatch(setSortingSelectedNew({ isNew: this.showOnlyNew }));
+    this.store.dispatch(VideoPageActions.setSortingSelectedNew({ isNew: this.showOnlyNew }));
   }
 
   removeSortByRating(){

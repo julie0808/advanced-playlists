@@ -9,8 +9,8 @@ import { Video } from '../video.model';
 import { IPlaylist } from '../playlist.model';
 
 import { Store } from '@ngrx/store';
-import { State, getVideos, getCurrentVideo, getSortedVideos } from '../state/video.reducer';
-import * as VideoActions from "../state/video.action";
+import { State, getVideos, getCurrentVideo, getSortedVideos, getCurrentVideoPosition } from '../state';
+import { VideoPageActions } from "../state/actions";
 
 
 @Component({
@@ -39,15 +39,17 @@ export class VideoListComponent {
   fullVideoData$ = this.store.select(getVideos);
   videosSorted$ = this.store.select(getSortedVideos);
   currentVideoPlaying$ = this.store.select(getCurrentVideo);
+  currentVideoPosition$ = this.store.select(getCurrentVideoPosition);
 
   vm$ = combineLatest([
     this.videosSorted$,
     this.fullVideoData$,
     this.currentVideoPlaying$,
-    this.playlistList$
+    this.playlistList$,
+    this.currentVideoPosition$
   ]).pipe(
-    map(([sortedVideos, allVideos, videoPlaying, playlistList]) =>
-        ({ sortedVideos, allVideos, videoPlaying, playlistList}))
+    map(([sortedVideos, allVideos, videoPlaying, playlistList, currentVideoPosition]) =>
+        ({ sortedVideos, allVideos, videoPlaying, playlistList, currentVideoPosition}))
   )  
 
   constructor(
@@ -59,14 +61,7 @@ export class VideoListComponent {
     private videoService: VideoService) { }
   
   ngOnInit(): void {
-    // cant do this. infinite loop when sorting
-   /* this.videosSorted$.subscribe(
-      videos => {
-        if (videos.length){
-          this.store.dispatch(VideoActions.setCurrentVideo({ videoId: videos[0].youtubeId }));
-        }
-      }
-    )*/
+    
   }
 
   editTags(objectId: string) {
@@ -74,7 +69,7 @@ export class VideoListComponent {
   }
 
   playVideo(video: Video) {
-    this.store.dispatch(VideoActions.setCurrentVideo({ videoId: video.youtubeId }));
+    this.store.dispatch(VideoPageActions.setCurrentVideo({ videoId: video.youtubeId }));
   }
 
   sortByPlaylist(): void {

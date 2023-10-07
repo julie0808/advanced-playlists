@@ -1,12 +1,12 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Observable, Subject, combineLatest } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 
 import { Video, VideoPlayerFormats } from '../video.model';
 
 import { Store } from '@ngrx/store';
-import { State, getCurrentVideo } from '../state/video.reducer';
-import * as VideoActions from "../state/video.action";
+import { State, getCurrentVideo, getNextVideoId, getPreviousVideoId, getFirstVideoId } from '../state';
+import { VideoPageActions } from "../state/actions";
 
 
 @Component({
@@ -17,13 +17,27 @@ import * as VideoActions from "../state/video.action";
 
 })
 export class VideoPlayerComponent implements OnInit {
+  @ViewChild('player') player: any;
 
   apiLoaded = false;
   videoPlayerStatus: VideoPlayerFormats = VideoPlayerFormats.hidden;
   videoIsPlaying: boolean = false;
-  videoPlayer: any;
 
   selectedVideo$: Observable<Video> = this.store.select(getCurrentVideo);
+  previousVideo$ = this.store.select(getPreviousVideoId);
+  nextVideo$ = this.store.select(getNextVideoId);
+  firstVideo$ = this.store.select(getFirstVideoId);
+
+  vm$ = combineLatest([
+    this.selectedVideo$,
+    this.previousVideo$,
+    this.nextVideo$,
+    this.firstVideo$
+  ])
+    .pipe(
+      map(([selectedVideo, previousVideo, nextVideo, firstVideo]) =>
+          ({ selectedVideo, previousVideo, nextVideo, firstVideo}))
+    ) 
 
   playerConfig = {
     controls: 1
@@ -41,7 +55,7 @@ export class VideoPlayerComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.store.dispatch(VideoActions.loadVideos());
+    this.store.dispatch(VideoPageActions.loadVideos());
     
     if (!this.apiLoaded) {
       const tag = document.createElement("script");
@@ -50,56 +64,46 @@ export class VideoPlayerComponent implements OnInit {
       this.apiLoaded = true;
     }
 
-    this.selectedVideo$.subscribe(
-      video => {
-        if ( this.videoIsValid(video) && this.videoPlayerStatus === VideoPlayerFormats.hidden ) {
-          this.videoPlayerStatus = VideoPlayerFormats.tiny
-        }
-      }
-    )
-
   }
 
-  videoReady(event: any) {
-    this.videoPlayer = event.target;
-    this.playVideo();
+  videoReady(event: any, video: string) {
+    if ( video !== "12345678910" && this.videoPlayerStatus === VideoPlayerFormats.hidden ) {
+      this.switchToVideo(video);
+      this.videoPlayerStatus = VideoPlayerFormats.tiny
+      this.playVideo();
+    }
   }
 
-  videoIsValid(video: Video) {
-    // disabled; à voir si encore utile après avoir retiré videoModified
-    // return video.status !== StatusCode.invalid;
-    return true;
+  playerError(event: any){
+    console.log('player error', event);
   }
 
   setPlayerFormat(selectedFormat: VideoPlayerFormats) {
     this.videoPlayerStatus = selectedFormat;
   }
 
-  playPreviousVideo() {
-    //this.videoService.playVideoAction(this.currentVideoList, ActionCode.previous);
-  }
-
-  playNextVideo() {
-    //this.videoService.playVideoAction(this.currentVideoList, ActionCode.next);
+  switchToVideo(videoId: string) {
+    this.store.dispatch(VideoPageActions.setCurrentVideo({ videoId }));
   }
 
   pauseVideo() {
     this.videoIsPlaying = false;
-    this.videoPlayer.pauseVideo();
+    this.player.pauseVideo();
   }
 
   playVideo() {
-    console.log('playyyyy');
+    console.log('play bitch');
     this.videoIsPlaying = true;
-    this.videoPlayer.playVideo();
+    this.player.playVideo();
   }
 
-  followState(event: any) {
+  followState(event: any, nextVideo: string) {
+    console.log('follow', event.data);
     // https://developers.google.com/youtube/iframe_api_reference#Events
     switch(event.data) {
       case 0:
         // video has ended
-        //this.videoService.playVideoAction(this.currentVideoList, ActionCode.next);
+        this.switchToVideo(nextVideo);
         this.videoIsPlaying = false;
         break;
       case -1:
@@ -108,10 +112,11 @@ export class VideoPlayerComponent implements OnInit {
         break;
       case 2:
         // video is paused
+        this.videoIsPlaying = false;
         break;
       case 5:
-        // video is cued
-        // event.target.playVideo();
+        // video is loaded (cued)
+        this.playVideo();
         break;
       default:
         // not every state requires an action

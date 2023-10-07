@@ -3,7 +3,7 @@ import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { mergeMap, map, catchError, concatMap } from "rxjs/operators";
 
 import { TagService } from "../tag.service";
-import * as TagActions from "./tag.action";
+import { TagApiActions, TagPageActions } from "./actions";
 import { of } from "rxjs";
 
 
@@ -19,14 +19,14 @@ export class TagEffects {
   loadTags$ = createEffect( () => {
     return this.actions$
       .pipe(
-        ofType(TagActions.loadTags),
+        ofType(TagPageActions.loadTags),
         mergeMap(() => {
           return this.tagService.getTags().pipe(
             map(tags => {
-              return TagActions.loadTagsSuccess({ tags });
+              return TagApiActions.loadTagsSuccess({ tags });
             }),
             catchError(error => {
-              return of(TagActions.loadTagsFailure({ error }))
+              return of(TagApiActions.loadTagsFailure({ error }))
             })
           );
         })
@@ -36,15 +36,15 @@ export class TagEffects {
   createTag$ = createEffect(() => {
     return this.actions$
       .pipe(
-        ofType(TagActions.createTag),
+        ofType(TagPageActions.createTag),
         concatMap(action =>
           this.tagService.createTag(action.tag)
             .pipe(
               map(tag => {
-                return TagActions.createTagSuccess({ tag });
+                return TagApiActions.createTagSuccess({ tag });
               }),
               catchError(error => {
-                return of(TagActions.createTagFailure({ error }))
+                return of(TagApiActions.createTagFailure({ error }))
               })
             )
         )
@@ -53,14 +53,14 @@ export class TagEffects {
 
   updateTag$ = createEffect( () => {
     return this.actions$.pipe(
-      ofType(TagActions.updateTag),
+      ofType(TagPageActions.updateTag),
       concatMap(action => {
         return this.tagService.updateTag(action.tag).pipe(
           map(tag => {
-            return TagActions.updateTagSuccess({ tag });
+            return TagApiActions.updateTagSuccess({ tag });
           }),
           catchError(error => {
-            return of(TagActions.updateTagFailure({ error }));
+            return of(TagApiActions.updateTagFailure({ error }));
           })
         )
       })
@@ -70,13 +70,13 @@ export class TagEffects {
   deleteTag$ = createEffect(() => {
     return this.actions$
       .pipe(
-        ofType(TagActions.deleteTag),
+        ofType(TagPageActions.deleteTag),
         mergeMap(action =>
           this.tagService.deleteTag(action.tagId).pipe(
             map(() => {
-              return TagActions.deleteTagSuccess({ tagId: action.tagId });
+              return TagApiActions.deleteTagSuccess({ tagId: action.tagId });
             }),
-            catchError(error => of(TagActions.deleteTagFailure({ error })))
+            catchError(error => of(TagApiActions.deleteTagFailure({ error })))
           )
         )
       );

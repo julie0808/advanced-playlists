@@ -9,10 +9,10 @@ import { Tag } from '../../tags/tag.model';
 import { Video, VideoForm } from '../video.model';
 
 import { Store } from '@ngrx/store';
-import { State, getArtistTags, getOtherTagsForPrimeNg } from '../../tags/state/tag.reducer';
-import * as TagActions from '../../tags/state/tag.action';
-import * as VideoActions from '../state/video.action';
-import { getCurrentVideoEdited } from '../state/video.reducer';
+import { State, getArtistTags, getOtherTagsForPrimeNg } from '../../tags/state';
+import { TagPageActions } from '../../tags/state/actions';
+import { VideoPageActions } from '../state/actions';
+import { getCurrentVideoEdited } from '../state';
 
 @Component({
   selector: 'app-video-tag-edit',
@@ -51,7 +51,7 @@ export class VideoTagEditComponent implements OnInit, OnDestroy {
       .subscribe(
         (params: Params) => {
           this.videoId = params['id'];
-          this.store.dispatch(VideoActions.setCurrentVideoEditedId({ videoId: params['id'] }))
+          this.store.dispatch(VideoPageActions.setCurrentVideoEditedId({ videoId: params['id'] }))
         }
       )
 
@@ -64,7 +64,7 @@ export class VideoTagEditComponent implements OnInit, OnDestroy {
       })
     });
 
-    this.store.dispatch(TagActions.loadTags());
+    this.store.dispatch(TagPageActions.loadTags());
 
   } 
 
@@ -80,7 +80,7 @@ export class VideoTagEditComponent implements OnInit, OnDestroy {
 
       this.currentlyEditedVideo = updatedVideo;
 
-      this.store.dispatch(VideoActions.updateVideo({ video: this.currentlyEditedVideo }));
+      this.store.dispatch(VideoPageActions.updateVideo({ video: this.currentlyEditedVideo }));
     }
   }
 

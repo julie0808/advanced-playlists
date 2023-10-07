@@ -11,8 +11,8 @@ import { StatusCode } from 'src/app/shared/global-model';
 import { IPlaylist } from 'src/app/videos/playlist.model';
 
 import { Store } from '@ngrx/store';
-import { State, getCurrentTag, getParentTags } from '../state/tag.reducer';
-import * as TagActions from '../state/tag.action';
+import { State, getCurrentTag, getParentTags } from '../state';
+import { TagPageActions } from '../state/actions';
 
 @Component({
   selector: 'app-tag-edit',
@@ -67,9 +67,9 @@ export class TagEditComponent implements OnInit, OnDestroy {
         (params: Params) => {
           const id = +params['id'];
           if ( id !== 0 ){
-            this.store.dispatch(TagActions.setCurrentTag({ tagId: id }));
+            this.store.dispatch(TagPageActions.setCurrentTag({ tagId: id }));
           } else {
-            this.store.dispatch(TagActions.setCurrentTag({ tagId: 0 }));
+            this.store.dispatch(TagPageActions.setCurrentTag({ tagId: 0 }));
             this.resetForm();
           }
         }
@@ -97,7 +97,7 @@ export class TagEditComponent implements OnInit, OnDestroy {
     newTag.status = StatusCode.added;
     newTag.playlist_id = this.playlistHardcoded;
     
-    this.store.dispatch(TagActions.createTag({ tag: newTag }));
+    this.store.dispatch(TagPageActions.createTag({ tag: newTag }));
     this.resetPage();
   }
 
@@ -105,7 +105,7 @@ export class TagEditComponent implements OnInit, OnDestroy {
     if (this.tagForm.valid){
       const updatedTag = {...this.tag, ...this.tagForm.value};
       updatedTag.status = StatusCode.updated;
-      this.store.dispatch(TagActions.updateTag({ tag: updatedTag }));
+      this.store.dispatch(TagPageActions.updateTag({ tag: updatedTag }));
       this.resetPage();
     }
   }
@@ -131,7 +131,7 @@ export class TagEditComponent implements OnInit, OnDestroy {
       status: StatusCode.deleted
     };
 
-    this.store.dispatch(TagActions.deleteTag({ tagId: deletedTag.id }));
+    this.store.dispatch(TagPageActions.deleteTag({ tagId: deletedTag.id }));
     this.resetPage();
   }
 
@@ -141,7 +141,7 @@ export class TagEditComponent implements OnInit, OnDestroy {
 
   resetPage(){
     this.resetForm();
-    this.store.dispatch(TagActions.setCurrentTag({ tagId: 0 }));
+    this.store.dispatch(TagPageActions.setCurrentTag({ tagId: 0 }));
     this.router.navigate(['../../'], {relativeTo: this.route})
   }
 

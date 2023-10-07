@@ -4,6 +4,7 @@ https://trello.com/b/sihPIKvw/fancyt
 comment ajouter et publier un tag :
 git tag -a v1.3.0 -m "Filtre pour artiste et choix de playlist"
 git push origin v1.3.0
+Got to github in Tags section and "Create release"
 
 
 
@@ -46,14 +47,16 @@ git push origin v1.3.0
 
 # WIP Release 2.1.0
 
-## Modifié
-- WIP BUG - premier selected video not working, so first video not play
-- WIP Index barrels for ngrx / sortir les sélecteurs des reducers
-- WIP ajouter les unsubscribe (revoir "course"?)
-- WIP Réactiver les contrôles personnalisés de reculer/avancer/jouer un vidéo
-- WIP Refaire la fonction pour enregistrer dans la BD le titre des nouveaux vidéos
-- WIP Refaire curretnly Playing dans video-list component
+## Corrigé
+- Le premier vidéo de la liste est correctement chargé et joue automatiquement
+- Les contrôles personnalisés de reculer/avancer/jouer un vidéo sont de nouveau fonctionnels
+- Le numéro du vidéo actuellement joué est affiché correctement
+- Les nouveaux vidéos sont de nouveaux enregistrés dans la base de données pour garder leur titre initial en mémoire
 - WIP Quand un tag est modifié, cela édite aussi ses associations dans la liste de vidéos
+
+## Modifié
+- Modification structurelle au code - Index barrels
+- WIP ajouter les unsubscribe (revoir "course"?)
 
 
 
