@@ -7,7 +7,7 @@ import { ErrorService } from "../shared/error/error/error-service";
 
 import { Video } from "./video.model";
 
-import { IPlaylist } from "./playlist.model";
+import { Playlist } from "../shared/model/playlist.model";
 
 
 @Injectable({providedIn: 'root'})
@@ -28,26 +28,6 @@ export class VideoService {
 
   headers = new HttpHeaders()
     .set('content-Type', 'application/json');
-
-
-  private playlistSelectedSubject = new Subject<IPlaylist>();
-  playlistSelectedAction$ = this.playlistSelectedSubject.asObservable();
-
-
-  playlists$: Observable<IPlaylist[]> = this.http.get<any>(this.apiURL + '/playlist')
-    .pipe(
-      map( playlists => {
-        const finalPlaylistList: IPlaylist[] = playlists.map( (playlist: any) => {
-          const playlistInfo: IPlaylist = {
-            id: playlist.id,
-            title: playlist.title
-          };
-          return playlistInfo;
-        });
-        return finalPlaylistList;
-      }),
-      catchError(err => this.errorService.handleError(err))
-    );
 
   // not used. I use the length of actual returned array
   videosFromPlaylistCount$ = this.http.get<any>(this.youtubeApiUrl + '/playlistItems', {
@@ -72,13 +52,11 @@ export class VideoService {
     private errorService: ErrorService) { }   
     
 
-  getVideosFromYoutube(): Observable<Video[]> {
-    // we can't. that observable doesnt END (forkjoin constraint)
-    // const playlist = this.store.select(getCurrentPlaylistId);
+  getVideosFromYoutube(playlistId: string): Observable<Video[]> {
 
-    const getVideoPageFromYoutube = this.makeYoutubeAPICall(this.videoPlayListKPop)
+    const getVideoPageFromYoutube = this.makeYoutubeAPICall(playlistId)
       .pipe(          
-        expand(() => this.makeYoutubeAPICall(this.videoPlayListKPop)),
+        expand(() => this.makeYoutubeAPICall(playlistId)),
         takeWhile(() => this.nextPageToken !== '', true),
         reduce((acc, curr) => acc.concat(curr))
       );
@@ -87,14 +65,12 @@ export class VideoService {
 
   }
 
-  getVideosFromDatabase(): Observable<Video[]> {
-    // we can't. that observable doesnt END (forkjoin constraint)
-    // const playlist = this.store.select(getCurrentPlaylistId);
+  getVideosFromDatabase(playlistId: string): Observable<Video[]> {
 
     return this.http.get<Video[]>(`${this.apiRootURL}`, {
       context: new HttpContext().set(CACHEABLE, true),
       params: {
-        'playlist_id' : this.videoPlayListKPop 
+        'playlist_id' : playlistId 
       }
     })
       .pipe(
@@ -162,10 +138,6 @@ export class VideoService {
 
     return mappedVideo;
   } 
-
-  sortAppByPlaylist(playlist: IPlaylist): void {
-    this.playlistSelectedSubject.next(playlist);
-  }
 
   getVideoDetail(videoListIds: string[]): Observable<any> {
     return this.http.get<any>(this.youtubeApiUrl + '/videos', {params: {

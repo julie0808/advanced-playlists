@@ -119,8 +119,8 @@ app.get(`${rootUrl}/tags`, (req, res) => {
       t.playlist_id,
       'unchanged' as status
     FROM    tag t
-    WHERE   t.parent_tag_id is null
-      OR    t.parent_tag_id = 0
+    WHERE   ( t.parent_tag_id is null
+            OR    t.parent_tag_id = 0 ) 
     `;
 
     // not yet coded and saved in database
@@ -377,12 +377,13 @@ app.get(`${rootUrl}/video`, (req, res) => {
           ) json_ressource
         ) as artists
 
-      FROM video v
+      FROM    video v
+      WHERE   1 = 1
     `;
 
-    /*if (playlist_id !== 'none'){
+    if (playlist_id !== 'none'){
       qry += ` AND playlist_id = ($1) `;
-    }*/
+    }
 
     const { rows } = await pool.query(req);
     res.json(rows);

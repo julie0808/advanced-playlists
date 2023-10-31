@@ -1,11 +1,13 @@
 import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
-import { mergeMap, map, catchError, concatMap } from "rxjs/operators";
+import { mergeMap, map, catchError, concatMap, withLatestFrom } from "rxjs/operators";
 
 import { TagService } from "../tag.service";
 import { TagApiActions, TagPageActions } from "./actions";
 import { of } from "rxjs";
 
+import { Store } from '@ngrx/store';
+import { State, getCurrentPlaylistId } from '../../shared/state';
 
 
 @Injectable()
@@ -13,15 +15,19 @@ export class TagEffects {
 
   constructor(
     private actions$: Actions,
-    private tagService: TagService
+    private tagService: TagService,
+    private store$: Store<State>
   ) {}
 
   loadTags$ = createEffect( () => {
     return this.actions$
       .pipe(
         ofType(TagPageActions.loadTags),
-        mergeMap(() => {
-          return this.tagService.getTags().pipe(
+        withLatestFrom(
+          this.store$.select(getCurrentPlaylistId)
+        ),
+        mergeMap(([action, playlistId]) => {
+          return this.tagService.getTags(playlistId).pipe(
             map(tags => {
               return TagApiActions.loadTagsSuccess({ tags });
             }),

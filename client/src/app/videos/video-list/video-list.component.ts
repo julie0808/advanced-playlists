@@ -1,16 +1,17 @@
 import { Component, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { map, tap } from 'rxjs/operators';
-import { Subject, Observable, combineLatest } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { Subject, combineLatest } from 'rxjs';
 import { ConfirmationService, MessageService } from 'primeng/api';
 
-import { VideoService } from '../video.service';
 import { Video } from '../video.model';
-import { IPlaylist } from '../playlist.model';
 
 import { Store } from '@ngrx/store';
 import { State, getVideos, getCurrentVideo, getSortedVideos, getCurrentVideoPosition } from '../state';
+import { getCurrentPlaylistId } from '../../shared/state';
+
 import { VideoPageActions } from "../state/actions";
+
 
 
 @Component({
@@ -26,16 +27,8 @@ export class VideoListComponent {
   private errorMessageSubject = new Subject<string>();
   errorMessage$ = this.errorMessageSubject.asObservable();
 
-  selectedPlaylist!: IPlaylist;
-
-  playlistList$: Observable<IPlaylist[]> = this.videoService.playlists$
-    .pipe( 
-      tap((playlists: IPlaylist[]) => {
-        this.selectedPlaylist = playlists[0];
-        this.sortByPlaylist();
-      })
-    );
-
+  currentPlaylistId!: string;
+  
   fullVideoData$ = this.store.select(getVideos);
   videosSorted$ = this.store.select(getSortedVideos);
   currentVideoPlaying$ = this.store.select(getCurrentVideo);
@@ -45,11 +38,10 @@ export class VideoListComponent {
     this.videosSorted$,
     this.fullVideoData$,
     this.currentVideoPlaying$,
-    this.playlistList$,
     this.currentVideoPosition$
   ]).pipe(
-    map(([sortedVideos, allVideos, videoPlaying, playlistList, currentVideoPosition]) =>
-        ({ sortedVideos, allVideos, videoPlaying, playlistList, currentVideoPosition}))
+    map(([sortedVideos, allVideos, videoPlaying, currentVideoPosition]) =>
+        ({ sortedVideos, allVideos, videoPlaying, currentVideoPosition}))
   )  
 
   constructor(
@@ -57,11 +49,13 @@ export class VideoListComponent {
     private store: Store<State>,
     private router: Router,
     private messageService: MessageService,
-    private confirmationService: ConfirmationService,
-    private videoService: VideoService) { }
+    private confirmationService: ConfirmationService) { }
   
   ngOnInit(): void {
-    
+    this.store.select(getCurrentPlaylistId)
+      .subscribe(playlistId => {
+        this.currentPlaylistId = playlistId;
+      })
   }
 
   editTags(objectId: string) {
@@ -70,10 +64,6 @@ export class VideoListComponent {
 
   playVideo(video: Video) {
     this.store.dispatch(VideoPageActions.setCurrentVideo({ videoId: video.youtubeId }));
-  }
-
-  sortByPlaylist(): void {
-    this.videoService.sortAppByPlaylist(this.selectedPlaylist);
   }
 
   deleteVideo(selectedForDeletion: Video): void {

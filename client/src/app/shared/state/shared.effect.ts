@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 
 import { TagService } from "../../tags/tag.service";
-import * as PlaylistActions from "./playlist.action";
+import { PlaylistApiActions, PlaylistPageActions } from "./actions";
 import { mergeMap, map, catchError } from "rxjs/operators";
 
 import { of } from "rxjs";
@@ -10,7 +10,7 @@ import { of } from "rxjs";
 
 
 @Injectable()
-export class PlaylistEffects {
+export class SharedEffects {
 
   constructor(
     private actions$: Actions,
@@ -20,14 +20,14 @@ export class PlaylistEffects {
   loadPlaylists$ = createEffect( () => {
     return this.actions$
       .pipe(
-        ofType(PlaylistActions.loadPlaylists),
+        ofType(PlaylistPageActions.loadPlaylists),
         mergeMap(() => {
           return this.tagService.getPlaylists().pipe(
             map(playlists => {
-              return PlaylistActions.loadPlaylistsSuccess({ playlists });
+              return PlaylistApiActions.loadPlaylistsSuccess({ playlists });
             }),
             catchError(error => {
-              return of(PlaylistActions.loadPlaylistsFailure({ error }))
+              return of(PlaylistApiActions.loadPlaylistsFailure({ error }))
             })
           );
         })

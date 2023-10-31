@@ -5,46 +5,26 @@ import { catchError, map } from 'rxjs/operators';
 
 import { Tag } from './tag.model';
 import { ErrorService } from '../shared/error/error/error-service';
-import { IPlaylist } from '../videos/playlist.model';
+import { Playlist } from '../shared/model/playlist.model';
+
+
 
 @Injectable({providedIn: 'root'})
 export class TagService {
 
   apiRootURL: string = '/api/v1/tags';
   apiURL: string = '/api/v1';
-
-  playlistHardcoded = 'PLwgftAdEcD4rXHmDdFTFI8Hch3BfWBQIt';
   
   headers = new HttpHeaders()
     .set('content-Type', 'application/json');
 
-  private playlistSelectedSubject = new BehaviorSubject<IPlaylist>(new IPlaylist());
-  playlistSelectedAction$ = this.playlistSelectedSubject.asObservable();
-
-  
-  playlists$: Observable<IPlaylist[]> = this.http.get<any>(this.apiURL + '/playlist')
-    .pipe(
-      map( playlists => {
-        const finalPlaylistList: IPlaylist[] = playlists.map( (playlist: any) => {
-          const playlistInfo: IPlaylist = {
-            id: playlist.id,
-            title: playlist.title
-          };
-          return playlistInfo;
-        });
-        return finalPlaylistList;
-      }),
-      catchError(err => this.errorService.handleError(err))
-    );
-
-
   constructor(private http: HttpClient,
     private errorService: ErrorService) {}
 
-  getTags(): Observable<Tag[]> {
+  getTags(playlistId: string): Observable<Tag[]> {
     return this.http.get<Tag[]>(this.apiRootURL, {
       params: {
-        'playlist_id' : this.playlistHardcoded 
+        'playlist_id' : playlistId 
       }
     })
       .pipe(
@@ -52,12 +32,12 @@ export class TagService {
       );
   }
 
-  getPlaylists(): Observable<IPlaylist[]> {
+  getPlaylists(): Observable<Playlist[]> {
     return this.http.get<any>(this.apiURL + '/playlist')
     .pipe(
       map( playlists => {
-        const finalPlaylistList: IPlaylist[] = playlists.map( (playlist: any) => {
-          const playlistInfo: IPlaylist = {
+        const finalPlaylistList: Playlist[] = playlists.map( (playlist: any) => {
+          const playlistInfo: Playlist = {
             id: playlist.id,
             title: playlist.title
           };
@@ -100,8 +80,4 @@ export class TagService {
       );
   }
  
-  sortAppByPlaylist(playlist: IPlaylist): void {
-    this.playlistSelectedSubject.next(playlist);
-  }
-
 }

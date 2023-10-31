@@ -1,5 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { GoogleLoginProvider, SocialAuthService, SocialUser } from '@abacritt/angularx-social-login';
+import { Observable, tap } from 'rxjs';
+
+import { Store } from '@ngrx/store';
+import { State, getPlaylists, getCurrentPlaylist, getCurrentPlaylistId } from '../shared/state';
+import { TagPageActions } from '../tags/state/actions';
+import { VideoPageActions } from '../videos/state/actions';
+import { PlaylistPageActions } from '../shared/state/actions';
+
+import { Playlist } from '../shared/model/playlist.model';
+
+
 
 @Component({
   selector: 'app-header',
@@ -9,15 +20,28 @@ export class HeaderComponent implements OnInit {
 
   user!: SocialUser;
   loggedIn: boolean = false;
+  currentPlaylist!: Playlist;
 
-  constructor(private authService: SocialAuthService) { }
+  playlist$: Observable<Playlist[]> = this.store.select(getPlaylists);
+
+  constructor(
+    private authService: SocialAuthService,
+    private store: Store<State>
+    ) { }
 
   ngOnInit() {
+
+    this.store.dispatch(PlaylistPageActions.loadPlaylists())
+
     this.authService.authState.subscribe((user) => {
       this.user = user;
       this.loggedIn = (user != null);
-      //console.log('auth info', user);
     });
+
+    this.store.select(getCurrentPlaylist)
+      .subscribe(playlist => {
+        this.currentPlaylist = playlist || new Playlist();
+      })
   }
 
   signInWithGoogle(): void {
@@ -30,6 +54,14 @@ export class HeaderComponent implements OnInit {
 
   refreshToken(): void {
     this.authService.refreshAuthToken(GoogleLoginProvider.PROVIDER_ID);
+  }
+
+  onPlaylistChange(): void {
+    this.store.dispatch(PlaylistPageActions.setCurrentPlaylist({
+      playlistId: this.currentPlaylist.id
+    }));
+    this.store.dispatch(TagPageActions.loadTags());
+    this.store.dispatch(VideoPageActions.loadVideos());
   }
 
 }

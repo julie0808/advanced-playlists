@@ -7,9 +7,18 @@ git push origin v1.3.0
 Got to github in Tags section and "Create release"
 
 
+FOCUS
+- current playlist not showing
+- 1er video playing plante au chargement
+- new bugs with tags. current filtered tags not showing if coming back from tag managing or messing up the video list
+- retester ce que ça fait au tags assignés quand on revient de modifier les tags
+- problème quand le video est partagé entre les playlists; les tags de lautre playlist apparaissent quand meme. lié les tags au id unique plutôt que id video?
+-retirer tingle
+
 
 ### lineup
 - FEATURE choisir plus d'un rating en même temps
+- FEATURE avoir le player pendant quon gère les tags
 - HOTFIX les tags assigné ne sont pas à jour quand on édite un Tag
 - FEATURE avoir sous-playlist avec ordre custom (ex: bts story line)
 - update à angular 16
@@ -17,17 +26,18 @@ Got to github in Tags section and "Create release"
 - FEATURE mettre un commentaire à un video (ex : video dentrainement)
 - FEATURE Raccourci pour scroller au vidéo actuellement lu dans videoList
 - FEATURE avoir une loading bar précise? possible avec interceptor? autres options avec le store? async?
+- HOTFIX - playlist dropdown width
 
 
 
 ### Backlog
+- FEATURE "offline mode" tous les tags de toutes les playlists (ex: get all the flirty stuff de toutes les playlists)
 - HOTFIX this.tag dans tag-edit à revoir
 - HOTFIX tester ce qui arrive si je supprime un tag parent qui a des parents, ou donne un parent à un tag qui a des enfants
 - FEATURE HOTFIX avoir le loading présent quand on sort / unsort + régler autre bogue de quand il n'apparait pas
 - FEATURE fonction pour flaguer les vidéos à ne pas montrer (Maze of memories doublons?, age restricted...)
 - FEATURE trier par... video non affiché (unavailable, non published...). mais ne pas les montrer par défaut dans la liste
 - FEATURE REFACTOR faire les /edit avec le routing "popup"
-- FEATURE Trier par playlist (get rid of playlistHardcoded = 'PLwgftAdEcD4rXHmDdFTFI8Hch3BfWBQIt';)
 - FEATURE terminer la fonctionnalité détectant les duplications
 - HOTFIX updateNewVideos() -> problématique si + de 50 vidéos
 ----- HOTFIX REFACTOR Latence en général. 850 vidéos... problème avec les observable ou normal? possibilité de lazy load?
@@ -41,22 +51,26 @@ Got to github in Tags section and "Create release"
 - FEATURE héberger l'app en ligne
 
 
+# WIP Release 2.2.0
 
+- WIP  Le premier vidéo de la liste est correctement chargé et joue automatiquement
+- WIP Quand un tag est modifié, cela édite aussi ses associations dans la liste de vidéos
+- WIP ajouter les unsubscribe (revoir "course"?)
 
 
 
 # WIP Release 2.1.0
 
+## Ajouté
+- Chargement des tags et vidéos par playlist
+
 ## Corrigé
-- Le premier vidéo de la liste est correctement chargé et joue automatiquement
 - Les contrôles personnalisés de reculer/avancer/jouer un vidéo sont de nouveau fonctionnels
 - Le numéro du vidéo actuellement joué est affiché correctement
 - Les nouveaux vidéos sont de nouveaux enregistrés dans la base de données pour garder leur titre initial en mémoire
-- WIP Quand un tag est modifié, cela édite aussi ses associations dans la liste de vidéos
 
 ## Modifié
 - Modification structurelle au code - Index barrels
-- WIP ajouter les unsubscribe (revoir "course"?)
 
 
 

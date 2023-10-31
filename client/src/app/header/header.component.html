@@ -2,10 +2,26 @@
   <div class="boxed-container">
     <nav>
       <ul>
-        <li class="main-menu--item" routerLinkActive="item-active"><a routerLink="/videos">Video List</a></li>
-        <li class="main-menu--item" routerLinkActive="item-active"><a routerLink="/tags">Tag Manager</a></li>
+        <li class="main-menu--item" routerLinkActive="item-active">
+          <a routerLink="/videos">Video List</a></li>
+        <li class="main-menu--item" routerLinkActive="item-active">
+          <a routerLink="/tags">Tag Manager</a></li>
       </ul>
     </nav>
+    <div 
+      class="playlist-container"
+      *ngIf="playlist$ | async as playlistList">
+        <p class="playlist-container--title">Current playlist: </p>
+        <p-dropdown 
+          [options]="playlistList" 
+          [(ngModel)]="currentPlaylist"
+          dataKey="title"
+          (onChange)="onPlaylistChange()"
+          placeholder="Choose a playlist"
+          autoWidth="false"
+          class="playlist-container--dropdown"
+          optionLabel="title"></p-dropdown>
+    </div>
     <p *ngIf="user">Logged as {{ user.name }}</p>
   </div>
 </header>

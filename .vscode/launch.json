@@ -1,0 +1,14 @@
+{
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Spring Boot-FancYtApplication<fancYT>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "com.example.fancYT.FancYtApplication",
+      "projectName": "fancYT",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env"
+    }
+  ]
+}

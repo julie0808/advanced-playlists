@@ -4,15 +4,16 @@ import { NonNullableFormBuilder, Validators } from '@angular/forms';
 import { Observable, Subject, Subscription } from 'rxjs';
 
 import { Tag, TagForm } from '../tag.model';
-import { TagService } from '../tag.service';
 import { tap } from 'rxjs/operators';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { StatusCode } from 'src/app/shared/global-model';
-import { IPlaylist } from 'src/app/videos/playlist.model';
 
 import { Store } from '@ngrx/store';
 import { State, getCurrentTag, getParentTags } from '../state';
+import { getCurrentPlaylistId } from '../../shared/state';
 import { TagPageActions } from '../state/actions';
+
+
 
 @Component({
   selector: 'app-tag-edit',
@@ -24,7 +25,7 @@ export class TagEditComponent implements OnInit, OnDestroy {
 
   private idSub!: Subscription;
   tag!: Tag;
-  playlistHardcoded = 'PLwgftAdEcD4rXHmDdFTFI8Hch3BfWBQIt';
+  currentPlaylistId = '';
   
   tagForm: TagForm = this.fb.group({
     title: this.fb.control('', Validators.required),
@@ -43,8 +44,7 @@ export class TagEditComponent implements OnInit, OnDestroy {
               private store: Store<State>,
               private fb: NonNullableFormBuilder,
               private messageService: MessageService,
-              private confirmationService: ConfirmationService,
-              private tagService: TagService) {                 
+              private confirmationService: ConfirmationService) {                 
   }
 
   ngOnInit() {
@@ -52,6 +52,11 @@ export class TagEditComponent implements OnInit, OnDestroy {
     this.store.select(getCurrentTag)
       .subscribe(tag => {
         this.displayTag(tag);
+      })
+
+    this.store.select(getCurrentPlaylistId)
+      .subscribe(playlistId => {
+        this.currentPlaylistId = playlistId;
       })
 
     this.tagGroupChoices$ = this.store.select(getParentTags).pipe(
@@ -95,8 +100,8 @@ export class TagEditComponent implements OnInit, OnDestroy {
     newTag.description = this.tagForm.value['description']!;
     newTag.parent_tag_id = this.tagForm.value['parent_tag_id']!;
     newTag.status = StatusCode.added;
-    newTag.playlist_id = this.playlistHardcoded;
-    
+    newTag.playlist_id = this.currentPlaylistId;
+
     this.store.dispatch(TagPageActions.createTag({ tag: newTag }));
     this.resetPage();
   }

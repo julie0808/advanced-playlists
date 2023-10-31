@@ -1,11 +1,14 @@
 import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
-import { forkJoin, merge, of } from "rxjs";
-import { mergeMap, map, catchError, concatMap, tap, switchMap } from "rxjs/operators";
+import { forkJoin, of } from "rxjs";
+import { mergeMap, map, catchError, concatMap, switchMap, withLatestFrom } from "rxjs/operators";
 
 import { VideoService } from "../video.service";
 import { VideoApiActions, VideoPageActions } from "./actions";
 import { Video } from "../video.model";
+
+import { Store } from '@ngrx/store';
+import { State, getCurrentPlaylistId } from '../../shared/state';
 
 
 
@@ -14,6 +17,7 @@ export class VideoEffects {
 
   constructor(
     private actions$: Actions,
+    private store$: Store<State>,
     private videoService: VideoService
   ) {}
   
@@ -21,10 +25,13 @@ export class VideoEffects {
     return this.actions$
       .pipe(
         ofType(VideoPageActions.loadVideos),
-        switchMap(() => {
+        withLatestFrom(
+          this.store$.select(getCurrentPlaylistId)
+        ),
+        switchMap(([action, playlistId]) => {
           const allData = forkJoin([
-            this.videoService.getVideosFromYoutube(),
-            this.videoService.getVideosFromDatabase()
+            this.videoService.getVideosFromYoutube(playlistId),
+            this.videoService.getVideosFromDatabase(playlistId)
           ])
           return allData;
         }),

@@ -5,6 +5,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 3px 0;
   }
 
   .main-menu--item {
@@ -21,6 +22,15 @@
 
   .item-active {
     filter: brightness(1.5);
+  }
+}
+
+.playlist-container {
+  display: flex;
+  align-items: center;
+
+  .playlist-container--title {
+    margin-right: 10px;
   }
 }
 
