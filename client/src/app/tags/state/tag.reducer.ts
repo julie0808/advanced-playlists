@@ -75,7 +75,7 @@ export const tagReducer = createReducer<TagState>(
 
 
 
-  on(TagApiActions.updateTagSuccess,
+  on(TagPageActions.updateTagList,
     (state, action): TagState => {
       const updatedTags = TagHelperFunc.updateTagFromList(state.tags, action.tag);
 
@@ -110,10 +110,6 @@ export const tagReducer = createReducer<TagState>(
         error: ''
       }
 
-      console.log('CURRENT STATE', state.tags);
-      console.log('UPDATEDTAGS', updatedTags);
-      console.log('NEW STATE', newState);
-
       return newState;
     }
   ),
@@ -128,7 +124,7 @@ export const tagReducer = createReducer<TagState>(
 
 
 
-  on(TagApiActions.deleteTagSuccess,
+  on(TagPageActions.deleteFromTagList,
     (state, action): TagState => {
 
       const updatedTags = TagHelperFunc.removeTagFromList(state.tags, action.tagId);

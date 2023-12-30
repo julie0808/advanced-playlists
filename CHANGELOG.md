@@ -6,12 +6,25 @@ git tag -a v1.3.0 -m "Filtre pour artiste et choix de playlist"
 git push origin v1.3.0
 Got to github in Tags section and "Create release"
 
+Changement à sprintool:
+https://www.baeldung.com/swagger-2-documentation-for-spring-rest-api
+https://spring.io/guides/gs/rest-service/
+https://spring.io/quickstart
+https://spring.io/guides/gs/guides-with-vscode/
+
+best ngrx practices to consider https://medium.com/@m3po22/stop-using-ngrx-effects-for-that-a6ccfe186399
+
+
+ngrx:
+cleanup StatusCode?
+
+
 
 FOCUS
+- cant change playlist
 - current playlist not showing
 - 1er video playing plante au chargement
 - new bugs with tags. current filtered tags not showing if coming back from tag managing or messing up the video list
-- retester ce que ça fait au tags assignés quand on revient de modifier les tags
 - problème quand le video est partagé entre les playlists; les tags de lautre playlist apparaissent quand meme. lié les tags au id unique plutôt que id video?
 -retirer tingle
 

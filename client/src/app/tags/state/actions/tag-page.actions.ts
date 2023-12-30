@@ -24,6 +24,11 @@ export const updateTag = createAction(
   props<{ tag: Tag }>()
 );
 
+export const updateTagList = createAction(
+  '[Tag Page] Update Tag list',
+  props<{ tag: Tag }>()
+);
+
 export const createTag = createAction(
   '[Tag Page] Create Tag',
   props<{ tag: Tag }>()
@@ -31,6 +36,11 @@ export const createTag = createAction(
 
 export const deleteTag = createAction(
   '[Tag Page] Delete Tag',
+  props<{ tagId: number }>()
+);
+
+export const deleteFromTagList = createAction(
+  '[Tag Page] Delete from Tag list',
   props<{ tagId: number }>()
 );
 

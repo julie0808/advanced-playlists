@@ -37,3 +37,13 @@ export const updateVideo = createAction(
   props<{ video: Video }>()
 );
 
+export const updateVideoTag = createAction(
+ '[Video (from tag)] Update Video tag',
+ props<{ tag: Tag }>()
+)
+
+export const deleteVideoTag = createAction(
+  '[Video (from tag)] Delete Video tag',
+  props<{ tagId: number }>()
+ )
+

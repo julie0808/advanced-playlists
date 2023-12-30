@@ -69,10 +69,18 @@ export const addTagToList = (tags: Tag[], tag: Tag) => {
       updatedArray = [...tags, tag];
     }
 
-    return orderTagsAlphabetically(updatedArray);
+    return orderTagsAlphabeticallyWithChildren(updatedArray);
 }
 
 export const orderTagsAlphabetically = (tags: Tag[]) => {
+  const alphaSorted = tags.sort( (x: Tag, y: Tag) => {
+    return x.title.localeCompare(y.title);
+  });
+
+  return alphaSorted;
+}
+
+export const orderTagsAlphabeticallyWithChildren = (tags: Tag[]) => {
   const alphaSortedArrayParents = tags.sort( (x: Tag, y: Tag) => {
     return x.title.localeCompare(y.title);
   });

@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Observable, Subject } from 'rxjs';
+import { Observable } from 'rxjs';
 import { catchError, map, tap, expand, takeWhile, reduce } from "rxjs/operators";
 import { HttpClient, HttpHeaders, HttpParams, HttpContext } from '@angular/common/http';
 import { CACHEABLE } from "../shared/cache.interceptor";
@@ -7,14 +7,12 @@ import { ErrorService } from "../shared/error/error/error-service";
 
 import { Video } from "./video.model";
 
-import { Playlist } from "../shared/model/playlist.model";
-
 
 @Injectable({providedIn: 'root'})
 export class VideoService {
 
-  testMode: boolean = false; // va charger une seule page de l'api
-  testModeMaxItems: number = 25; // max 50, car on va chercher une seule page 
+  testMode: boolean = true; // va charger une seule page de l'api
+  testModeMaxItems: number = 3; // max 50, car on va chercher une seule page 
 
   nextPageToken: string = '';
   totalVideoInPlaylist: number = 0;

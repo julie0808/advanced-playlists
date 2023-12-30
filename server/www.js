@@ -187,9 +187,17 @@ app.delete(`${rootUrl}/tags/:id`, (req, res) => {
        `DELETE FROM tag 
         WHERE tag_id = ($1)`,
         [id]);
+        
      if (results.rowCount === 0) { 
       console.log('no results')
      }
+
+     const deleteQry = `
+        DELETE FROM   video_tag 
+        WHERE         tag_id = $1
+        `;
+      await client.query(deleteQry, [id]);
+
      res.status(201).json(results);
    } finally {
      client.release();

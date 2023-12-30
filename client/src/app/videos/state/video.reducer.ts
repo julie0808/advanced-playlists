@@ -4,6 +4,8 @@ import { VideoApiActions, VideoPageActions } from "./actions";
 
 import { Video } from "../video.model";
 import { Tag } from "src/app/tags/tag.model";
+import { orderTagsAlphabetically } from "src/app/tags/state/tag-helper-func";
+
 
 
 
@@ -102,7 +104,7 @@ export const videoReducer = createReducer<VideoState>(
 
   on(VideoApiActions.updateVideoSuccess,
     (state, action): VideoState => {
-      const updatedProducts = state.videos.map(
+      const updatedVideos = state.videos.map(
         item => {
           return action.video.youtubeId === item.youtubeId ? action.video : item;
         }
@@ -110,7 +112,7 @@ export const videoReducer = createReducer<VideoState>(
 
       return {
         ...state,
-        videos: updatedProducts,
+        videos: updatedVideos,
         error: ''
       }
     }
@@ -123,4 +125,55 @@ export const videoReducer = createReducer<VideoState>(
       }
     }
   ),
+
+
+
+  
+  on(VideoPageActions.updateVideoTag,
+    (state, action): VideoState => {
+      const updatedVideos = state.videos.map(
+        item => {
+          const updatedTags =  item.tags.map( t => t.id === action.tag.id ? action.tag : t);
+          const reorderedTags = orderTagsAlphabetically(updatedTags);
+
+          return {
+            ...item,
+            tags: reorderedTags
+          }
+        }
+      );
+     
+      return {
+        ...state,
+        videos: updatedVideos,
+        error: ''
+      }
+    }
+  ),
+  on(VideoPageActions.deleteVideoTag,
+    (state, action): VideoState => {
+      const updatedVideos = state.videos.map(
+        item => {
+          const findDeletedTag = item.tags.findIndex( t => t.id === action.tagId );
+          let updatedItem = item;
+
+          if (findDeletedTag > -1) {
+            updatedItem = {
+              ...item,
+              tags: item.tags.splice(findDeletedTag, 1)
+            }
+          }
+          return updatedItem;
+        }
+      );
+      
+      return {
+        ...state,
+        videos: updatedVideos,
+        error: ''
+      }
+    }
+  )
+  
+
 )

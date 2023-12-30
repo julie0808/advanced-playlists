@@ -111,6 +111,7 @@ export class TagEditComponent implements OnInit, OnDestroy {
       const updatedTag = {...this.tag, ...this.tagForm.value};
       updatedTag.status = StatusCode.updated;
       this.store.dispatch(TagPageActions.updateTag({ tag: updatedTag }));
+      
       this.resetPage();
     }
   }

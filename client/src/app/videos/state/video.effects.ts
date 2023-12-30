@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { forkJoin, of } from "rxjs";
-import { mergeMap, map, catchError, concatMap, switchMap, withLatestFrom } from "rxjs/operators";
+import { mergeMap, map, catchError, concatMap, switchMap, withLatestFrom, take } from "rxjs/operators";
 
 import { VideoService } from "../video.service";
 import { VideoApiActions, VideoPageActions } from "./actions";
@@ -72,7 +72,7 @@ export class VideoEffects {
         }),
         mergeMap( data => {
           const [finalList, newVideoList] = data;
-          
+
           // there is a possibility of bug if over 50 videos
           const actionResultat = this.videoService.updateNewVideos(newVideoList)
             .pipe(
@@ -88,7 +88,8 @@ export class VideoEffects {
         }),
         catchError( error => {
           return of(VideoApiActions.loadVideosFailure({ error }))
-        })
+        }),
+        take(1)
       )
   });
 
