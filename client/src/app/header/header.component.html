@@ -3,9 +3,9 @@
     <nav>
       <ul>
         <li class="main-menu--item" routerLinkActive="item-active">
-          <a routerLink="/videos">Video List</a></li>
+          <a routerLink="videos">Video List</a></li>
         <li class="main-menu--item" routerLinkActive="item-active">
-          <a routerLink="/tags">Tag Manager</a></li>
+          <a routerLink="tags">Tag Manager</a></li>
       </ul>
     </nav>
     <div 
@@ -15,7 +15,7 @@
         <p-dropdown 
           [options]="playlistList" 
           [(ngModel)]="currentPlaylist"
-          dataKey="title"
+          dataKey="id"
           (onChange)="onPlaylistChange()"
           placeholder="Choose a playlist"
           autoWidth="false"

@@ -7,12 +7,14 @@ import { Playlist } from "src/app/shared/model/playlist.model";
 
 
 export interface SharedState {
+  appInitialized: boolean;
   playlists: Playlist[];
   currentPlaylistId: string;
   error: string;
 }
 
 const initialState: SharedState = {
+  appInitialized: false,
   playlists: [],
   currentPlaylistId: 'PLwgftAdEcD4rXHmDdFTFI8Hch3BfWBQIt',
   error: ''

@@ -14,6 +14,11 @@ export interface State extends AppState.State {
 
 const getSharedFeatureState = createFeatureSelector<SharedState>('shared');
 
+export const getAppInitialized = createSelector(
+  getSharedFeatureState,
+  state => state.appInitialized
+)
+
 export const getPlaylists = createSelector(
   getSharedFeatureState,
   state => state.playlists

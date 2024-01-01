@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
-import { mergeMap, map, catchError, concatMap, withLatestFrom, take } from "rxjs/operators";
+import { mergeMap, map, catchError, concatMap, withLatestFrom } from "rxjs/operators";
 import { of } from "rxjs";
 
 import { TagService } from "../tag.service";
@@ -36,8 +36,7 @@ export class TagEffects {
               return of(TagApiActions.loadTagsFailure({ error }))
             })
           );
-        }),
-        take(1)
+        })
       )
   });
 

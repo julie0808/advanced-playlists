@@ -1,6 +1,5 @@
 import { FormGroup, FormControl } from "@angular/forms";
 import { Tag } from "../tags/tag.model";
-import { StatusCode } from "../shared/global-model";
 
 export interface Video {
   title: string; 
@@ -14,7 +13,6 @@ export interface Video {
   artists: Tag[]; 
   publishedBy: string; // original Channel name on which it was published
   youtubeStatus: string;
-  status: StatusCode;
   //ytPlaylists: {name: string, id: string, dateAdded: string}[]; // in which lists the video is in. might have duplicates
 }
 
@@ -31,7 +29,6 @@ export class Video {
   artists = [] as Tag[];
   publishedBy = '';
   youtubeStatus = 'published';
-  status = StatusCode.invalid;
 }
 
 export interface VideoForm extends FormGroup<{

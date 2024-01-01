@@ -10,7 +10,6 @@ import { Video, VideoForm } from '../video.model';
 
 import { Store } from '@ngrx/store';
 import { State, getArtistTags, getOtherTagsForPrimeNg } from '../../tags/state';
-import { TagPageActions } from '../../tags/state/actions';
 import { VideoPageActions } from '../state/actions';
 import { getCurrentVideoEdited } from '../state';
 
@@ -63,8 +62,6 @@ export class VideoTagEditComponent implements OnInit, OnDestroy {
         rating: video.rating
       })
     });
-
-    this.store.dispatch(TagPageActions.loadTags());
 
   } 
 

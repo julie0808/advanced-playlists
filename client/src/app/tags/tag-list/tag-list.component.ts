@@ -28,7 +28,7 @@ export class TagListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.store.dispatch(TagPageActions.loadTags());
+
   }
 
   editTag(objectId: number) {

@@ -6,7 +6,6 @@ import { Observable, Subject, Subscription } from 'rxjs';
 import { Tag, TagForm } from '../tag.model';
 import { tap } from 'rxjs/operators';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { StatusCode } from 'src/app/shared/global-model';
 
 import { Store } from '@ngrx/store';
 import { State, getCurrentTag, getParentTags } from '../state';
@@ -99,7 +98,6 @@ export class TagEditComponent implements OnInit, OnDestroy {
     newTag.color = this.tagForm.value['color']!;
     newTag.description = this.tagForm.value['description']!;
     newTag.parent_tag_id = this.tagForm.value['parent_tag_id']!;
-    newTag.status = StatusCode.added;
     newTag.playlist_id = this.currentPlaylistId;
 
     this.store.dispatch(TagPageActions.createTag({ tag: newTag }));
@@ -109,7 +107,6 @@ export class TagEditComponent implements OnInit, OnDestroy {
   updateTag() {
     if (this.tagForm.valid){
       const updatedTag = {...this.tag, ...this.tagForm.value};
-      updatedTag.status = StatusCode.updated;
       this.store.dispatch(TagPageActions.updateTag({ tag: updatedTag }));
       
       this.resetPage();
@@ -132,12 +129,7 @@ export class TagEditComponent implements OnInit, OnDestroy {
   }
 
   deleteTag() {
-    const deletedTag = {
-      ...this.tag,
-      status: StatusCode.deleted
-    };
-
-    this.store.dispatch(TagPageActions.deleteTag({ tagId: deletedTag.id }));
+    this.store.dispatch(TagPageActions.deleteTag({ tagId: this.tag.id }));
     this.resetPage();
   }
 

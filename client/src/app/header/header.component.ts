@@ -31,7 +31,7 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit() {
 
-    this.store.dispatch(PlaylistPageActions.loadPlaylists())
+    this.store.dispatch(PlaylistPageActions.loadPlaylists());
 
     this.authService.authState.subscribe((user) => {
       this.user = user;
@@ -40,7 +40,11 @@ export class HeaderComponent implements OnInit {
 
     this.store.select(getCurrentPlaylist)
       .subscribe(playlist => {
+        const strongTypedPlaylist: Playlist = playlist ||  new Playlist();
         this.currentPlaylist = playlist || new Playlist();
+        console.log('current playlist received', playlist);
+        console.log('current playlist sub', this.currentPlaylist);
+        console.log('current playlist test', strongTypedPlaylist);
       })
   }
 
@@ -60,8 +64,6 @@ export class HeaderComponent implements OnInit {
     this.store.dispatch(PlaylistPageActions.setCurrentPlaylist({
       playlistId: this.currentPlaylist.id
     }));
-    this.store.dispatch(TagPageActions.loadTags());
-    this.store.dispatch(VideoPageActions.loadVideos());
   }
 
 }

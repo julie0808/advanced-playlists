@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { forkJoin, of } from "rxjs";
-import { mergeMap, map, catchError, concatMap, switchMap, withLatestFrom, take } from "rxjs/operators";
+import { mergeMap, map, catchError, concatMap, switchMap, withLatestFrom } from "rxjs/operators";
 
 import { VideoService } from "../video.service";
 import { VideoApiActions, VideoPageActions } from "./actions";
@@ -88,8 +88,7 @@ export class VideoEffects {
         }),
         catchError( error => {
           return of(VideoApiActions.loadVideosFailure({ error }))
-        }),
-        take(1)
+        })
       )
   });
 
@@ -110,4 +109,17 @@ export class VideoEffects {
       })
     )
   });
+
+  setFirstVideo$ = createEffect( () => {
+    return this.actions$.pipe(
+      ofType(VideoApiActions.loadVideosSuccess),
+      concatMap(action => {
+        return of(VideoPageActions.setCurrentVideo( 
+          { videoId: action.videos[0].youtubeId }
+        ));
+      })
+    )
+  });
+
+
 }

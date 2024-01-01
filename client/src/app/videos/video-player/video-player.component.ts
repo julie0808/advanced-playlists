@@ -54,8 +54,6 @@ export class VideoPlayerComponent implements OnInit {
     private store: Store<State>) { }
 
   ngOnInit(): void {
-
-    this.store.dispatch(VideoPageActions.loadVideos());
     
     if (!this.apiLoaded) {
       const tag = document.createElement("script");

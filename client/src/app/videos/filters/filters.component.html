@@ -63,7 +63,7 @@
 </section>
 
 <section class="filter-active">
-  <ul class="boxed-container filter-active-list">
+  <ul *ngIf="selectedTagList$ | async as selectedTagList" class="boxed-container filter-active-list">
     <ng-container *ngFor="let tag of selectedTagList">
       <li 
         [ngStyle]="{'background': tag.color !== null || tag.color !== '' ? tag.color : '#282f39' }"

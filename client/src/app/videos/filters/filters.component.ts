@@ -3,12 +3,11 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Subject } from 'rxjs';
 
 import { Tag } from 'src/app/tags/tag.model';
-import { VideoService } from '../video.service';
 
 import { Store } from '@ngrx/store';
 import { State, getArtistTags, getOtherTagsForPrimeNg } from '../../tags/state';
-import { TagPageActions } from '../../tags/state/actions';
 import { VideoPageActions } from '../state/actions';
+import { getSortingSelectedTags, getSortingSelectedNew, getSortingSelectedRatings } from '../state';
 
 
 @Component({
@@ -21,6 +20,7 @@ export class FiltersComponent implements OnInit {
 
   tagList: Tag[] = [];
   artistTagList: Tag[] = [];
+
   selectedTagList: Tag[] = [];
   selectedRating: number = 0;
   showOnlyNew: boolean = false;
@@ -28,15 +28,18 @@ export class FiltersComponent implements OnInit {
   tagList$ = this.store.select(getOtherTagsForPrimeNg);
   artistTagList$ = this.store.select(getArtistTags);
 
+  selectedTagList$ = this.store.select(getSortingSelectedTags);
+  selectedRating$ = this.store.select(getSortingSelectedRatings);
+  showOnlyNew$ = this.store.select(getSortingSelectedNew)
+
   private errorMessageSubject = new Subject<string>();
   errorMessage$ = this.errorMessageSubject.asObservable();
 
   constructor(
-    private store: Store<State>,
-    private videoService: VideoService) { }
+    private store: Store<State>) { }
 
   ngOnInit(): void {
-    this.store.dispatch(TagPageActions.loadTags());
+    
   }
 
   sortByTag(){

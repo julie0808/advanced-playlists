@@ -1,5 +1,4 @@
 import { FormControl, FormGroup } from "@angular/forms";
-import { StatusCode } from "../shared/global-model";
 
 export interface Tag {
   id: number;
@@ -10,7 +9,6 @@ export interface Tag {
   lst_children_tag: Tag[] | null;
   nb_associated_videos: number;
   playlist_id: string;
-  status?: StatusCode;
 }
 
 export class Tag {

@@ -17,12 +17,14 @@ import { EffectsModule } from '@ngrx/effects';
 
 import { sharedReducer } from './shared/state/shared.reducer';
 import { SharedEffects } from './shared/state/shared.effect';
+import { InterfaceComponent } from './interface/interface.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    HeaderComponent
+    HeaderComponent,
+    InterfaceComponent
   ], 
   imports: [
     SharedModule,

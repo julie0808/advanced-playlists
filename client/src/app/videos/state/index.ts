@@ -178,3 +178,20 @@ export const getCurrentVideoPosition = createSelector(
     }) + 1 || 0;
   }
 )
+
+
+
+export const getSortingSelectedTags = createSelector(
+  getVideoFeatureState,
+  state => state.sortingSelectedTags
+)
+
+export const getSortingSelectedRatings = createSelector(
+  getVideoFeatureState,
+  state => state.sortingSelectedRatings
+)
+
+export const getSortingSelectedNew = createSelector(
+  getVideoFeatureState,
+  state => state.sortingSelectedNew
+)

@@ -12,21 +12,24 @@ https://spring.io/guides/gs/rest-service/
 https://spring.io/quickstart
 https://spring.io/guides/gs/guides-with-vscode/
 
-best ngrx practices to consider https://medium.com/@m3po22/stop-using-ngrx-effects-for-that-a6ccfe186399
+best ngrx practices to consider 
+-- https://medium.com/@m3po22/stop-using-ngrx-effects-for-that-a6ccfe186399
+-- https://angularindepth.com/posts/1442/ngrx-bad-practices
 
-
-ngrx:
-cleanup StatusCode?
 
 
 
 FOCUS
-- cant change playlist
-- current playlist not showing
-- 1er video playing plante au chargement
+- current playlist not showing in dropdown
 - new bugs with tags. current filtered tags not showing if coming back from tag managing or messing up the video list
-- problème quand le video est partagé entre les playlists; les tags de lautre playlist apparaissent quand meme. lié les tags au id unique plutôt que id video?
--retirer tingle
+- éditer un tag en ayant le player
+- ajout du sorting au store pas terminé
+
+- 1er video playing plante au chargement
+- routing mess :) cant load from root or parent
+--- viens avec le bug de la liste qui load pas si on a ouvert l'app dans la page de gestion de Tags ou une autre pages
+
+
 
 
 ### lineup
@@ -40,6 +43,7 @@ FOCUS
 - FEATURE Raccourci pour scroller au vidéo actuellement lu dans videoList
 - FEATURE avoir une loading bar précise? possible avec interceptor? autres options avec le store? async?
 - HOTFIX - playlist dropdown width
+- HOTFIX problème quand le video est partagé entre les playlists; les tags de lautre playlist apparaissent quand meme dans l'édition de tag pour un vidéo. lier les tags au id unique plutôt que id video?
 
 
 
@@ -64,11 +68,7 @@ FOCUS
 - FEATURE héberger l'app en ligne
 
 
-# WIP Release 2.2.0
 
-- WIP  Le premier vidéo de la liste est correctement chargé et joue automatiquement
-- WIP Quand un tag est modifié, cela édite aussi ses associations dans la liste de vidéos
-- WIP ajouter les unsubscribe (revoir "course"?)
 
 
 
@@ -81,9 +81,14 @@ FOCUS
 - Les contrôles personnalisés de reculer/avancer/jouer un vidéo sont de nouveau fonctionnels
 - Le numéro du vidéo actuellement joué est affiché correctement
 - Les nouveaux vidéos sont de nouveaux enregistrés dans la base de données pour garder leur titre initial en mémoire
+- Si on change de section, la liste de vidéos est correctement rafraichie au retour
+- Quand un tag est modifié, cela édite aussi ses associations dans la liste de vidéos
 
 ## Modifié
 - Modification structurelle au code - Index barrels
+
+## Retiré
+- Librairie "tingle" inutilisée
 
 
 
