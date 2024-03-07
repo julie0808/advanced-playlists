@@ -68,7 +68,7 @@ export const getSortedVideos = createSelector(
       if (state.sortingSelectedRatings.length){
         sortedVideos = sortedVideos.filter((video: Video) => {
           return state.sortingSelectedRatings.some(rating => {
-            return rating === video.rating;
+            return rating.rating === video.rating;
           });
         });
       }

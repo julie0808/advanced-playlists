@@ -20,11 +20,7 @@ best ngrx practices to consider
 
 
 FOCUS
-- éditer un tag en ayant le player, mais que ça continue où on en étant quand on retourne dans la liste de vidéo (pas reset au vidéo #1)
-- changing playlist has to reset filters (another Effect nightmare)
-- FEATURE choisir plus d'un rating en même temps (mais aussi actuellement déboguer le non fonctionnel)
-
-Bugs non bloquants mais nécessaire pour release 2.1.0 :
+Non bloquants mais nécessaire pour release 2.1.0 :
 - HOTFIX les tags assigné ne sont pas à jour quand on édite un Tag
 - HOTFIX problème quand le video est partagé entre les playlists; les tags de lautre playlist apparaissent quand meme dans l'édition de tag pour un vidéo. lier les tags au id unique plutôt que id video?
 
@@ -33,6 +29,8 @@ Bugs non bloquants mais nécessaire pour release 2.1.0 :
 ### lineup
 - update à angular 16 + update des packages
 
+- FEATURE éditer un tag en ayant le player, mais que ça continue où on en étant quand on retourne dans la liste de vidéo (pas reset au vidéo #1)
+
 - FEATURE avoir sous-playlist avec ordre custom (ex: bts story line)
 - écrire dans la docu les instructions pour installer la bd (tech.md)
 - FEATURE mettre un commentaire à un video (ex : video dentrainement)
@@ -40,11 +38,12 @@ Bugs non bloquants mais nécessaire pour release 2.1.0 :
 - FEATURE avoir une loading bar précise? possible avec interceptor? autres options avec le store? async?
 - HOTFIX - playlist dropdown width
 - DEBT - subscribing to value to filters.. should I send observable to action ngrx?
-
+- HOTFIX - redirect to videos not working
 
 
 
 ### Backlog
+- FEATURE changer primeng pour Material
 - FEATURE "offline mode" tous les tags de toutes les playlists (ex: get all the flirty stuff de toutes les playlists)
 - HOTFIX this.tag dans tag-edit à revoir
 - HOTFIX tester ce qui arrive si je supprime un tag parent qui a des parents, ou donne un parent à un tag qui a des enfants
@@ -63,6 +62,8 @@ Bugs non bloquants mais nécessaire pour release 2.1.0 :
 - HOTFIX vérifier tous les TODO TECHNICAL DEBT
 - FEATURE error handling avec interface et +
 - FEATURE héberger l'app en ligne
+- HOTFIX? show only new VERSUS no stars? keep the new taga or merge with ratings?
+- HOTDIX video edit : garder les 3 étoiles ou utiliser le array à la place?
 
 
 
@@ -83,6 +84,7 @@ Bugs non bloquants mais nécessaire pour release 2.1.0 :
 
 ## Modifié
 - Modification structurelle au code - Index barrels
+- Le tri par cote permet de sélectionner plusieurs cotes à la fois; un nom a également été donné aux cotes pour les rendre moins subjectives
 
 ## Retiré
 - Librairie "tingle" inutilisée

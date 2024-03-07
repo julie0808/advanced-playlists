@@ -1,6 +1,6 @@
 import { createAction, props } from "@ngrx/store";
 
-import { Video } from "../../video.model";
+import { Video, VideoRating } from "../../video.model";
 import { Tag } from "src/app/tags/tag.model";
 
 export const setCurrentVideo = createAction(
@@ -20,7 +20,7 @@ export const setSortingSelectedTags = createAction(
 
 export const setSortingSelectedRatings = createAction(
   '[Video] Set selected ratings for video sorting',
-  props<{ ratings: Array<number> }>() 
+  props<{ ratings: VideoRating[] }>() 
 );
 
 export const setSortingSelectedNew = createAction(
@@ -47,3 +47,6 @@ export const deleteVideoTag = createAction(
   props<{ tagId: number }>()
  )
 
+ export const initializeFilters = createAction(
+  '[Video] Initialize Filter '
+);

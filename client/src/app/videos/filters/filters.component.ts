@@ -1,8 +1,9 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 
-import { Observable, Subject, combineLatest, map, of } from 'rxjs';
+import { Observable, Subject, of } from 'rxjs';
 
 import { Tag } from 'src/app/tags/tag.model';
+import { VideoRating, VideoRatings } from '../video.model';
 
 import { Store } from '@ngrx/store';
 import { State, getArtistTags, getOtherTagsForPrimeNg } from '../../tags/state';
@@ -18,28 +19,14 @@ import { getSortingSelectedTags, getSortingSelectedNew, getSortingSelectedRating
 })
 export class FiltersComponent implements OnInit {
 
-  /*tagList: Tag[] = [];
-  artistTagList: Tag[] = [];/*/
   selectedTagList: Tag[] = [];
-  selectedRating: number[] = [];
+  selectedRating: VideoRating[] = [];
   showOnlyNew: boolean = false;
+  ratingList: VideoRating[] = VideoRatings;
 
   tagList$: Observable<Tag[]> = of([]);
   artistTagList$: Observable<Tag[]> = of([]);
   selectedTagList$: Observable<Tag[]> = of([]);
-  /*selectedRating$: Observable<number[]> = of([]);
-  showOnlyNew$: Observable<boolean> = of(false);
-
-  filterVM$ = combineLatest([
-    this.tagList$,
-    this.artistTagList$,
-    this.selectedTagList$,
-    this.selectedRating$,
-    this.showOnlyNew$
-  ]).pipe(
-    map(([tagList, artistTagList, selectedTagList, selectedRating, showOnlyNew]) => 
-    ({tagList, artistTagList, selectedTagList, selectedRating, showOnlyNew}))
-  )*/
 
   private errorMessageSubject = new Subject<string>();
   errorMessage$ = this.errorMessageSubject.asObservable();

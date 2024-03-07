@@ -44,3 +44,15 @@ export enum VideoPlayerFormats {
   fullscreen = 'fullscreen',
   hidden = 'hidden'
 }
+
+
+export interface VideoRating {
+  rating: number;
+  description: string; 
+}
+
+export const VideoRatings: VideoRating[] = [
+  { rating: 1, description: "It exists" },
+  { rating: 2, description: "Repeat worthy" },
+  { rating: 3, description: "Unskippable" }
+]

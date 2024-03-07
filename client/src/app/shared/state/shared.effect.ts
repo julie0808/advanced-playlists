@@ -56,6 +56,15 @@ export class SharedEffects {
     )
   });
 
+  initializeFilters$ = createEffect( () => {
+    return this.actions$.pipe(
+      ofType(PlaylistPageActions.setCurrentPlaylist),
+      concatMap(action => {
+        return of(VideoPageActions.initializeFilters()); 
+      })
+    )
+  });
+
   loadTags$ = createEffect( () => {
     return this.actions$.pipe(
       ofType(PlaylistPageActions.setCurrentPlaylist),

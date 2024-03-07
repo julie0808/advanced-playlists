@@ -2,7 +2,7 @@ import { createReducer, on } from "@ngrx/store";
 
 import { VideoApiActions, VideoPageActions } from "./actions";
 
-import { Video } from "../video.model";
+import { Video, VideoRating } from "../video.model";
 import { Tag } from "src/app/tags/tag.model";
 import { orderTagsAlphabetically } from "src/app/tags/state/tag-helper-func";
 
@@ -14,7 +14,7 @@ export interface VideoState {
   currentVideoEditedId: string;
   videos: Video[];
   sortingSelectedTags: Tag[];
-  sortingSelectedRatings: Array<number>;
+  sortingSelectedRatings: VideoRating[];
   sortingSelectedNew: boolean;
   error: string;
 }
@@ -171,6 +171,17 @@ export const videoReducer = createReducer<VideoState>(
         ...state,
         videos: updatedVideos,
         error: ''
+      }
+    }
+  ),
+
+  on(VideoPageActions.initializeFilters,
+    (state): VideoState => {
+      return {
+        ...state,
+        sortingSelectedTags: [],
+        sortingSelectedRatings: [],
+        sortingSelectedNew: false
       }
     }
   )

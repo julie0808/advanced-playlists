@@ -32,22 +32,16 @@
       </p-multiSelect>
     </div>
     <div class="filter-sort filter-sort--rating">  
-      <p-rating 
-        [stars]="3"
+
+      <p-multiSelect 
+        [options]="ratingList" 
         [(ngModel)]="selectedRating"
-        (onCancel)="removeSortByRating()"
-        (onRate)="sortByRating()"
-        >
-        <ng-template pTemplate="onicon">
-          <i class="pi pi-star-fill"></i>
-        </ng-template>
-        <ng-template pTemplate="officon">
-          <i class="pi pi-star"></i>
-        </ng-template>
-        <ng-template pTemplate="cancel">
-          <i class="pi pi-times-circle"></i>
-        </ng-template>
-      </p-rating>
+        (onChange)="sortByRating()"
+        dataKey="rating"
+        optionLabel="description"
+        defaultLabel="Sort by rating"> 
+      </p-multiSelect>
+
     </div>
     <div class="filter-sort filter-sort--new">
       <p-checkbox 

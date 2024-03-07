@@ -15,23 +15,6 @@
     align-items: center;
   }
 
-  .filter-sort--rating {
-    border: 1px solid #888;
-    border-radius: 2px;
-
-    .p-rating .p-rating-icon:nth-child(2) {
-      color:rgb(201, 137, 40);
-    }
-    
-    .p-rating .p-rating-icon:nth-child(3) {
-      color:rgb(228, 228, 228);
-    }
-    
-    .p-rating .p-rating-icon:nth-child(4) {
-      color:rgb(250, 225, 81);
-    }
-  }
-
   .filter-sort--new label {
     margin-left: 8px;
   }
