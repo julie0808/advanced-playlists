@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 
-import { Subject } from 'rxjs';
+import { Observable, Subject, combineLatest, map, of } from 'rxjs';
 
 import { Tag } from 'src/app/tags/tag.model';
 
@@ -18,19 +18,28 @@ import { getSortingSelectedTags, getSortingSelectedNew, getSortingSelectedRating
 })
 export class FiltersComponent implements OnInit {
 
-  tagList: Tag[] = [];
-  artistTagList: Tag[] = [];
-
+  /*tagList: Tag[] = [];
+  artistTagList: Tag[] = [];/*/
   selectedTagList: Tag[] = [];
-  selectedRating: number = 0;
+  selectedRating: number[] = [];
   showOnlyNew: boolean = false;
 
-  tagList$ = this.store.select(getOtherTagsForPrimeNg);
-  artistTagList$ = this.store.select(getArtistTags);
+  tagList$: Observable<Tag[]> = of([]);
+  artistTagList$: Observable<Tag[]> = of([]);
+  selectedTagList$: Observable<Tag[]> = of([]);
+  /*selectedRating$: Observable<number[]> = of([]);
+  showOnlyNew$: Observable<boolean> = of(false);
 
-  selectedTagList$ = this.store.select(getSortingSelectedTags);
-  selectedRating$ = this.store.select(getSortingSelectedRatings);
-  showOnlyNew$ = this.store.select(getSortingSelectedNew)
+  filterVM$ = combineLatest([
+    this.tagList$,
+    this.artistTagList$,
+    this.selectedTagList$,
+    this.selectedRating$,
+    this.showOnlyNew$
+  ]).pipe(
+    map(([tagList, artistTagList, selectedTagList, selectedRating, showOnlyNew]) => 
+    ({tagList, artistTagList, selectedTagList, selectedRating, showOnlyNew}))
+  )*/
 
   private errorMessageSubject = new Subject<string>();
   errorMessage$ = this.errorMessageSubject.asObservable();
@@ -39,7 +48,25 @@ export class FiltersComponent implements OnInit {
     private store: Store<State>) { }
 
   ngOnInit(): void {
-    
+    this.tagList$ = this.store.select(getOtherTagsForPrimeNg);
+    this.artistTagList$ = this.store.select(getArtistTags);
+
+    this.selectedTagList$ = this.store.select(getSortingSelectedTags);
+
+    this.store.select(getSortingSelectedTags)
+      .subscribe(selectedTagList => {
+        this.selectedTagList = selectedTagList;        
+      });
+
+    this.store.select(getSortingSelectedRatings)
+      .subscribe(rating => {
+        this.selectedRating = rating;        
+      });
+
+    this.store.select(getSortingSelectedNew)
+      .subscribe(showNew => {
+        this.showOnlyNew = showNew;        
+      });
   }
 
   sortByTag(){
@@ -47,10 +74,7 @@ export class FiltersComponent implements OnInit {
   }
 
   sortByRating(){
-    // temp, until ratings are made multi selectable
-    const ratingAsArray = [this.selectedRating];
-
-    this.store.dispatch(VideoPageActions.setSortingSelectedRatings({ ratings: ratingAsArray }));
+    this.store.dispatch(VideoPageActions.setSortingSelectedRatings({ ratings: this.selectedRating }));
   }
 
   sortByNewOnly(){
@@ -58,7 +82,7 @@ export class FiltersComponent implements OnInit {
   }
 
   removeSortByRating(){
-    this.selectedRating = 0;
+    this.selectedRating = [];
     this.sortByRating();
   }
 

@@ -4,8 +4,6 @@ import { Observable, tap } from 'rxjs';
 
 import { Store } from '@ngrx/store';
 import { State, getPlaylists, getCurrentPlaylist, getCurrentPlaylistId } from '../shared/state';
-import { TagPageActions } from '../tags/state/actions';
-import { VideoPageActions } from '../videos/state/actions';
 import { PlaylistPageActions } from '../shared/state/actions';
 
 import { Playlist } from '../shared/model/playlist.model';
@@ -41,10 +39,11 @@ export class HeaderComponent implements OnInit {
     this.store.select(getCurrentPlaylist)
       .subscribe(playlist => {
         const strongTypedPlaylist: Playlist = playlist ||  new Playlist();
-        this.currentPlaylist = playlist || new Playlist();
-        console.log('current playlist received', playlist);
-        console.log('current playlist sub', this.currentPlaylist);
-        console.log('current playlist test', strongTypedPlaylist);
+
+        if ( strongTypedPlaylist.id !== 'none' ) {
+          this.currentPlaylist = playlist || new Playlist();
+        }
+        
       })
   }
 

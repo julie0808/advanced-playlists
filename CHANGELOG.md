@@ -20,30 +20,27 @@ best ngrx practices to consider
 
 
 FOCUS
-- current playlist not showing in dropdown
-- new bugs with tags. current filtered tags not showing if coming back from tag managing or messing up the video list
-- éditer un tag en ayant le player
-- ajout du sorting au store pas terminé
+- éditer un tag en ayant le player, mais que ça continue où on en étant quand on retourne dans la liste de vidéo (pas reset au vidéo #1)
+- changing playlist has to reset filters (another Effect nightmare)
+- FEATURE choisir plus d'un rating en même temps (mais aussi actuellement déboguer le non fonctionnel)
 
-- 1er video playing plante au chargement
-- routing mess :) cant load from root or parent
---- viens avec le bug de la liste qui load pas si on a ouvert l'app dans la page de gestion de Tags ou une autre pages
-
+Bugs non bloquants mais nécessaire pour release 2.1.0 :
+- HOTFIX les tags assigné ne sont pas à jour quand on édite un Tag
+- HOTFIX problème quand le video est partagé entre les playlists; les tags de lautre playlist apparaissent quand meme dans l'édition de tag pour un vidéo. lier les tags au id unique plutôt que id video?
 
 
 
 ### lineup
-- FEATURE choisir plus d'un rating en même temps
-- FEATURE avoir le player pendant quon gère les tags
-- HOTFIX les tags assigné ne sont pas à jour quand on édite un Tag
+- update à angular 16 + update des packages
+
 - FEATURE avoir sous-playlist avec ordre custom (ex: bts story line)
-- update à angular 16
 - écrire dans la docu les instructions pour installer la bd (tech.md)
 - FEATURE mettre un commentaire à un video (ex : video dentrainement)
 - FEATURE Raccourci pour scroller au vidéo actuellement lu dans videoList
 - FEATURE avoir une loading bar précise? possible avec interceptor? autres options avec le store? async?
 - HOTFIX - playlist dropdown width
-- HOTFIX problème quand le video est partagé entre les playlists; les tags de lautre playlist apparaissent quand meme dans l'édition de tag pour un vidéo. lier les tags au id unique plutôt que id video?
+- DEBT - subscribing to value to filters.. should I send observable to action ngrx?
+
 
 
 
@@ -57,7 +54,7 @@ FOCUS
 - FEATURE REFACTOR faire les /edit avec le routing "popup"
 - FEATURE terminer la fonctionnalité détectant les duplications
 - HOTFIX updateNewVideos() -> problématique si + de 50 vidéos
------ HOTFIX REFACTOR Latence en général. 850 vidéos... problème avec les observable ou normal? possibilité de lazy load?
+----- DEBT REFACTOR Latence en général. 850 vidéos... problème avec les observable ou normal? possibilité de lazy load?
 - HOTFIX les @extends fonctionnent pas comme prévu avec l'encapsulation
 - FEATURE enregistrer un groupe de filtre pour sélection rapide
 - FEATURE voir la durée des vidéos

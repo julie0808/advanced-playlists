@@ -90,13 +90,11 @@ export class VideoPlayerComponent implements OnInit {
   }
 
   playVideo() {
-    console.log('play bitch');
     this.videoIsPlaying = true;
     this.player.playVideo();
   }
 
   followState(event: any, nextVideo: string) {
-    console.log('follow', event.data);
     // https://developers.google.com/youtube/iframe_api_reference#Events
     switch(event.data) {
       case 0:
