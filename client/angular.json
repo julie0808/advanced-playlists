@@ -75,10 +75,10 @@
           },
           "configurations": {
             "production": {
-              "browserTarget": "FancYT:build:production"
+              "buildTarget": "FancYT:build:production"
             },
             "development": {
-              "browserTarget": "FancYT:build:development"
+              "buildTarget": "FancYT:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -86,7 +86,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "FancYT:build"
+            "buildTarget": "FancYT:build"
           }
         },
         "test": {
