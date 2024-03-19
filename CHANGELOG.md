@@ -16,6 +16,11 @@ best ngrx practices to consider
 -- https://medium.com/@m3po22/stop-using-ngrx-effects-for-that-a6ccfe186399
 -- https://angularindepth.com/posts/1442/ngrx-bad-practices
 
+ncu -u (view current packages and available updates)
+ng update angular/core@17 (1 major version at a time)
+
+
+
 
 
 
