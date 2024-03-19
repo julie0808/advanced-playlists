@@ -90,6 +90,7 @@ Non bloquants mais nécessaire pour release 2.1.0 :
 ## Modifié
 - Modification structurelle au code - Index barrels
 - Le tri par cote permet de sélectionner plusieurs cotes à la fois; un nom a également été donné aux cotes pour les rendre moins subjectives
+- Mise à jour vers Angular 17
 
 ## Retiré
 - Librairie "tingle" inutilisée
