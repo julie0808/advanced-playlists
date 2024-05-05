@@ -25,6 +25,10 @@ ng update angular/core@17 (1 major version at a time)
 
 
 FOCUS
+Travail de visuel brisé un peu partout avec le primeng à jour
+
+- démystifier 3stats+, unique, coup de coeur..
+
 Non bloquants mais nécessaire pour release 2.1.0 :
 - HOTFIX les tags assigné ne sont pas à jour quand on édite un Tag
 - HOTFIX problème quand le video est partagé entre les playlists; les tags de lautre playlist apparaissent quand meme dans l'édition de tag pour un vidéo. lier les tags au id unique plutôt que id video?
@@ -32,8 +36,6 @@ Non bloquants mais nécessaire pour release 2.1.0 :
 
 
 ### lineup
-- update à angular 16 + update des packages
-
 - FEATURE éditer un tag en ayant le player, mais que ça continue où on en étant quand on retourne dans la liste de vidéo (pas reset au vidéo #1)
 
 - FEATURE avoir sous-playlist avec ordre custom (ex: bts story line)
@@ -44,8 +46,8 @@ Non bloquants mais nécessaire pour release 2.1.0 :
 - HOTFIX - playlist dropdown width
 - DEBT - subscribing to value to filters.. should I send observable to action ngrx?
 - HOTFIX - redirect to videos not working
-
-
+- DEBT - www.js 393 - enregsitrer le ID des playlist pour les vidéos. le but de cette table était de garder le titre original des vidéos, il faudrait ajuster ça aussi
+- FEATURE - exlure des tags (ex : dance performance, live...)
 
 ### Backlog
 - FEATURE changer primeng pour Material
@@ -75,10 +77,15 @@ Non bloquants mais nécessaire pour release 2.1.0 :
 
 
 
+
+
+
 # WIP Release 2.1.0
 
 ## Ajouté
 - Chargement des tags et vidéos par playlist
+- Possibilité de ordonner la liste par vidéo le moins récemment ajouté à la playlist originale sur Youtube
+- Possibilité de jouer un vidéo en boucle
 
 ## Corrigé
 - Les contrôles personnalisés de reculer/avancer/jouer un vidéo sont de nouveau fonctionnels

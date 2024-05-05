@@ -89,7 +89,13 @@ export const getSortedVideos = createSelector(
           }
           return false;
         });
-      }       
+      }   
+      
+      // Order by latest
+      if (state.sortingOldestFirst === true){
+        const reversed = [...sortedVideos].reverse();
+        sortedVideos = reversed;
+      }
 
     }
 
@@ -181,6 +187,9 @@ export const getCurrentVideoPosition = createSelector(
 
 
 
+
+/*********** SORTING AND FILTERS ***************/
+
 export const getSortingSelectedTags = createSelector(
   getVideoFeatureState,
   state => state.sortingSelectedTags
@@ -194,4 +203,9 @@ export const getSortingSelectedRatings = createSelector(
 export const getSortingSelectedNew = createSelector(
   getVideoFeatureState,
   state => state.sortingSelectedNew
+)
+
+export const getSortingOldestFirst = createSelector(
+  getVideoFeatureState,
+  state => state.sortingOldestFirst
 )

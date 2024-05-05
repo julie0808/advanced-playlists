@@ -8,7 +8,7 @@ import { VideoRating, VideoRatings } from '../video.model';
 import { Store } from '@ngrx/store';
 import { State, getArtistTags, getOtherTagsForPrimeNg } from '../../tags/state';
 import { VideoPageActions } from '../state/actions';
-import { getSortingSelectedTags, getSortingSelectedNew, getSortingSelectedRatings } from '../state';
+import { getSortingSelectedTags, getSortingSelectedNew, getSortingSelectedRatings, getSortingOldestFirst } from '../state';
 
 
 @Component({
@@ -22,6 +22,7 @@ export class FiltersComponent implements OnInit {
   selectedTagList: Tag[] = [];
   selectedRating: VideoRating[] = [];
   showOnlyNew: boolean = false;
+  orderOldestFirst: boolean = false;
   ratingList: VideoRating[] = VideoRatings;
 
   tagList$: Observable<Tag[]> = of([]);
@@ -54,6 +55,11 @@ export class FiltersComponent implements OnInit {
       .subscribe(showNew => {
         this.showOnlyNew = showNew;        
       });
+
+    this.store.select(getSortingOldestFirst)
+      .subscribe(byOldestFirst => {
+        this.orderOldestFirst = byOldestFirst;        
+      });
   }
 
   sortByTag(){
@@ -66,6 +72,10 @@ export class FiltersComponent implements OnInit {
 
   sortByNewOnly(){
     this.store.dispatch(VideoPageActions.setSortingSelectedNew({ isNew: this.showOnlyNew }));
+  }
+
+  orderByOldestFirst(){
+    this.store.dispatch(VideoPageActions.setSortingOldestFirst({ isOldestFirst: this.orderOldestFirst }));
   }
 
   removeSortByRating(){

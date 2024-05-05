@@ -16,6 +16,8 @@ export interface VideoState {
   sortingSelectedTags: Tag[];
   sortingSelectedRatings: VideoRating[];
   sortingSelectedNew: boolean;
+  sortingOldestFirst: boolean;
+  settingRepeatOn: boolean;
   error: string;
 }
 
@@ -26,6 +28,8 @@ const initialState: VideoState = {
   sortingSelectedTags: [],
   sortingSelectedRatings: [],
   sortingSelectedNew: false,
+  sortingOldestFirst: false,
+  settingRepeatOn: false,
   error: ''
 }
 
@@ -75,6 +79,24 @@ export const videoReducer = createReducer<VideoState>(
       return {
         ...state,
         sortingSelectedNew: action.isNew
+      }
+    }
+  ),
+  on(
+    VideoPageActions.setSortingOldestFirst,
+    (state, action): VideoState => {
+      return {
+        ...state,
+        sortingOldestFirst: action.isOldestFirst
+      }
+    }
+  ),
+  on(
+    VideoPageActions.setSettingRepeatOn,
+    (state, action): VideoState => {
+      return {
+        ...state,
+        settingRepeatOn: action.settingRepeatOn
       }
     }
   ),

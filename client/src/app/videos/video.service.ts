@@ -12,7 +12,7 @@ import { Video } from "./video.model";
 export class VideoService {
 
   testMode: boolean = false; // va charger une seule page de l'api
-  testModeMaxItems: number = 3; // max 50, car on va chercher une seule page 
+  testModeMaxItems: number = 5; // max 50, car on va chercher une seule page 
 
   nextPageToken: string = '';
   totalVideoInPlaylist: number = 0;

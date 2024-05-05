@@ -1,12 +1,13 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Observable, Subject, combineLatest } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 import { Video, VideoPlayerFormats } from '../video.model';
 
 import { Store } from '@ngrx/store';
 import { State, getCurrentVideo, getNextVideoId, getPreviousVideoId, getFirstVideoId } from '../state';
 import { VideoPageActions } from "../state/actions";
+import { YouTubePlayer } from '@angular/youtube-player';
 
 
 @Component({
@@ -20,8 +21,10 @@ export class VideoPlayerComponent implements OnInit {
   @ViewChild('player') player: any;
 
   apiLoaded = false;
-  videoPlayerStatus: VideoPlayerFormats = VideoPlayerFormats.hidden;
+  videoPlayerStatus: VideoPlayerFormats = VideoPlayerFormats.tiny;
   videoIsPlaying: boolean = false;
+  settingRepeatOn: boolean = false;
+  isFirstVideoAfterInit: boolean = true;
 
   selectedVideo$: Observable<Video> = this.store.select(getCurrentVideo);
   previousVideo$ = this.store.select(getPreviousVideoId);
@@ -40,7 +43,8 @@ export class VideoPlayerComponent implements OnInit {
     ) 
 
   playerConfig = {
-    controls: 1
+    controls: 1,
+    autoplay: 0
   } 
 
   public get videoPlayerFormats(): typeof VideoPlayerFormats {
@@ -54,7 +58,7 @@ export class VideoPlayerComponent implements OnInit {
     private store: Store<State>) { }
 
   ngOnInit(): void {
-    
+
     if (!this.apiLoaded) {
       const tag = document.createElement("script");
       tag.src = "https://www.youtube.com/iframe_api";
@@ -64,16 +68,13 @@ export class VideoPlayerComponent implements OnInit {
 
   }
 
-  videoReady(event: any, video: string) {
-    if ( video !== "12345678910" && this.videoPlayerStatus === VideoPlayerFormats.hidden ) {
-      this.switchToVideo(video);
-      this.videoPlayerStatus = VideoPlayerFormats.tiny
-      this.playVideo();
-    }
-  }
-
   playerError(event: any){
     console.log('player error', event);
+  }
+
+  toggleSettingRepeat() {
+    this.settingRepeatOn = !this.settingRepeatOn;
+    this.store.dispatch(VideoPageActions.setSettingRepeatOn({ settingRepeatOn: this.settingRepeatOn }));
   }
 
   setPlayerFormat(selectedFormat: VideoPlayerFormats) {
@@ -85,13 +86,18 @@ export class VideoPlayerComponent implements OnInit {
   }
 
   pauseVideo() {
-    this.videoIsPlaying = false;
     this.player.pauseVideo();
+    this.videoIsPlaying = false;
   }
 
   playVideo() {
-    this.videoIsPlaying = true;
     this.player.playVideo();
+    this.videoIsPlaying = true;
+  }
+
+  userPlayVideo() {
+    this.isFirstVideoAfterInit = false;
+    this.playVideo();
   }
 
   followState(event: any, nextVideo: string) {
@@ -99,12 +105,27 @@ export class VideoPlayerComponent implements OnInit {
     switch(event.data) {
       case 0:
         // video has ended
-        this.switchToVideo(nextVideo);
+        if (this.settingRepeatOn) {
+          this.playVideo();
+        } else {
+          this.switchToVideo(nextVideo);
+        }
         this.videoIsPlaying = false;
         break;
       case -1:
         // video is unstarted
-        this.playVideo();
+        if (!this.isFirstVideoAfterInit){
+         this.playVideo();
+        }
+        break;
+      case 1:
+        // video is playing
+
+        // technical debt hack to "listen" to user click
+        if (this.isFirstVideoAfterInit){
+          this.isFirstVideoAfterInit = false;
+        }
+        this.videoIsPlaying = true;
         break;
       case 2:
         // video is paused
@@ -112,7 +133,9 @@ export class VideoPlayerComponent implements OnInit {
         break;
       case 5:
         // video is loaded (cued)
-        this.playVideo();
+        if (!this.isFirstVideoAfterInit){
+          this.playVideo();
+        }
         break;
       default:
         // not every state requires an action

@@ -2,15 +2,22 @@
   class="video-player"
   *ngIf="vm$ | async as vm"
   [ngClass]="videoPlayerStatus">
-  <div class="video-player--controls">    
-    <ul class="video-player--actions">
-      <li><i class="pi pi-step-backward" (click)="switchToVideo(vm.previousVideo)"></i></li>
-      <li>
-        <i *ngIf="videoIsPlaying" class="pi pi-pause" (click)="pauseVideo()"></i>
-        <i *ngIf="!videoIsPlaying" class="pi pi-play" (click)="playVideo()"></i>
-      </li>
-      <li><i class="pi pi-step-forward" (click)="switchToVideo(vm.nextVideo)"></i></li>
-    </ul>
+  <div class="video-player--controls"> 
+    <div class="video-player--controls--row">  
+      <ul class="video-player--actions">
+        <li><i class="pi pi-step-backward" (click)="switchToVideo(vm.previousVideo)"></i></li>
+        <li>
+          <i *ngIf="videoIsPlaying" class="pi pi-pause" (click)="pauseVideo()"></i>
+          <i *ngIf="!videoIsPlaying" class="pi pi-play" (click)="userPlayVideo()"></i>
+        </li>
+        <li><i class="pi pi-step-forward" (click)="switchToVideo(vm.nextVideo)"></i></li>
+      </ul>
+
+      <div class="video-player--settings">
+        <button *ngIf="!settingRepeatOn" (click)="toggleSettingRepeat()">Repeat</button>
+        <button class="video-player--settings-on" *ngIf="settingRepeatOn" (click)="toggleSettingRepeat()">Stop Repeat</button>
+      </div>
+    </div> 
 
     <div class="video-player--format">
       <p>Player format:</p>
@@ -49,14 +56,13 @@
   <div>
     <div class="video-player--container">
       <youtube-player 
-        #player
+        #player        
         videoId="{{ vm.selectedVideo.youtubeId }}" 
         suggestedQuality="highres"
         (stateChange)="followState($event, vm.nextVideo)"
-        (ready)="videoReady($event, vm.firstVideo)"
         (error)="playerError($event)"
-        [playerVars]="playerConfig">
-      </youtube-player>
+        [playerVars]="playerConfig"
+      />
     </div>
   </div>
 </section>

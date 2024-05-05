@@ -90,6 +90,7 @@ app.get(`${rootUrl}/tags`, (req, res) => {
   const {playlist_id} = req.query;
   
   ;(async () => {
+
     qry = `
     SELECT 
       t.tag_id as id, 
@@ -347,7 +348,7 @@ app.get(`${rootUrl}/video`, (req, res) => {
   const {playlist_id} = req.query;
   ;(async () => {
 
-    const req = `
+    req = `
       SELECT 
         v.rating,
         v.title,
@@ -389,9 +390,11 @@ app.get(`${rootUrl}/video`, (req, res) => {
       WHERE   1 = 1
     `;
 
-    if (playlist_id !== 'none'){
-      qry += ` AND playlist_id = ($1) `;
-    }
+    // Le ID de la playlist d'origine n'est pas enregistré. 
+    // dette technique, car on load plus de vidéos que nécessaire
+    /*if (playlist_id !== 'none'){
+      req += ` AND playlist_id = ($1) `;
+    }*/
 
     const { rows } = await pool.query(req);
     res.json(rows);

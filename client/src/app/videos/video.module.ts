@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { YouTubePlayerModule } from '@angular/youtube-player';
+import { YOUTUBE_PLAYER_CONFIG, YouTubePlayerModule } from '@angular/youtube-player';
 import { SharedModule } from '../shared/shared.module';
 import { FiltersComponent } from './filters/filters.component';
 
@@ -45,7 +45,15 @@ import { VideoEffects } from './state/video.effects';
     VideoPlayerComponent,
     VideoTagEditComponent,
     FiltersComponent
-  ]
+  ],
+  providers: [{
+    provide: YOUTUBE_PLAYER_CONFIG,
+    useValue: {
+      loadApi: false,
+      controls: 1,
+      disablePlaceholder: true
+    }
+  }]
 })
 
 export class VideoModule {}

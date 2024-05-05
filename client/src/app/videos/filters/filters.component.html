@@ -10,7 +10,7 @@
         optionLabel="title"
         optionGroupLabel="title"
         optionGroupChildren="lst_children_tag"
-        defaultLabel="Sort tags"> 
+        placeholder="Sort tags"> 
         <ng-template pTemplate="selectedItems">
           Sort by tag
           <!-- custom "chips" codés -->
@@ -24,7 +24,7 @@
         (onChange)="sortByTag()"
         dataKey="id"
         optionLabel="title"
-        defaultLabel="Sort tags"> 
+        placeholder="Sort tags"> 
         <ng-template pTemplate="selectedItems">
           Sort by artist
           <!-- custom "chips" codés -->
@@ -39,7 +39,7 @@
         (onChange)="sortByRating()"
         dataKey="rating"
         optionLabel="description"
-        defaultLabel="Sort by rating"> 
+        placeholder="Sort by rating"> 
       </p-multiSelect>
 
     </div>
@@ -53,6 +53,18 @@
       </p-checkbox>
       <label for="filterByNew">Show only new</label>
     </div>
+
+    <div class="filter-sort filter-sort--oldest-first">
+      <p-checkbox 
+        name="filterByOldestFirst" 
+        [binary]="true"
+        inputId="filterByOldestFirst"
+        (onChange)="orderByOldestFirst()"
+        [(ngModel)]="orderOldestFirst">
+      </p-checkbox>
+      <label for="filterByOldestFirst">Sort by oldest first</label>
+    </div>
+
   </div>
 </section>
 
