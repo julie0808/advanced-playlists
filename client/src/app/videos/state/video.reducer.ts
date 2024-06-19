@@ -103,7 +103,9 @@ export const videoReducer = createReducer<VideoState>(
 
 
 
-  on(VideoApiActions.loadVideosSuccess,
+  on(
+    VideoApiActions.loadVideosSuccess,
+    VideoPageActions.refreshVideos,
     (state, action): VideoState => {
       return {
         ...state,

@@ -16,6 +16,8 @@ export interface State extends AppState.State {
 
 const getVideoFeatureState = createFeatureSelector<VideoState>('videos');
 
+
+
 export const getCurrentVideoId = createSelector(
   getVideoFeatureState,
   state => state.currentVideoPlayingId

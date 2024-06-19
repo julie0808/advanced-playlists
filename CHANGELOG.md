@@ -25,18 +25,16 @@ ng update angular/core@17 (1 major version at a time)
 
 
 FOCUS
-Travail de visuel brisé un peu partout avec le primeng à jour
-
 - démystifier 3stats+, unique, coup de coeur..
+- mises à jour https://github.com/julie0808/advanced-playlists/security/dependabot
 
-Non bloquants mais nécessaire pour release 2.1.0 :
-- HOTFIX les tags assigné ne sont pas à jour quand on édite un Tag
-- HOTFIX problème quand le video est partagé entre les playlists; les tags de lautre playlist apparaissent quand meme dans l'édition de tag pour un vidéo. lier les tags au id unique plutôt que id video?
 
 
 
 ### lineup
+- FEATURE les artistes sont cross playlists
 - FEATURE éditer un tag en ayant le player, mais que ça continue où on en étant quand on retourne dans la liste de vidéo (pas reset au vidéo #1)
+- FEATURE pas loader les videos par défaut...me laisser choisir la playlist
 
 - FEATURE avoir sous-playlist avec ordre custom (ex: bts story line)
 - écrire dans la docu les instructions pour installer la bd (tech.md)
@@ -71,7 +69,7 @@ Non bloquants mais nécessaire pour release 2.1.0 :
 - FEATURE héberger l'app en ligne
 - HOTFIX? show only new VERSUS no stars? keep the new taga or merge with ratings?
 - HOTDIX video edit : garder les 3 étoiles ou utiliser le array à la place?
-
+- HOTFIX devrait pas avoir le visual d'accordéon si pas d'enfant?s
 
 
 
@@ -93,6 +91,7 @@ Non bloquants mais nécessaire pour release 2.1.0 :
 - Les nouveaux vidéos sont de nouveaux enregistrés dans la base de données pour garder leur titre initial en mémoire
 - Si on change de section, la liste de vidéos est correctement rafraichie au retour
 - Quand un tag est modifié, cela édite aussi ses associations dans la liste de vidéos
+- Si un vidéo est dans 2 playlists différentes, il ne partage pas les tags entre les listes.
 
 ## Modifié
 - Modification structurelle au code - Index barrels

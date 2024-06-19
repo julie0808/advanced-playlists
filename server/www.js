@@ -297,6 +297,7 @@ app.put(`${rootUrl}/video/tags/update/:id`, (req, res) => {
   const videoTags = req.body.tags;
   const videoArtists = req.body.artists;
   const videoAllTags = videoTags.concat(videoArtists);
+  const playlist_id = req.body.playlistId;
 
   ;(async () => {
     const client = await pool.connect();
@@ -308,8 +309,14 @@ app.put(`${rootUrl}/video/tags/update/:id`, (req, res) => {
       const deleteQry = `
         DELETE FROM   video_tag 
         WHERE         youtube_id = $1
+        AND           tag_id IN 
+          (
+            SELECT tag_id
+            FROM tag
+            WHERE playlist_id = ($2)
+          )
         `;
-      await client.query(deleteQry, [id]);
+      await client.query(deleteQry, [id, playlist_id]);
 
       for (var k in videoAllTags){
         if (videoAllTags.hasOwnProperty(k)) {
@@ -367,6 +374,7 @@ app.get(`${rootUrl}/video`, (req, res) => {
               LEFT JOIN 	tag t ON t.tag_id = vt_agg.tag_id
             WHERE 		vt_agg.youtube_id = v.youtube_id
               AND     t.parent_tag_id <> 55
+              AND     t.playlist_id = ($1)
           ) json_ressource
         ) as tags,
 
@@ -383,6 +391,7 @@ app.get(`${rootUrl}/video`, (req, res) => {
               LEFT JOIN 	tag t ON t.tag_id = vt_agg.tag_id
             WHERE 		vt_agg.youtube_id = v.youtube_id
               AND     t.parent_tag_id = 55
+              AND     t.playlist_id = ($1)
           ) json_ressource
         ) as artists
 
@@ -396,7 +405,7 @@ app.get(`${rootUrl}/video`, (req, res) => {
       req += ` AND playlist_id = ($1) `;
     }*/
 
-    const { rows } = await pool.query(req);
+    const { rows } = await pool.query(req, [playlist_id]);
     res.json(rows);
   })().catch(err => {
     res.json(err.stack)

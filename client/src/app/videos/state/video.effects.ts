@@ -9,6 +9,7 @@ import { Video } from "../video.model";
 
 import { Store } from '@ngrx/store';
 import { State, getCurrentPlaylistId } from '../../shared/state';
+import { getVideos } from ".";
 
 
 
@@ -65,7 +66,7 @@ export class VideoEffects {
         
             return mergedDataVideo;
           });
-        
+
           const allData = forkJoin([of(videos), of(newVideosNotInDB)]);
           return allData;
 
@@ -73,6 +74,7 @@ export class VideoEffects {
         mergeMap( data => {
           const [finalList, newVideoList] = data;
 
+          // save to database new videos
           // there is a possibility of bug if over 50 videos
           const actionResultat = this.videoService.updateNewVideos(newVideoList)
             .pipe(
@@ -92,11 +94,14 @@ export class VideoEffects {
       )
   });
 
-  updateVideos$ = createEffect( () => {
+  updateVideo$ = createEffect( () => {
     return this.actions$.pipe(
       ofType(VideoPageActions.updateVideo),
-      concatMap(action => {
-        const actionResultat = this.videoService.updateVideo(action.video)
+      withLatestFrom(
+        this.store$.select(getCurrentPlaylistId)
+      ),
+      concatMap(([action, playlistId]) => {
+        const actionResultat = this.videoService.updateVideo(action.video, playlistId)
           .pipe(
             map(video => {
               return VideoApiActions.updateVideoSuccess({ video });
@@ -106,6 +111,39 @@ export class VideoEffects {
             })
           )
         return actionResultat;
+      })
+    )
+  });
+
+  updateVideoTag$ = createEffect( () => {
+    return this.actions$.pipe(
+      ofType(VideoPageActions.updateVideoTag),
+      withLatestFrom(
+        this.store$.select(getVideos)
+      ),
+      mergeMap(([action, videoList]) => {
+
+        const newVideoList = videoList.map(v => {
+
+          const tagList = v.tags.map(t => {
+            return t.id === action.tag.id ? action.tag : t;
+          });
+
+          const artistList = v.artists.map(a => {
+            return a.id === action.tag.id ? action.tag : a;
+          });
+
+          const updatedVideo: Video = {
+            ...v,
+            tags: tagList,
+            artists: artistList
+          };
+
+          return updatedVideo;
+        });
+
+        return of(VideoPageActions.refreshVideos({ videos: newVideoList }));
+
       })
     )
   });

@@ -19,6 +19,11 @@ export const loadVideos = createAction(
   '[Video] Load All '
 );
 
+export const refreshVideos = createAction(
+  '[Video] Refresh All ',
+  props<{ videos: Video[] }>() 
+);
+
 export const updateVideo = createAction(
   '[Video] Update Video',
   props<{ video: Video }>()

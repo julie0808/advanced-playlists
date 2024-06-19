@@ -1,8 +1,12 @@
 
 .tag-list {
  
-  a {
+  .link-look {
     color: var(--color-Accent1);
+  }
+
+  .p-accordion-toggle-icon {
+    color: #fff;
   }
 
   .p-accordion .p-accordion-content {
@@ -12,10 +16,6 @@
   .p-accordion .p-accordion-header .p-accordion-header-link {
     padding: 0 10px 0 0;
     background: var(--color-Main1);
-  }
-
-  .p-accordion-header-link {
-    border:1px solid red;
   }
 
   .p-accordion p-accordiontab .p-accordion-tab {
@@ -35,6 +35,8 @@
     width: calc(100% - 50px);
     padding: 10px 20px;
     font-size: 14px;
+    color: #fff;
+    font-weight: bold;
 
     &:last-child {
       border-bottom: none;

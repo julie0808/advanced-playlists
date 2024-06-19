@@ -157,8 +157,12 @@ export class VideoService {
       )
   }
 
-  updateVideo(video: Video): Observable<Video> {
-    const body = JSON.stringify(video);
+  updateVideo(video: Video, playlistId: string): Observable<Video> {
+    const completeVideoInfo = {
+      ...video,
+      playlistId: playlistId
+    };
+    const body = JSON.stringify(completeVideoInfo);
     let params = new HttpParams(); 
     params = params.append('id', video.youtubeId);
 
