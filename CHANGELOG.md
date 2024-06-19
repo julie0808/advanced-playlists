@@ -26,7 +26,7 @@ ng update angular/core@17 (1 major version at a time)
 
 FOCUS
 - démystifier 3stats+, unique, coup de coeur..
-- mises à jour https://github.com/julie0808/advanced-playlists/security/dependabot
+- mises à jour https://github.com/julie0808/advanced-playlists/security/dependabot ?
 
 
 
@@ -76,9 +76,11 @@ FOCUS
 
 
 
+# WIP Release 2.2.0
 
 
-# WIP Release 2.1.0
+
+# Release 2.1.0
 
 ## Ajouté
 - Chargement des tags et vidéos par playlist
