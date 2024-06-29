@@ -27,7 +27,7 @@ export class VideoListComponent {
   private errorMessageSubject = new Subject<string>();
   errorMessage$ = this.errorMessageSubject.asObservable();
 
-  currentPlaylistId!: string;
+  currentPlaylistId: string = '';
   
   fullVideoData$ = this.store.select(getVideos);
   videosSorted$ = this.store.select(getSortedVideos);
@@ -56,6 +56,10 @@ export class VideoListComponent {
       .subscribe(playlistId => {
         this.currentPlaylistId = playlistId;
       })
+  }
+
+  hasPlaylistSelected(): boolean {
+    return this.currentPlaylistId !== '' ? true : false;
   }
 
   editTags(objectId: string) {

@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Observable, Subject, combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -7,7 +7,7 @@ import { Video, VideoPlayerFormats } from '../video.model';
 import { Store } from '@ngrx/store';
 import { State, getCurrentVideo, getNextVideoId, getPreviousVideoId, getFirstVideoId } from '../state';
 import { VideoPageActions } from "../state/actions";
-import { YouTubePlayer } from '@angular/youtube-player';
+import { getCurrentPlaylistId } from 'src/app/shared/state';
 
 
 @Component({
@@ -25,6 +25,7 @@ export class VideoPlayerComponent implements OnInit {
   videoIsPlaying: boolean = false;
   settingRepeatOn: boolean = false;
   isFirstVideoAfterInit: boolean = true;
+  currentPlaylistId: string = '';
 
   selectedVideo$: Observable<Video> = this.store.select(getCurrentVideo);
   previousVideo$ = this.store.select(getPreviousVideoId);
@@ -66,6 +67,15 @@ export class VideoPlayerComponent implements OnInit {
       this.apiLoaded = true;
     }
 
+    this.store.select(getCurrentPlaylistId)
+      .subscribe(playlistId => {
+        this.currentPlaylistId = playlistId;
+      });
+
+  }
+
+  hasPlaylistSelected(): boolean {
+    return this.currentPlaylistId !== '' ? true : false;
   }
 
   playerError(event: any){

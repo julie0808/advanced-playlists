@@ -9,6 +9,7 @@ import { Store } from '@ngrx/store';
 import { State, getArtistTags, getOtherTagsForPrimeNg } from '../../tags/state';
 import { VideoPageActions } from '../state/actions';
 import { getSortingSelectedTags, getSortingSelectedNew, getSortingSelectedRatings, getSortingOldestFirst } from '../state';
+import { getCurrentPlaylistId } from 'src/app/shared/state';
 
 
 @Component({
@@ -24,6 +25,7 @@ export class FiltersComponent implements OnInit {
   showOnlyNew: boolean = false;
   orderOldestFirst: boolean = false;
   ratingList: VideoRating[] = VideoRatings;
+  currentPlaylistId: string = '';
 
   tagList$: Observable<Tag[]> = of([]);
   artistTagList$: Observable<Tag[]> = of([]);
@@ -38,7 +40,6 @@ export class FiltersComponent implements OnInit {
   ngOnInit(): void {
     this.tagList$ = this.store.select(getOtherTagsForPrimeNg);
     this.artistTagList$ = this.store.select(getArtistTags);
-
     this.selectedTagList$ = this.store.select(getSortingSelectedTags);
 
     this.store.select(getSortingSelectedTags)
@@ -60,6 +61,15 @@ export class FiltersComponent implements OnInit {
       .subscribe(byOldestFirst => {
         this.orderOldestFirst = byOldestFirst;        
       });
+
+    this.store.select(getCurrentPlaylistId)
+      .subscribe(playlistId => {
+        this.currentPlaylistId = playlistId;
+      })
+  }
+
+  hasPlaylistSelected(): boolean {
+    return this.currentPlaylistId !== '' ? true : false;
   }
 
   sortByTag(){

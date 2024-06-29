@@ -36,6 +36,8 @@ export class SharedEffects {
       )
   });
 
+  // Pourrait être utile, mais crée un enjeu de performance
+  /*
   loadDefaultPlaylist$ = createEffect( () => {
     return this.actions$.pipe(
       ofType(PlaylistApiActions.loadPlaylistsSuccess),
@@ -46,6 +48,7 @@ export class SharedEffects {
       })
     )
   });
+  */
 
   loadVideos$ = createEffect( () => {
     return this.actions$.pipe(

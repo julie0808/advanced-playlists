@@ -6,18 +6,23 @@
   <div 
     class="video--total-count"
     *ngIf="vm$ | async as vm">
-    <span 
-      *ngIf="vm.sortedVideos.length !== vm.allVideos.length">
-      Showing {{ vm.sortedVideos.length }} videos of {{ vm.allVideos.length }}
-    </span>
-    <span 
-      *ngIf="vm.sortedVideos.length === vm.allVideos.length">
-      {{ vm.allVideos.length }} videos in list
-    </span>
-    <p *ngIf="vm.currentVideoPosition !== 0">
-      Currently playing : {{ vm.currentVideoPosition }}
-    </p>
-    <p><a href="#" (click)="scrollToCurrentlyPlaying(videoList)"></a></p>
+    <div *ngIf="hasPlaylistSelected()">
+      <span 
+        *ngIf="vm.sortedVideos.length !== vm.allVideos.length">
+        Showing {{ vm.sortedVideos.length }} videos of {{ vm.allVideos.length }}
+      </span>
+      <span 
+        *ngIf="vm.sortedVideos.length === vm.allVideos.length">
+        {{ vm.allVideos.length }} videos in list
+      </span>
+      <p *ngIf="vm.currentVideoPosition !== 0">
+        Currently playing : {{ vm.currentVideoPosition }}
+      </p>
+      <!-- todo <p>
+        <a href="#" (click)="scrollToCurrentlyPlaying(videoList)">Scroll to currently playing (todo)</a>
+      </p> -->
+    </div>
+    <div *ngIf="!hasPlaylistSelected()">Please choose a playlist to begin.</div>
   </div>
 
   <p-scrollPanel #videoList [style]="{width: '100%', height: '706px'}">

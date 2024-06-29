@@ -2,7 +2,7 @@ import { createReducer, on } from "@ngrx/store";
 
 import { PlaylistApiActions, PlaylistPageActions } from "./actions";
 
-import { Playlist } from "src/app/shared/model/playlist.model";
+import { Playlist } from "src/app/playlists/playlist.model";
 
 
 
@@ -16,7 +16,7 @@ export interface SharedState {
 const initialState: SharedState = {
   appInitialized: false,
   playlists: [],
-  currentPlaylistId: 'PLwgftAdEcD4rXHmDdFTFI8Hch3BfWBQIt',
+  currentPlaylistId: '',
   error: ''
 }
 

@@ -1,4 +1,6 @@
-<section class="filter-list">
+<section 
+  class="filter-list"
+  *ngIf="hasPlaylistSelected()">
   <div class="boxed-container filter-group">
     <div class="filter-sort filter-sort--tags" *ngIf="tagList$ | async as tagList">
       <p-multiSelect 
