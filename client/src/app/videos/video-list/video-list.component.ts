@@ -1,8 +1,9 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs/operators';
 import { Subject, combineLatest } from 'rxjs';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
+import { ContextMenu } from 'primeng/contextmenu';
 
 import { Video } from '../video.model';
 
@@ -21,7 +22,7 @@ import { VideoPageActions } from "../state/actions";
   encapsulation : ViewEncapsulation.None
 })
 export class VideoListComponent {
-
+  menuTagOptions: MenuItem[] = [];
   currentlyPlayingVideoPosition: number = 0;
 
   private errorMessageSubject = new Subject<string>();
@@ -33,6 +34,8 @@ export class VideoListComponent {
   videosSorted$ = this.store.select(getSortedVideos);
   currentVideoPlaying$ = this.store.select(getCurrentVideo);
   currentVideoPosition$ = this.store.select(getCurrentVideoPosition);
+
+  @ViewChild('cm') cm!: ContextMenu;
 
   vm$ = combineLatest([
     this.videosSorted$,
@@ -56,6 +59,12 @@ export class VideoListComponent {
       .subscribe(playlistId => {
         this.currentPlaylistId = playlistId;
       })
+
+    this.menuTagOptions = [
+      { label: 'Show matching', icon: 'pi pi-plus-circle', command: () => this.addToIncludedTags() },
+      { label: 'Filter out', icon: 'pi pi-minus-circle', command: () => this.addToExcludedTags() }
+    ];
+
   }
 
   hasPlaylistSelected(): boolean {
@@ -78,6 +87,14 @@ export class VideoListComponent {
     // get current id of video playing
     // get its top position
     // use .scrollTop(value)
+  }
+
+  addToIncludedTags() {
+
+  }
+
+  addToExcludedTags() {
+
   }
 
   confirmDeletion(selectedForDeletion: Video) {

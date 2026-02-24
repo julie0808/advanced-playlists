@@ -15,7 +15,7 @@
     align-items: center;
   }
 
-  .filter-sort--new label {
+  .filter-sort label {
     margin-left: 8px;
   }
 
@@ -53,4 +53,15 @@
       margin-left: 10px;
     }
   }
+}
+
+.filter-active--excluded {
+    background: var(--color-Main1);
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.filter-active--subtitle {
+  margin-bottom: 6px;
+  font-size: 1em;
 }

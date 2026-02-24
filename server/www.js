@@ -96,10 +96,7 @@ app.get(`${rootUrl}/tags`, (req, res) => {
       t.tag_id as id, 
       t.title, 
       t.color,
-      CASE WHEN parent_tag_id is null 
-        THEN 0 
-        ELSE parent_tag_id 
-        END as parent_tag_id, 
+      parent_tag_id, 
       ( SELECT jsonb_agg(json_ressource)
         FROM (
           SELECT
@@ -120,13 +117,13 @@ app.get(`${rootUrl}/tags`, (req, res) => {
       t.playlist_id,
       'unchanged' as status
     FROM    tag t
-    WHERE   ( t.parent_tag_id is null
-            OR    t.parent_tag_id = 0 ) 
+    WHERE   t.parent_tag_id = 0
     `;
 
     // not yet coded and saved in database
+    // what is not coded actually?
     if (playlist_id !== 'none'){
-      qry += ` AND playlist_id = ($1) `;
+      qry += ` AND (t.playlist_id = ($1) OR t.is_shared) `;
     }
 
     qry += `ORDER BY t.title `;
@@ -223,7 +220,8 @@ app.get(`${rootUrl}/playlist/`, (req, res) => {
     const { rows } = await pool.query(`
       SELECT  
         p.id,
-        p.title
+        p.title,
+        p.is_youtube
       FROM playlist p
     `)
     res.json(rows);
@@ -296,8 +294,10 @@ app.put(`${rootUrl}/video/tags/update/:id`, (req, res) => {
   const videoInfo = req.body;
   const videoTags = req.body.tags;
   const videoArtists = req.body.artists;
+  const videoCustomPlaylists = req.body.customPlaylists;
   const videoAllTags = videoTags.concat(videoArtists);
   const playlist_id = req.body.playlistId;
+  const unique_youtube_id = req.body.uniqueYoutubeId;
 
   ;(async () => {
     const client = await pool.connect();
@@ -306,7 +306,9 @@ app.put(`${rootUrl}/video/tags/update/:id`, (req, res) => {
 
       let rows = 'todo';
 
-      const deleteQry = `
+
+      // 1) begin by updating Tags
+      const deleteTagsQry = `
         DELETE FROM   video_tag 
         WHERE         youtube_id = $1
         AND           tag_id IN 
@@ -316,7 +318,7 @@ app.put(`${rootUrl}/video/tags/update/:id`, (req, res) => {
             WHERE playlist_id = ($2)
           )
         `;
-      await client.query(deleteQry, [id, playlist_id]);
+      await client.query(deleteTagsQry, [id, playlist_id]);
 
       for (var k in videoAllTags){
         if (videoAllTags.hasOwnProperty(k)) {
@@ -327,6 +329,28 @@ app.put(`${rootUrl}/video/tags/update/:id`, (req, res) => {
           await client.query(insertQry, [`${id}`, videoAllTags[k].id ]);
         }
       }
+
+
+
+      // 2) then update custom Playlists
+      const deletePlaylistsQry = `
+        DELETE FROM   playlist_video 
+        WHERE         unique_youtube_id = $1
+        `;
+      await client.query(deletePlaylistsQry, [unique_youtube_id]);
+
+      for (var k in videoCustomPlaylists){
+        if (videoCustomPlaylists.hasOwnProperty(k)) {
+          const insertQry = `
+            INSERT INTO   playlist_video (unique_youtube_id, playlist_id)
+            VALUES ($1, $2)
+            `;
+          await client.query(insertQry, [`${unique_youtube_id}`, videoCustomPlaylists[k].id ]);
+        }
+      }
+
+
+      // 3) finish with video info
 
       const videoInfoRating = videoInfo.rating;
       let resultsCustomInfo = await client.query(
@@ -374,7 +398,6 @@ app.get(`${rootUrl}/video`, (req, res) => {
               LEFT JOIN 	tag t ON t.tag_id = vt_agg.tag_id
             WHERE 		vt_agg.youtube_id = v.youtube_id
               AND     t.parent_tag_id <> 55
-              AND     t.playlist_id = ($1)
           ) json_ressource
         ) as tags,
 
@@ -393,7 +416,20 @@ app.get(`${rootUrl}/video`, (req, res) => {
               AND     t.parent_tag_id = 55
               AND     t.playlist_id = ($1)
           ) json_ressource
-        ) as artists
+        ) as artists,
+
+        ( SELECT jsonb_agg(json_ressource)
+          FROM (
+            SELECT
+              -- map to Playlist model
+              p.id,
+              p.title,
+              p.is_youtube
+              FROM 		playlist_video pl_agg
+              LEFT JOIN 	playlist p ON p.id = pl_agg.playlist_id
+            WHERE 		pl_agg.unique_youtube_id = v.unique_youtube_id
+          ) json_ressource
+        ) as "customPlaylists"
 
       FROM    video v
       WHERE   1 = 1

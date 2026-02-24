@@ -75,17 +75,29 @@ export const getSortedVideos = createSelector(
         });
       }
 
-      // Selected tags
-      if (state.sortingSelectedTags.length) {
-        
+      // Included and excluded tags
+      if (state.sortingExcludedTags.length) {
         sortedVideos = sortedVideos.filter( (video: Video) => {
-          const combineTagTypes = video.tags.concat(video.artists);
-          const videoTags = combineTagTypes || [];
+          let combineTagTypes = video.tags.concat(video.artists);
+          let videoTags = combineTagTypes || [];
+
+          return !videoTags.some(videoTag => {
+            return state.sortingExcludedTags.some(excludedTag => {
+              return excludedTag.id === videoTag.id
+            });
+          });        
+        });
+      }   
+
+      if (state.sortingIncludedTags.length) {
+        sortedVideos = sortedVideos.filter( (video: Video) => {
+          let combineTagTypes = video.tags.concat(video.artists);
+          let videoTags = combineTagTypes || [];
 
           if (videoTags.length){
             return videoTags.some(videoTag => {
-              return state.sortingSelectedTags.some(selectedTag => {
-                return selectedTag.id === videoTag.id;
+              return state.sortingIncludedTags.some(includedTag => {
+                return includedTag.id === videoTag.id;
               });
             })
           }
@@ -192,9 +204,14 @@ export const getCurrentVideoPosition = createSelector(
 
 /*********** SORTING AND FILTERS ***************/
 
-export const getSortingSelectedTags = createSelector(
+export const getSortingIncludedTags = createSelector(
   getVideoFeatureState,
-  state => state.sortingSelectedTags
+  state => state.sortingIncludedTags
+)
+
+export const getSortingExcludedTags = createSelector(
+  getVideoFeatureState,
+  state => state.sortingExcludedTags
 )
 
 export const getSortingSelectedRatings = createSelector(

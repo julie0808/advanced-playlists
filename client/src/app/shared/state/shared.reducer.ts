@@ -9,6 +9,7 @@ import { Playlist } from "src/app/playlists/playlist.model";
 export interface SharedState {
   appInitialized: boolean;
   playlists: Playlist[];
+  customPlaylists: Playlist[];
   currentPlaylistId: string;
   error: string;
 }
@@ -16,6 +17,7 @@ export interface SharedState {
 const initialState: SharedState = {
   appInitialized: false,
   playlists: [],
+  customPlaylists: [],
   currentPlaylistId: '',
   error: ''
 }
@@ -60,6 +62,7 @@ export const sharedReducer = createReducer<SharedState>(
       return {
         ...state,
         playlists: action.playlists,
+        customPlaylists: action.customPlaylists,
         error: ''
       }
     }

@@ -11,12 +11,8 @@
         *ngIf="vm.sortedVideos.length !== vm.allVideos.length">
         Showing {{ vm.sortedVideos.length }} videos of {{ vm.allVideos.length }}
       </span>
-      <span 
-        *ngIf="vm.sortedVideos.length === vm.allVideos.length">
-        {{ vm.allVideos.length }} videos in list
-      </span>
       <p *ngIf="vm.currentVideoPosition !== 0">
-        Currently playing : {{ vm.currentVideoPosition }}
+        Playing video {{ vm.currentVideoPosition }} of {{ vm.sortedVideos.length }}
       </p>
       <!-- todo <p>
         <a href="#" (click)="scrollToCurrentlyPlaying(videoList)">Scroll to currently playing (todo)</a>
@@ -25,7 +21,7 @@
     <div *ngIf="!hasPlaylistSelected()">Please choose a playlist to begin.</div>
   </div>
 
-  <p-scrollPanel #videoList [style]="{width: '100%', height: '706px'}">
+  <p-scrollPanel #videoList [style]="{width: '100%', height: 'calc(100vh - 190px)'}">
     <section class="video-list">
       <ul 
         *ngIf="vm$ | async as vm">
@@ -51,7 +47,6 @@
               <!--<p class="video-image--length">{{ video.duration }}</p>-->
               <p class="video-image--new" *ngIf="video.youtubeStatus !== 'published'">!!!</p>
               <p class="video-image--new" *ngIf="video.rating === 0 && video.youtubeStatus === 'published'">New</p>
-              <p class="video-image--new-border" *ngIf="video.rating === 0 || video.youtubeStatus !== 'published'"></p>
             </div>
           </div>
           <div class="video-info">
@@ -82,7 +77,6 @@
             <ul class="video-info--tag-list">
               <ng-container *ngFor="let tag of video.tags">
                 <li 
-                *ngIf="currentPlaylistId === tag.playlist_id"
                   [ngStyle]="{'background': tag.color !== null || tag.color !== '' ? tag.color : '#282f39' }"
                   class="video-tag">
                   <p>{{ tag.title }}</p>
@@ -100,3 +94,22 @@
 
 <p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
 <p-toast></p-toast>
+
+<!--<p-contextMenu [model]="menuTagOptions">
+  <ul>
+    <li><a (click)="addToIncludedTags()">Show matching</a></li>
+    <li><a (click)="addToExcludedTags()">Filter out</a></li>
+  </ul>
+</p-contextMenu>-->
+
+<!--<p-contextmenu></p-contextmenu>-->
+
+<!--
+<p-contextmenu #cm [model]="menuTagOptions">
+  <ng-template #item let-item>
+      <a pRipple class="flex items-center p-contextmenu-item-link">
+          <span [class]="item.icon"></span>
+          <span class="ml-2">{{ item.label }}</span>
+      </a>
+  </ng-template>
+</p-contextmenu>-->

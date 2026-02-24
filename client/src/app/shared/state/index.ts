@@ -24,6 +24,18 @@ export const getPlaylists = createSelector(
   state => state.playlists
 )
 
+export const getCustomPlaylists = createSelector(
+  getSharedFeatureState,
+  state => state.customPlaylists
+)
+
+export const getAllPlaylists = createSelector(
+  getSharedFeatureState,
+  state => {
+    return [...state.playlists, ...state.customPlaylists];
+  }
+)
+
 export const getCurrentPlaylistId = createSelector(
   getSharedFeatureState,
   state => state.currentPlaylistId

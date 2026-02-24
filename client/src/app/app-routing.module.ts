@@ -1,8 +1,9 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuardService } from './auth-guard.service';
-import { AppComponent } from './app.component';
 import { InterfaceComponent } from './interface/interface.component';
+
+
 
 const routes: Routes = [
   { 
@@ -27,6 +28,12 @@ const routes: Routes = [
         data: { preload: false },
         loadChildren: () =>
           import('./tags/tag.module').then(m => m.TagModule)
+      },
+      { 
+        path: 'playlists', 
+        data: { preload: false },
+        loadChildren: () =>
+          import('./playlists/playlist.module').then(m => m.PlaylistModule)
       }
     ]
   }

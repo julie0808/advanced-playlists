@@ -6,6 +6,7 @@ import * as TagHelperFunc from "./tag-helper-func";
 import { Tag } from "../tag.model";
 import { TagState } from "./tag.reducer";
 
+import { getSortingIncludedTags, getSortingExcludedTags } from "../../videos/state"; 
 
 
 export interface State extends AppState.State {
@@ -25,6 +26,42 @@ export const getOtherTagsForPrimeNg = createSelector(
   getTagFeatureState,
   state => {
     const formattedTags = TagHelperFunc.sortTagsForPrimeNg(state.tags);
+    return formattedTags;
+  }
+)
+
+export const getIncludedTagsForPrimeNg = createSelector(
+  getTagFeatureState,
+  getSortingExcludedTags,
+  (tagState, excludedTags) => {
+    var allTags: Tag[] = tagState.tags;
+    var filteredTags = allTags;
+
+    if (excludedTags.length){
+      var filteredTags = allTags.filter(tag =>
+        !excludedTags.some(excludedTag => excludedTag.id === tag.id)
+      );
+    }
+
+    const formattedTags = TagHelperFunc.sortTagsForPrimeNg(filteredTags);
+    return formattedTags;
+  }
+)
+
+export const getExcludedTagsForPrimeNg = createSelector(
+  getTagFeatureState,
+  getSortingIncludedTags,
+  (tagState, includedTags) => {
+    var allTags: Tag[] = tagState.tags;
+    var filteredTags = allTags;
+
+    if (includedTags.length){
+      var filteredTags = allTags.filter(tag =>
+        !includedTags.some(includedTag => includedTag.id === tag.id)
+      );
+    }
+
+    const formattedTags = TagHelperFunc.sortTagsForPrimeNg(filteredTags);
     return formattedTags;
   }
 )
@@ -80,7 +117,7 @@ export const getParentTags = createSelector(
   getTagFeatureState,
   state => {
     const filteredTags = state.tags.filter(tag => {
-      return tag.parent_tag_id === 0 || tag.parent_tag_id === null;
+      return tag.parent_tag_id === 0;
     });
 
    return filteredTags;

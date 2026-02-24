@@ -41,9 +41,9 @@ export const deleteVideoTag = createAction(
 
 
 /********** SET SORTING, FILTERING AND SETTINGS ******************/
-export const setSortingSelectedTags = createAction(
+export const setSortingIncludedTags = createAction(
   '[Video] Set selected tags for video sorting',
-  props<{ tags: Tag[] }>() 
+  props<{ tags: Tag[], excludedTags: Tag[] }>() 
 );
 
 export const setSortingSelectedRatings = createAction(
@@ -68,4 +68,8 @@ export const initializeFilters = createAction(
 export const setSettingRepeatOn = createAction(
   '[Video] Set setting for videos being repeated',
   props<{ settingRepeatOn: boolean }>() 
+);
+
+export const randomizeVideos = createAction(
+  '[Video] Randomized currently selected video list'
 );

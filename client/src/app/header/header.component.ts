@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { GoogleLoginProvider, SocialAuthService, SocialUser } from '@abacritt/angularx-social-login';
-import { Observable, tap } from 'rxjs';
+import { Observable } from 'rxjs';
 
 import { Store } from '@ngrx/store';
-import { State, getPlaylists, getCurrentPlaylist, getCurrentPlaylistId } from '../shared/state';
+import { State, getAllPlaylists, getCurrentPlaylist } from '../shared/state';
 import { PlaylistPageActions } from '../shared/state/actions';
 
-import { Playlist } from '../shared/model/playlist.model';
+import { Playlist } from '../playlists/playlist.model';
 
 
 
@@ -20,7 +20,7 @@ export class HeaderComponent implements OnInit {
   loggedIn: boolean = false;
   currentPlaylist!: Playlist;
 
-  playlist$: Observable<Playlist[]> = this.store.select(getPlaylists);
+  playlist$: Observable<Playlist[]> = this.store.select(getAllPlaylists);
 
   constructor(
     private authService: SocialAuthService,
@@ -38,7 +38,7 @@ export class HeaderComponent implements OnInit {
 
     this.store.select(getCurrentPlaylist)
       .subscribe(playlist => {
-        const strongTypedPlaylist: Playlist = playlist ||  new Playlist();
+        const strongTypedPlaylist: Playlist = playlist || new Playlist();
 
         if ( strongTypedPlaylist.id !== 'none' ) {
           this.currentPlaylist = playlist || new Playlist();
@@ -60,9 +60,18 @@ export class HeaderComponent implements OnInit {
   }
 
   onPlaylistChange(): void {
-    this.store.dispatch(PlaylistPageActions.setCurrentPlaylist({
-      playlistId: this.currentPlaylist.id
-    }));
+    var playlistChosenIsYoutube: boolean = this.currentPlaylist.isYoutube;
+    var playlistChosenId: string = this.currentPlaylist.id;
+
+    if ( playlistChosenIsYoutube ) {
+      this.store.dispatch(PlaylistPageActions.setCurrentPlaylist({
+        playlistId: playlistChosenId
+      }));
+    } else {
+      console.log('playlist is custom!');
+      // ici en fait on veut pas faire un if else; on veut que l'effect soit celui qui détermine
+      // comment aller chercher le data si c'est une custom playlist
+    }
   }
 
 }

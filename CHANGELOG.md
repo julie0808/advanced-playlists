@@ -1,12 +1,33 @@
+# WIP Release 2.3.0
+
+## Ajouté
+- WIP Filtre pour voir les vidéos supprimés de Youtube mais présents dans la base de données
+
+## Modifié 
+- WIP Changé la méthode deprecated de log in one-click de Google
+- WIP Updater tous les packages et retirer ceux représentant un risque de sécurité
+
+
 # WIP Release 2.2.0
 
 ## Ajouté
-- WIP Gestion des playlists
-- WIP Ajout de playlist par l'utilisateur (ajout à une playlist utilisateur des vidéos de n'importe quelle playlist Youtube existante)
+- WIP - Début de la gestion des playlists - laissé dans le code car trop gros module qui doit être repensé en détail (rendue dans video.effect.ts à décider la façon la plus optimale d'aller chercher les videos sur youtube)
+- WIP Ajout de playlist par l'utilisateur (ajout à une playlist utilisateur des vidéos de n'importe quelle playlist Youtube existante via lédition du vidéo)
+- WIP choisir l'ordre des vidéo dans playlist customs
+- WIP pouvoir ajouter ou exclure des tags à partir de la liste de vidéos
+  
+- Ajouté fonctionnalité de base pour rendre aléatoire la liste de lecture
+- La boite de video peut être déplacé par cliquer-glisser
+- Ajouté fonctionnalité pour exlure un tag
+- Le tag pour les styles de musique est maintenant commun à toutes les playlists. Une playlist peut être mise à "partagée" via la base de données avec le champ "is_shared"
 
 ## Modifié
+- L'affichage du video en court est ajusté pour être mis en évidence
 - Il n'y a plus de playlist qui se charge par défaut avec l'application
-- Si aucune playlist n'est sélectionnée, la barre des filtrse et les informations de la liste de vidéo sont cachées.
+- Si aucune playlist n'est sélectionnée, la barre des filtre et les informations de la liste de vidéo sont cachées.
+- WIP Même si c'est le premier vidéo chargé après le chargement de la playlist, faire jouer le vidéo si manuellement on demande de le jouer.
+- Récupérer les tags liés à un vidéo récupère tous les tags, indépendant de la playlist sélectionnée
+
 
 
 # Release 2.1.0

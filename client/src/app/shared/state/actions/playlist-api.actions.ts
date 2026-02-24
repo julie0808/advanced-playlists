@@ -1,12 +1,12 @@
 import { createAction, props } from "@ngrx/store";
 
-import { Playlist } from "src/app/shared/model/playlist.model";
+import { Playlist } from "src/app/playlists/playlist.model";
 
 
 
 export const loadPlaylistsSuccess = createAction(
   '[Playlist API] Load Success',
-  props<{ playlists: Playlist[] }>() 
+  props<{ playlists: Playlist[], customPlaylists: Playlist[] }>() 
 );
 
 export const loadPlaylistsFailure = createAction(

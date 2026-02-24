@@ -5,7 +5,7 @@ import { catchError, map } from 'rxjs/operators';
 
 import { Tag } from './tag.model';
 import { ErrorService } from '../shared/error/error/error-service';
-import { Playlist } from '../shared/model/playlist.model';
+import { Playlist } from '../playlists/playlist.model';
 
 
 
@@ -39,8 +39,10 @@ export class TagService {
         const finalPlaylistList: Playlist[] = playlists.map( (playlist: any) => {
           const playlistInfo: Playlist = {
             id: playlist.id,
-            title: playlist.title
+            title: playlist.title,
+            isYoutube: playlist.is_youtube
           };
+
           return playlistInfo;
         });
         return finalPlaylistList;

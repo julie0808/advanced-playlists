@@ -1,5 +1,8 @@
 import { FormGroup, FormControl } from "@angular/forms";
 import { Tag } from "../tags/tag.model";
+import { Playlist } from "../playlists/playlist.model";
+
+
 
 export interface Video {
   title: string; 
@@ -12,7 +15,9 @@ export interface Video {
   rating: number;
   artists: Tag[]; 
   publishedBy: string; // original Channel name on which it was published
+  datePublished: Date; // date the video was uploaded to youtube
   youtubeStatus: string;
+  customPlaylists: Playlist[];
   //ytPlaylists: {name: string, id: string, dateAdded: string}[]; // in which lists the video is in. might have duplicates
 }
 
@@ -28,13 +33,16 @@ export class Video {
   rating = 0;
   artists = [] as Tag[];
   publishedBy = '';
+  datePublished = new Date();
   youtubeStatus = 'published';
+  customPlaylists = [] as Playlist[];
 }
 
 export interface VideoForm extends FormGroup<{
   artists: FormControl<Tag[]>;
   tags: FormControl<Tag[]>;
   rating: FormControl<number>;
+  customPlaylists: FormControl<Playlist[]>;
 }> {}
  
 export enum VideoPlayerFormats {
@@ -44,7 +52,6 @@ export enum VideoPlayerFormats {
   fullscreen = 'fullscreen',
   hidden = 'hidden'
 }
-
 
 export interface VideoRating {
   rating: number;

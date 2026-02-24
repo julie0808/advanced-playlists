@@ -11,6 +11,8 @@ import { Store } from '@ngrx/store';
 import { State, getCurrentPlaylistId } from '../../shared/state';
 import { getVideos } from ".";
 
+import * as SharedHelperFunc from '../../shared/state/shared-helper-func';
+
 
 
 @Injectable()
@@ -141,6 +143,23 @@ export class VideoEffects {
 
           return updatedVideo;
         });
+
+        return of(VideoPageActions.refreshVideos({ videos: newVideoList }));
+
+      })
+    )
+  });
+
+  randomizeVideos$ = createEffect( () => {
+    return this.actions$.pipe(
+      ofType(VideoPageActions.randomizeVideos),
+      withLatestFrom(
+        this.store$.select(getVideos)
+      ),
+      mergeMap(([action, videoList]) => {
+
+        const newVideoList = SharedHelperFunc.shuffle(videoList);
+        console.log('random me!');
 
         return of(VideoPageActions.refreshVideos({ videos: newVideoList }));
 

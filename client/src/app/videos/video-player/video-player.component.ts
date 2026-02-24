@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Observable, Subject, combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -26,6 +26,8 @@ export class VideoPlayerComponent implements OnInit {
   settingRepeatOn: boolean = false;
   isFirstVideoAfterInit: boolean = true;
   currentPlaylistId: string = '';
+  playerVisible: boolean = false;
+  playerPosition: 'center' | 'top' | 'bottom' | 'left' | 'right' | 'topleft' | 'topright' | 'bottomleft' | 'bottomright' = 'bottomright';
 
   selectedVideo$: Observable<Video> = this.store.select(getCurrentVideo);
   previousVideo$ = this.store.select(getPreviousVideoId);
@@ -75,7 +77,13 @@ export class VideoPlayerComponent implements OnInit {
   }
 
   hasPlaylistSelected(): boolean {
-    return this.currentPlaylistId !== '' ? true : false;
+    const hasPlaylistSelected = this.currentPlaylistId !== '' ? true : false;
+
+    if (hasPlaylistSelected) { 
+      this.playerVisible = true;
+    }
+
+    return hasPlaylistSelected;
   }
 
   playerError(event: any){
@@ -85,6 +93,10 @@ export class VideoPlayerComponent implements OnInit {
   toggleSettingRepeat() {
     this.settingRepeatOn = !this.settingRepeatOn;
     this.store.dispatch(VideoPageActions.setSettingRepeatOn({ settingRepeatOn: this.settingRepeatOn }));
+  }
+
+  toggleSettingRandom() {
+    this.store.dispatch(VideoPageActions.randomizeVideos());
   }
 
   setPlayerFormat(selectedFormat: VideoPlayerFormats) {

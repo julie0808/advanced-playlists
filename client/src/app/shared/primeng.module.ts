@@ -4,6 +4,8 @@ import { AccordionModule } from 'primeng/accordion';
 import { CheckboxModule } from 'primeng/checkbox';
 import { ColorPickerModule } from 'primeng/colorpicker';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ContextMenuModule } from 'primeng/contextmenu';
+import { DialogModule } from 'primeng/dialog';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
@@ -16,11 +18,16 @@ import { ToastModule } from 'primeng/toast';
 import { ConfirmationService, MessageService } from 'primeng/api';
 
 @NgModule({
+  imports: [
+    ContextMenuModule
+  ],
   exports: [
     AccordionModule,
     CheckboxModule,
     ColorPickerModule,
     ConfirmDialogModule,
+    ContextMenuModule,
+    DialogModule,
     DropdownModule,
     InputTextModule,
     InputTextareaModule,

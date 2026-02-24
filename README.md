@@ -1,3 +1,6 @@
+**offrir une interface sans distraction comme vidéo afférent et +
+
+
 # Liste de lecture Youtube avancées
 
 Étant une utilisatrice avide de Youtube, j'ai atteint un point où mes listes de lectures sont devenues inutilisables. Spécialement pour les listes de musique avec plus de 800 items, je ne trouve pas facilement ce que je veux.

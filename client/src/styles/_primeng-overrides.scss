@@ -10,3 +10,7 @@ p-multiselect .p-multiselect-label{
 p-multiselect .p-multiselect-token{
   margin-bottom: 0;
 }
+
+.p-multiselect-items-wrapper {
+  max-height: 400px !important; 
+}

@@ -6,9 +6,20 @@ import { Tag } from 'src/app/tags/tag.model';
 import { VideoRating, VideoRatings } from '../video.model';
 
 import { Store } from '@ngrx/store';
-import { State, getArtistTags, getOtherTagsForPrimeNg } from '../../tags/state';
+import { 
+  State, 
+  getArtistTags, 
+  getOtherTagsForPrimeNg, 
+  getIncludedTagsForPrimeNg,
+  getExcludedTagsForPrimeNg
+} from '../../tags/state';
 import { VideoPageActions } from '../state/actions';
-import { getSortingSelectedTags, getSortingSelectedNew, getSortingSelectedRatings, getSortingOldestFirst } from '../state';
+import { 
+  getSortingIncludedTags, 
+  getSortingExcludedTags, 
+  getSortingSelectedNew, 
+  getSortingSelectedRatings, 
+  getSortingOldestFirst } from '../state';
 import { getCurrentPlaylistId } from 'src/app/shared/state';
 
 
@@ -20,7 +31,8 @@ import { getCurrentPlaylistId } from 'src/app/shared/state';
 })
 export class FiltersComponent implements OnInit {
 
-  selectedTagList: Tag[] = [];
+  includedTagList: Tag[] = [];
+  excludedTagList: Tag[] = [];
   selectedRating: VideoRating[] = [];
   showOnlyNew: boolean = false;
   orderOldestFirst: boolean = false;
@@ -28,8 +40,11 @@ export class FiltersComponent implements OnInit {
   currentPlaylistId: string = '';
 
   tagList$: Observable<Tag[]> = of([]);
+  tagListForInclude$: Observable<Tag[]> = of([]);
+  tagListForExclude$: Observable<Tag[]> = of([]);
   artistTagList$: Observable<Tag[]> = of([]);
-  selectedTagList$: Observable<Tag[]> = of([]);
+  includedTagList$: Observable<Tag[]> = of([]);
+  excludedTagList$: Observable<Tag[]> = of([]);
 
   private errorMessageSubject = new Subject<string>();
   errorMessage$ = this.errorMessageSubject.asObservable();
@@ -38,13 +53,21 @@ export class FiltersComponent implements OnInit {
     private store: Store<State>) { }
 
   ngOnInit(): void {
-    this.tagList$ = this.store.select(getOtherTagsForPrimeNg);
     this.artistTagList$ = this.store.select(getArtistTags);
-    this.selectedTagList$ = this.store.select(getSortingSelectedTags);
+    this.includedTagList$ = this.store.select(getSortingIncludedTags);
+    this.excludedTagList$ = this.store.select(getSortingExcludedTags);
+    this.tagList$ = this.store.select(getOtherTagsForPrimeNg); 
+    this.tagListForInclude$ = this.store.select(getIncludedTagsForPrimeNg);
+    this.tagListForExclude$ = this.store.select(getExcludedTagsForPrimeNg);
 
-    this.store.select(getSortingSelectedTags)
-      .subscribe(selectedTagList => {
-        this.selectedTagList = selectedTagList;        
+    this.store.select(getSortingIncludedTags)
+      .subscribe(includedTagList => {
+        this.includedTagList = includedTagList;        
+      });
+
+    this.store.select(getSortingExcludedTags)
+      .subscribe(excludedTagList => {
+        this.excludedTagList = excludedTagList;        
       });
 
     this.store.select(getSortingSelectedRatings)
@@ -73,7 +96,10 @@ export class FiltersComponent implements OnInit {
   }
 
   sortByTag(){
-    this.store.dispatch(VideoPageActions.setSortingSelectedTags({ tags: this.selectedTagList }));
+    this.store.dispatch(VideoPageActions.setSortingIncludedTags({ 
+      tags: this.includedTagList, 
+      excludedTags: this.excludedTagList })
+    );
   }
 
   sortByRating(){
@@ -94,8 +120,14 @@ export class FiltersComponent implements OnInit {
   }
 
   removeTagFromFilter(tagId: number) {
-    const selectedTagListUpdated = this.selectedTagList.filter(t => t.id !== tagId);
-    this.selectedTagList = selectedTagListUpdated;
+    const includedTagListUpdated = this.includedTagList.filter(t => t.id !== tagId);
+    this.includedTagList = includedTagListUpdated;
+    this.sortByTag();
+  }
+
+  removeExcludedTagFromFilter(tagId: number) {
+    const excludedTagListUpdated = this.excludedTagList.filter(t => t.id !== tagId);
+    this.excludedTagList = excludedTagListUpdated;
     this.sortByTag();
   }
 

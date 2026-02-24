@@ -26,7 +26,10 @@ export class SharedEffects {
         mergeMap(() => {
           return this.tagService.getPlaylists().pipe(
             map(playlists => {
-              return PlaylistApiActions.loadPlaylistsSuccess({ playlists });
+              const youtubePlaylists = playlists.filter(p => p.isYoutube === true);
+              const customPlaylists = playlists.filter(p => p.isYoutube === false);
+
+              return PlaylistApiActions.loadPlaylistsSuccess({ playlists: youtubePlaylists, customPlaylists: customPlaylists });
             }),
             catchError(error => {
               return of(PlaylistApiActions.loadPlaylistsFailure({ error }))

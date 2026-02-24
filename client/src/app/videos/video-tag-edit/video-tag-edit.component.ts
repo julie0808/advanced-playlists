@@ -1,17 +1,19 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { EMPTY, Subject, Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { NonNullableFormBuilder } from '@angular/forms';
-import { catchError, map } from 'rxjs/operators';
 import { ActivatedRoute, Params } from '@angular/router';
 
-import { VideoService } from '../video.service';
 import { Tag } from '../../tags/tag.model';
 import { Video, VideoForm } from '../video.model';
+import { Playlist } from 'src/app/playlists/playlist.model';
 
 import { Store } from '@ngrx/store';
 import { State, getArtistTags, getOtherTagsForPrimeNg } from '../../tags/state';
 import { VideoPageActions } from '../state/actions';
 import { getCurrentVideoEdited } from '../state';
+import { getCustomPlaylists } from 'src/app/shared/state';
+
+
 
 @Component({
   selector: 'app-video-tag-edit',
@@ -28,7 +30,8 @@ export class VideoTagEditComponent implements OnInit, OnDestroy {
   videoTagForm: VideoForm = this.fb.group({
     artists: this.fb.control( [] as Tag[]),
     tags: this.fb.control( [] as Tag[]),
-    rating: this.fb.control(1)
+    rating: this.fb.control(1),
+    customPlaylists: this.fb.control( [] as Playlist[]),
   });
 
   private errorMessageSubject = new Subject<string>();
@@ -37,9 +40,9 @@ export class VideoTagEditComponent implements OnInit, OnDestroy {
   video$ = this.store.select(getCurrentVideoEdited);
   tagList$ = this.store.select(getOtherTagsForPrimeNg);
   artistTagList$ = this.store.select(getArtistTags);
+  customPlaylists$ = this.store.select(getCustomPlaylists);
     
   constructor(
-    private videoService: VideoService,
     private store: Store<State>,
     private route: ActivatedRoute,
     private fb: NonNullableFormBuilder) { }
@@ -59,7 +62,8 @@ export class VideoTagEditComponent implements OnInit, OnDestroy {
       this.videoTagForm.patchValue({
         artists:  video?.artists || [],
         tags:  video?.tags || [],
-        rating: video.rating
+        rating: video.rating,
+        customPlaylists: video.customPlaylists
       })
     });
 
@@ -72,7 +76,8 @@ export class VideoTagEditComponent implements OnInit, OnDestroy {
         ...this.currentlyEditedVideo,
         artists: this.videoTagForm.get('artists')?.value!,
         tags: this.videoTagForm.get('tags')?.value!,
-        rating: this.videoTagForm.get('rating')?.value!
+        rating: this.videoTagForm.get('rating')?.value!,
+        customPlaylists: this.videoTagForm.get('customPlaylists')?.value!,
       }
 
       this.currentlyEditedVideo = updatedVideo;

@@ -12,7 +12,7 @@ import { Video } from "./video.model";
 export class VideoService {
 
   testMode: boolean = false; // va charger une seule page de l'api
-  testModeMaxItems: number = 5; // max 50, car on va chercher une seule page 
+  testModeMaxItems: number = 25; // max 50, car on va chercher une seule page 
 
   nextPageToken: string = '';
   totalVideoInPlaylist: number = 0;
@@ -77,7 +77,8 @@ export class VideoService {
             return {
               ...v,
               tags: v.tags ? v.tags : [],
-              artists: v.artists ? v.artists : []
+              artists: v.artists ? v.artists : [],
+              customPlaylists: v.customPlaylists ? v.customPlaylists : []
             };
           })
         }),
@@ -132,6 +133,7 @@ export class VideoService {
       mappedVideo.title = video.snippet.title;
       mappedVideo.thumbnailPath = typeof video.snippet.thumbnails.default !== "undefined" ? video.snippet.thumbnails.default.url : '';
       mappedVideo.publishedBy = video.snippet.videoOwnerChannelTitle;
+      mappedVideo.datePublished = video.snippet.publishedAt;
     }
 
     return mappedVideo;

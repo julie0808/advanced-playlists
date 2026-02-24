@@ -20,7 +20,7 @@
           <p-scrollPanel [style]="{width: '100%', height: '200px'}">
             <ul class="tag-children">
               <li *ngFor="let tagchildren of tag.lst_children_tag"
-              [ngStyle]="{'background': (tagchildren.parent_tag_id === 0 || tagchildren.parent_tag_id === null) && (tag.color !== null || tag.color !== '') ? tagchildren.color : '#353f4d' }">
+              [ngStyle]="{'background': (tagchildren.parent_tag_id === 0) && (tag.color !== null || tag.color !== '') ? tagchildren.color : '#353f4d' }">
                 <div class="tag-label">
                   <span>{{ tagchildren.title }} <span *ngIf="tagchildren.nb_associated_videos > 0">({{ tagchildren.nb_associated_videos }})</span></span>
                   <a class="link-look" (click)="editTag(tagchildren.id)">Edit</a>

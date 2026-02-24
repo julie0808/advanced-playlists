@@ -6,12 +6,14 @@
           <a routerLink="videos">Video List</a></li>
         <li class="main-menu--item" routerLinkActive="item-active">
           <a routerLink="tags">Tag Manager</a></li>
+        <li class="main-menu--item" routerLinkActive="item-active">
+          <a routerLink="playlists">Playlists</a></li>
       </ul>
     </nav>
     <div 
       class="playlist-container"
       *ngIf="playlist$ | async as playlistList">
-        <p class="playlist-container--title">Current playlist: </p>
+        <p class="playlist-container--title">Playlists: </p>
         <p-dropdown 
           [options]="playlistList" 
           [(ngModel)]="currentPlaylist"

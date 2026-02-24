@@ -2,10 +2,10 @@
   class="filter-list"
   *ngIf="hasPlaylistSelected()">
   <div class="boxed-container filter-group">
-    <div class="filter-sort filter-sort--tags" *ngIf="tagList$ | async as tagList">
+    <div class="filter-sort filter-sort--tags" *ngIf="tagListForInclude$ | async as tagList">
       <p-multiSelect 
         [options]="tagList" 
-        [(ngModel)]="selectedTagList"
+        [(ngModel)]="includedTagList"
         (onChange)="sortByTag()"
         [group]="true"
         dataKey="id"
@@ -19,10 +19,27 @@
         </ng-template>  
       </p-multiSelect>
     </div>
+    <div class="filter-sort filter-sort--tags" *ngIf="tagListForExclude$ | async as tagList">
+      <p-multiSelect 
+        [options]="tagList" 
+        [(ngModel)]="excludedTagList"
+        (onChange)="sortByTag()"
+        [group]="true"
+        dataKey="id"
+        optionLabel="title"
+        optionGroupLabel="title"
+        optionGroupChildren="lst_children_tag"
+        placeholder="Sort tags"> 
+        <ng-template pTemplate="selectedItems">
+          Exclude by tag
+          <!-- custom "chips" codés -->
+        </ng-template>  
+      </p-multiSelect>
+    </div>
     <div class="filter-sort filter-sort--artists" *ngIf="artistTagList$ | async as artistTagList">
       <p-multiSelect 
         [options]="artistTagList" 
-        [(ngModel)]="selectedTagList"
+        [(ngModel)]="includedTagList"
         (onChange)="sortByTag()"
         dataKey="id"
         optionLabel="title"
@@ -33,8 +50,8 @@
         </ng-template>  
       </p-multiSelect>
     </div>
-    <div class="filter-sort filter-sort--rating">  
 
+    <div class="filter-sort filter-sort--rating">  
       <p-multiSelect 
         [options]="ratingList" 
         [(ngModel)]="selectedRating"
@@ -43,8 +60,8 @@
         optionLabel="description"
         placeholder="Sort by rating"> 
       </p-multiSelect>
-
     </div>
+
     <div class="filter-sort filter-sort--new">
       <p-checkbox 
         name="filterByNew" 
@@ -70,16 +87,35 @@
   </div>
 </section>
 
-<section class="filter-active">
-  <ul *ngIf="selectedTagList$ | async as selectedTagList" class="boxed-container filter-active-list">
-    <ng-container *ngFor="let tag of selectedTagList">
-      <li 
-        [ngStyle]="{'background': tag.color !== null || tag.color !== '' ? tag.color : '#282f39' }"
-        class="filter-active--label" 
-        (click)="removeTagFromFilter(tag.id)">
-        <p>{{ tag.title }}</p>
-        <span class="filter-active--remove" title="Remove">X</span>
-      </li>
-    </ng-container>
-  </ul>
+<section class="filter-active" *ngIf="includedTagList$ | async as includedTagList">
+  <div *ngIf="includedTagList && includedTagList.length > 0"  class="boxed-container">
+    <ul class="filter-active-list">
+      <ng-container *ngFor="let tag of includedTagList">
+        <li 
+          [ngStyle]="{'background': tag.color !== null || tag.color !== '' ? tag.color : '#282f39' }"
+          class="filter-active--label" 
+          (click)="removeTagFromFilter(tag.id)">
+          <p>{{ tag.title }}</p>
+          <span class="filter-active--remove" title="Remove">X</span>
+        </li>
+      </ng-container>
+    </ul>
+  </div>
+</section>
+
+<section class="filter-active" *ngIf="excludedTagList$ | async as excludedTagList" >
+  <div *ngIf="excludedTagList && excludedTagList.length > 0" class="boxed-container filter-active--excluded">
+    <h3 class="filter-active--subtitle">Excluded tags</h3>
+    <ul class="filter-active-list">
+      <ng-container *ngFor="let tag of excludedTagList">
+        <li 
+          [ngStyle]="{'background': tag.color !== null || tag.color !== '' ? tag.color : '#282f39' }"
+          class="filter-active--label" 
+          (click)="removeExcludedTagFromFilter(tag.id)">
+          <p>{{ tag.title }}</p>
+          <span class="filter-active--remove" title="Remove">X</span>
+        </li>
+      </ng-container>
+    </ul>
+  </div>
 </section>

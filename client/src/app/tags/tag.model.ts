@@ -9,6 +9,7 @@ export interface Tag {
   lst_children_tag: Tag[] | null;
   nb_associated_videos: number;
   playlist_id: string;
+  is_shared: boolean;
 }
 
 export class Tag {
@@ -20,6 +21,7 @@ export class Tag {
     parent_tag_id = 0;
     nb_associated_videos = 0;
     playlist_id = '';
+    is_shared = false;
 }
 
 export interface TagForm extends FormGroup<{

@@ -28,7 +28,7 @@
         </div>
         <div 
           class="form-field" 
-          *ngIf="tagForm.get('parent_tag_id')!.value === null || tagForm.get('parent_tag_id')!.value === 0">
+          *ngIf="tagForm.get('parent_tag_id')!.value === 0">
           <label for="color2">Color code : </label>
           <p-colorPicker formControlName="color" ngDefaultControl></p-colorPicker>
           <a *ngIf="tagForm.get('color')!.value !== null && tagForm.get('color')!.value !== ''" (click)="removeColor()" class="action-link">Remove color</a>

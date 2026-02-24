@@ -43,6 +43,17 @@
           </ng-template>
           </p-rating>
       </div>
+      <div class="form-field" *ngIf="customPlaylists$ | async as customPlaylistList">
+        <label for="tagIds">Custom playlists :</label>
+        <p-multiSelect 
+          [options]="customPlaylistList" 
+          formControlName="customPlaylists"
+          dataKey="id"
+          optionLabel="title"
+          defaultLabel="Select playlists"
+          display="chip">   
+        </p-multiSelect>
+      </div>
       <span 
           *ngIf="!videoTagForm.valid && videoTagForm.touched"
           >The form contains errors</span>
