@@ -5,10 +5,12 @@
 
 ## Modifié 
 - WIP Changé la méthode deprecated de log in one-click de Google
+- WIP Mise à jour de Angular __ vers Angular __
+- WIP Mise à jour mineures de packages/dépendances (frontend et backend)
 - WIP Updater tous les packages et retirer ceux représentant un risque de sécurité
 
 
-# WIP Release 2.2.0
+# Release 2.2.0
 
 ## Ajouté
 - WIP - Début de la gestion des playlists - laissé dans le code car trop gros module qui doit être repensé en détail (rendue dans video.effect.ts à décider la façon la plus optimale d'aller chercher les videos sur youtube)

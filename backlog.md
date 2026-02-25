@@ -18,6 +18,7 @@ best ngrx practices to consider
 
 ncu -u (view current packages and available updates)
 ng update angular/core@17 (1 major version at a time)
+ng version (pour voir version de angular)
 
 
 
