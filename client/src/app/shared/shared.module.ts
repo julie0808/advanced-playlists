@@ -8,7 +8,10 @@ import { PrimeNgModule } from './primeng.module';
 
 @NgModule({
   imports: [
-    CommonModule
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    PrimeNgModule
   ],
   declarations: [
     ErrorComponent
@@ -16,8 +19,9 @@ import { PrimeNgModule } from './primeng.module';
   exports: [
     CommonModule, 
     PrimeNgModule, 
-    FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    FormsModule,   
+    ErrorComponent
   ]
 })
 export class SharedModule { }

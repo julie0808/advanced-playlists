@@ -1,6 +1,11 @@
+## corretion post upgrade Angular
+- style manquant au dropdown de playlist (migration primeng?)
+
+
+
 ## non breaking BUGS
 
-trier par 3stars+ 
+- trier par 3stars+ 
 ---- pourquoi solar a A.C.E et 3stars+? quelle données conflict?
 
 
@@ -19,6 +24,8 @@ best ngrx practices to consider
 ncu -u (view current packages and available updates)
 ng update angular/core@17 (1 major version at a time)
 ng version (pour voir version de angular)
+node -v (vérifier version de node)
+https://angular.dev/update-guide?v=17.0-18.0&l=1
 
 
 

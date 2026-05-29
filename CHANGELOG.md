@@ -5,10 +5,10 @@
 
 ## Modifié 
 - WIP Changé la méthode deprecated de log in one-click de Google
-- WIP Mise à jour de Angular __ vers Angular __
+- WIP Mise à jour de Angular 17 vers Angular 18
+- WIP Migration de Primeng pour utiliser l'API de configuration
 - WIP Mise à jour mineures de packages/dépendances (frontend et backend)
 - WIP Updater tous les packages et retirer ceux représentant un risque de sécurité
-
 
 # Release 2.2.0
 

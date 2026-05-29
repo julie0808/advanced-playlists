@@ -8,7 +8,7 @@ import { ContextMenuModule } from 'primeng/contextmenu';
 import { DialogModule } from 'primeng/dialog';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
-import { InputTextareaModule } from 'primeng/inputtextarea';
+import { TextareaModule } from 'primeng/textarea';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { RatingModule } from 'primeng/rating';
 import { ScrollerModule } from 'primeng/scroller';
@@ -19,7 +19,21 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 
 @NgModule({
   imports: [
-    ContextMenuModule
+    ContextMenuModule,
+    AccordionModule,
+    CheckboxModule,
+    ColorPickerModule,
+    ConfirmDialogModule,
+    ContextMenuModule,
+    DialogModule,
+    DropdownModule,
+    InputTextModule,
+    TextareaModule,
+    MultiSelectModule,
+    RatingModule,
+    ScrollerModule,
+    ScrollPanelModule,    
+    ToastModule
   ],
   exports: [
     AccordionModule,
@@ -30,7 +44,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
     DialogModule,
     DropdownModule,
     InputTextModule,
-    InputTextareaModule,
+    TextareaModule,
     MultiSelectModule,
     RatingModule,
     ScrollerModule,
