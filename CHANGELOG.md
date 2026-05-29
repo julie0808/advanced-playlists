@@ -86,6 +86,7 @@ FOCUS
 - Chargement des tags et vidéos par playlist
 - Possibilité de ordonner la liste par vidéo le moins récemment ajouté à la playlist originale sur Youtube
 - Possibilité de jouer un vidéo en boucle
+- Démarrer l'application (frontend et backend) depuis la racine du projet
 
 ## Corrigé
 - Les contrôles personnalisés de reculer/avancer/jouer un vidéo sont de nouveau fonctionnels
