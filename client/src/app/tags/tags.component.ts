@@ -1,8 +1,12 @@
 import { Component, ViewEncapsulation } from '@angular/core';
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute, Router, RouterModule } from "@angular/router";
+
+import { TagListComponent } from './tag-list/tag-list.component';
 
 @Component({
   selector: 'app-tags',
+  standalone: true,
+  imports: [RouterModule, TagListComponent],
   templateUrl: './tags.component.html',
   styleUrls: ['tags.component.scss'],
   encapsulation : ViewEncapsulation.None

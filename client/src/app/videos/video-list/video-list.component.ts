@@ -1,9 +1,16 @@
 import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { map } from 'rxjs/operators';
 import { Subject, combineLatest } from 'rxjs';
+
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
-import { ContextMenu } from 'primeng/contextmenu';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ContextMenu, ContextMenuModule } from 'primeng/contextmenu';
+import { RatingModule } from 'primeng/rating';
+import { ScrollPanel } from 'primeng/scrollpanel';
+import { ToastModule } from 'primeng/toast';
 
 import { Video } from '../video.model';
 
@@ -14,12 +21,14 @@ import { getCurrentPlaylistId } from '../../shared/state';
 import { VideoPageActions } from "../state/actions";
 
 
-
 @Component({
   selector: 'app-video-list',
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterModule, ConfirmDialogModule, ContextMenuModule, ScrollPanel, RatingModule, ToastModule],
   templateUrl: './video-list.component.html',
   styleUrls: ['video-list.component.scss'],
-  encapsulation : ViewEncapsulation.None
+  encapsulation : ViewEncapsulation.None,
+  providers: [ConfirmationService, MessageService]
 })
 export class VideoListComponent {
   menuTagOptions: MenuItem[] = [];

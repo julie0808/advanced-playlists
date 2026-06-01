@@ -1,6 +1,10 @@
 import { Component, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { Observable, Subject, combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { YouTubePlayerModule } from '@angular/youtube-player';
+
+import { DialogModule } from 'primeng/dialog';
 
 import { Video, VideoPlayerFormats } from '../video.model';
 
@@ -9,13 +13,13 @@ import { State, getCurrentVideo, getNextVideoId, getPreviousVideoId, getFirstVid
 import { VideoPageActions } from "../state/actions";
 import { getCurrentPlaylistId } from 'src/app/shared/state';
 
-
 @Component({
   selector: 'app-video-player',
+  standalone: true,
+  imports: [CommonModule, YouTubePlayerModule, DialogModule],
   templateUrl: './video-player.component.html',
   styleUrls: ['video-player.component.scss'],
   encapsulation : ViewEncapsulation.None
-
 })
 export class VideoPlayerComponent implements OnInit {
   @ViewChild('player') player: any;

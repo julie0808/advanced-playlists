@@ -1,3 +1,5 @@
+@use 'mixins';
+
 :root {
   --color-Main1: #35384D;
   --color-Main2: #272A38;
@@ -23,6 +25,6 @@
 }
 
 .icon-cog {
-  font-size: em(20);
+  font-size: mixins.em(20);
   fill: #fff;
 }

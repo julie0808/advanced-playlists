@@ -31,8 +31,9 @@ best ngrx practices to consider
 -- https://medium.com/@m3po22/stop-using-ngrx-effects-for-that-a6ccfe186399
 -- https://angularindepth.com/posts/1442/ngrx-bad-practices
 
-ncu -u (view current packages and available updates)
+ncu -u (view current packages and available updates) - à utiliser si pas de changement de version de plus de 1 version majeure
 ng update angular/core@17 (1 major version at a time)
+ng update rxjs to match version
 ng version (pour voir version de angular)
 node -v (vérifier version de node)
 https://angular.dev/update-guide?v=17.0-18.0&l=1

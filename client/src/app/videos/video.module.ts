@@ -16,8 +16,6 @@ import { videoReducer } from './state/video.reducer';
 import { tagReducer } from '../tags/state/tag.reducer';
 import { TagEffects } from '../tags/state/tag.effects';
 import { VideoEffects } from './state/video.effects';
-
-
 @NgModule({
   imports: [
     SharedModule,
@@ -38,13 +36,6 @@ import { VideoEffects } from './state/video.effects';
     EffectsModule.forFeature([VideoEffects]),
     StoreModule.forFeature('tags', tagReducer),
     EffectsModule.forFeature([TagEffects])
-  ],
-  declarations: [
-    VideosComponent,
-    VideoListComponent,
-    VideoPlayerComponent,
-    VideoTagEditComponent,
-    FiltersComponent
   ],
   providers: [{
     provide: YOUTUBE_PLAYER_CONFIG,

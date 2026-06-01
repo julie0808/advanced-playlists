@@ -1,24 +1,30 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { ActivatedRoute, Params, Router } from '@angular/router';
-import { NonNullableFormBuilder, Validators } from '@angular/forms';
+import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Observable, Subject, Subscription } from 'rxjs';
 
 import { Tag, TagForm } from '../tag.model';
 import { tap } from 'rxjs/operators';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { ColorPickerModule } from 'primeng/colorpicker';
+import { SelectModule } from 'primeng/select';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ToastModule } from 'primeng/toast';
 
 import { Store } from '@ngrx/store';
 import { State, getCurrentTag, getParentTags } from '../state';
 import { getCurrentPlaylistId } from '../../shared/state';
 import { TagPageActions } from '../state/actions';
 
-
-
 @Component({
   selector: 'app-tag-edit',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, ColorPickerModule, SelectModule, ConfirmDialogModule, ToastModule],
   templateUrl: './tag-edit.component.html',
   styleUrls: ['tag-edit.component.scss'],
-  encapsulation : ViewEncapsulation.None
+  encapsulation : ViewEncapsulation.None,
+  providers: [ConfirmationService, MessageService]
 })
 export class TagEditComponent implements OnInit, OnDestroy {
 

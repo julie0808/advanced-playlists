@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { ErrorService } from './error-service';
 
 @Component({
   selector: 'app-error',
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './error.component.html',
   template: `<p *ngIf="errorMessage">{{errorMessage}}</p>`
 })

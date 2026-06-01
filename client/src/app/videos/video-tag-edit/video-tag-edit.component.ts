@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { Subject, Subscription } from 'rxjs';
-import { NonNullableFormBuilder } from '@angular/forms';
+import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Params } from '@angular/router';
 
 import { Tag } from '../../tags/tag.model';
@@ -12,14 +13,20 @@ import { State, getArtistTags, getOtherTagsForPrimeNg } from '../../tags/state';
 import { VideoPageActions } from '../state/actions';
 import { getCurrentVideoEdited } from '../state';
 import { getCustomPlaylists } from 'src/app/shared/state';
-
-
+import { MultiSelectModule } from 'primeng/multiselect';
+import { SelectModule } from 'primeng/select';
+import { RatingModule } from 'primeng/rating';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-video-tag-edit',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, MultiSelectModule, SelectModule, RatingModule, ToastModule],
   templateUrl: './video-tag-edit.component.html',
   styleUrls: ['video-tag-edit.component.scss'],
-  encapsulation : ViewEncapsulation.None
+  encapsulation : ViewEncapsulation.None,
+  providers: [MessageService]
 })
 export class VideoTagEditComponent implements OnInit, OnDestroy {
 

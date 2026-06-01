@@ -1,12 +1,12 @@
-@import "normalize";
-@import "variables";
-@import "extends";
-@import "mixins";
+@use "normalize";
+@use "variables";
+@use "extends";
+@use "mixins";
 
-@import "main"; 
-@import "form";
+@use "main"; 
+@use "form";
 
-@import "header";
+@use "header";
 
-@import "primeng-overrides";
+@use "primeng-overrides";
 

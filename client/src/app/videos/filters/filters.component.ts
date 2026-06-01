@@ -1,4 +1,6 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 
 import { Observable, Subject, of } from 'rxjs';
 
@@ -21,10 +23,15 @@ import {
   getSortingSelectedRatings, 
   getSortingOldestFirst } from '../state';
 import { getCurrentPlaylistId } from 'src/app/shared/state';
-
+import { MultiSelectModule } from 'primeng/multiselect';
+import { CheckboxModule } from 'primeng/checkbox';
+import { SelectModule } from 'primeng/select';
+import { RatingModule } from 'primeng/rating';
 
 @Component({
   selector: 'app-filters',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, MultiSelectModule, CheckboxModule, SelectModule, RatingModule],
   templateUrl: './filters.component.html',
   styleUrls: ['filters.component.scss'],
   encapsulation : ViewEncapsulation.None

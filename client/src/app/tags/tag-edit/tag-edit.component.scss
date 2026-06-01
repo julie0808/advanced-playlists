@@ -1,3 +1,5 @@
+@use 'mixins';
+
 .tag-edit {
   background: var(--color-Main2);
   padding: 20px;
@@ -9,7 +11,7 @@
   .action-link {
     color: #fff;
     margin-left: 10px;
-    font-size: em(12);
+    font-size: mixins.em(12);
     cursor: pointer;
   }
 }

@@ -22,9 +22,6 @@ import { SharedEffects } from '../shared/state/shared.effect';
     
     StoreModule.forFeature('shared', sharedReducer),
     EffectsModule.forFeature([SharedEffects])
-  ],
-  declarations: [
-    PlaylistsComponent
   ]
 })
 

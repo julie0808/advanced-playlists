@@ -1,3 +1,5 @@
+@use 'mixins';
+
 .filter-list {
   background: var(--color-Main2);
   box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2);
@@ -34,7 +36,7 @@
     font-weight: bold;
     margin-right: 8px;
     padding: 5px 8px;
-    font-size: em(13);
+    font-size: mixins.em(13);
     box-shadow: 0px 1px 0px 0px rgba(0, 0, 0, 0.2);
     background: linear-gradient(var(--color-Main1), var(--color-Main2));
     border-radius: 2px;
@@ -49,7 +51,7 @@
 
     .filter-active--remove {
       flex: 0 0 auto;
-      font-size: em(12);
+      font-size: mixins.em(12);
       margin-left: 10px;
     }
   }

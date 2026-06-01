@@ -1,3 +1,5 @@
+@use 'mixins';
+
 .form {
 
   label {
@@ -34,7 +36,7 @@
 }
 
 %baseLabel {
-  font-size: em(14);
+  font-size: mixins.em(14);
 	color: #fff;
 	padding: 16px 14px 0 0;
 	white-space: nowrap;
