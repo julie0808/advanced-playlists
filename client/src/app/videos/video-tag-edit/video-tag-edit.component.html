@@ -10,7 +10,7 @@
           formControlName="artists"
           dataKey="id"
           optionLabel="title"
-          defaultLabel="Select artists"
+          placeholder="Select artists"
           display="chip">   
         </p-multiSelect>
       </div>
@@ -24,23 +24,18 @@
           optionLabel="title"
           optionGroupLabel="title"
           optionGroupChildren="lst_children_tag"
-          defaultLabel="Select tags"
+          placeholder="Select tags"
           display="chip">   
         </p-multiSelect>
       </div>
       <div class="form-field">
-        <label for="rating">Rating :</label>
-        <p-rating 
+        <label>Rating :</label>
+        <p-rating
           [stars]="3"
           formControlName="rating"
-          >
-          <ng-template pTemplate="onicon">
-            <i class="pi pi-star-fill"></i>
-          </ng-template>
-          <ng-template pTemplate="officon">
-            <i class="pi pi-star"></i>
-          </ng-template>
-          </p-rating>
+          iconOnClass="pi pi-star-fill"
+          iconOffClass="pi pi-star"
+        ></p-rating>
       </div>
       <div class="form-field" *ngIf="customPlaylists$ | async as customPlaylistList">
         <label for="tagIds">Custom playlists :</label>
@@ -49,7 +44,7 @@
           formControlName="customPlaylists"
           dataKey="id"
           optionLabel="title"
-          defaultLabel="Select playlists"
+          placeholder="Select playlists"
           display="chip">   
         </p-multiSelect>
       </div>

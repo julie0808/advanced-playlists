@@ -1,4 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { SelectModule } from 'primeng/select';
 import { GoogleLoginProvider, SocialAuthService, SocialUser } from '@abacritt/angularx-social-login';
 import { Observable } from 'rxjs';
 
@@ -12,6 +16,8 @@ import { Playlist } from '../playlists/playlist.model';
 
 @Component({
   selector: 'app-header',
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterModule, SelectModule],
   templateUrl: './header.component.html'
 })
 export class HeaderComponent implements OnInit {
@@ -28,7 +34,6 @@ export class HeaderComponent implements OnInit {
     ) { }
 
   ngOnInit() {
-
     this.store.dispatch(PlaylistPageActions.loadPlaylists());
 
     this.authService.authState.subscribe((user) => {

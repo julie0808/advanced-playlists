@@ -2,12 +2,13 @@ import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 
 import { TagService } from "../../tags/tag.service";
-import { PlaylistApiActions, PlaylistPageActions } from "./actions";
-import { mergeMap, map, catchError, concatMap } from "rxjs/operators";
+import { PlaylistApiActions, PlaylistPageActions, AuthPageActions, AuthApiActions } from "./actions";
+import { mergeMap, map, catchError, concatMap, switchMap, startWith, tap } from "rxjs/operators";
 
 import { of } from "rxjs";
 import { VideoPageActions } from "src/app/videos/state/actions";
 import { TagPageActions } from "src/app/tags/state/actions";
+import { SocialAuthService } from "@abacritt/angularx-social-login";
 
 
 
@@ -16,7 +17,8 @@ export class SharedEffects {
 
   constructor(
     private actions$: Actions,
-    private tagService: TagService
+    private tagService: TagService,
+    private socialAuthService: SocialAuthService
   ) {}
 
   loadPlaylists$ = createEffect( () => {
@@ -78,6 +80,28 @@ export class SharedEffects {
         return of(TagPageActions.loadTags());
       })
     )
+  });
+
+  initializeAuth$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(AuthPageActions.initializeAuth),
+      switchMap(() => {
+        return this.socialAuthService.authState.pipe(
+          startWith(null),
+          map(user => {
+            if (user) {
+              return AuthApiActions.loginSuccess({ user });
+            } else {
+              return AuthApiActions.loginFailure({ error: 'User not logged in' });
+            }
+          }),
+          catchError(error => {
+            console.log('authState error:', error);
+            return of(AuthApiActions.loginFailure({ error: error.message }));
+          })
+        );
+      })
+    );
   });
 
 }

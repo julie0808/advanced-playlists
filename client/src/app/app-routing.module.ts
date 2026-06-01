@@ -1,15 +1,19 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 import { AuthGuardService } from './auth-guard.service';
 import { InterfaceComponent } from './interface/interface.component';
+import { LoginComponent } from './auth/login.component';
 
 
 
-const routes: Routes = [
+export const routes: Routes = [
   { 
     path: '', 
     redirectTo: '/fancyt', 
     pathMatch: 'full' 
+  },
+  {
+    path: 'login',
+    component: LoginComponent
   },
   {
     path: 'fancyt',
@@ -38,9 +42,3 @@ const routes: Routes = [
     ]
   }
 ];
-
-@NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
-})
-export class AppRoutingModule { }

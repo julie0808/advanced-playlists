@@ -1,6 +1,7 @@
 import { createReducer, on } from "@ngrx/store";
 
-import { PlaylistApiActions, PlaylistPageActions } from "./actions";
+import { PlaylistApiActions, PlaylistPageActions, AuthApiActions, AuthPageActions } from "./actions";
+import { SocialUser } from "@abacritt/angularx-social-login";
 
 import { Playlist } from "src/app/playlists/playlist.model";
 
@@ -12,6 +13,9 @@ export interface SharedState {
   customPlaylists: Playlist[];
   currentPlaylistId: string;
   error: string;
+  user: SocialUser | null;
+  isAuthenticated: boolean;
+  isAuthLoading: boolean;
 }
 
 const initialState: SharedState = {
@@ -19,7 +23,10 @@ const initialState: SharedState = {
   playlists: [],
   customPlaylists: [],
   currentPlaylistId: '',
-  error: ''
+  error: '',
+  user: null,
+  isAuthenticated: false,
+  isAuthLoading: false
 }
 
 
@@ -73,6 +80,49 @@ export const sharedReducer = createReducer<SharedState>(
         ...state,
         playlists: [],
         error: action.error
+      }
+    }
+  ),
+
+  // Auth
+  on(AuthPageActions.initializeAuth,
+    (state): SharedState => {
+      return {
+        ...state,
+        isAuthLoading: true
+      }
+    }
+  ),
+  on(AuthApiActions.loginSuccess,
+    (state, action): SharedState => {
+      return {
+        ...state,
+        user: action.user,
+        isAuthenticated: true,
+        isAuthLoading: false,
+        error: ''
+      }
+    }
+  ),
+  on(AuthApiActions.loginFailure,
+    (state, action): SharedState => {
+      return {
+        ...state,
+        user: null,
+        isAuthenticated: false,
+        isAuthLoading: false,
+        error: action.error
+      }
+    }
+  ),
+  on(AuthApiActions.logoutSuccess,
+    (state): SharedState => {
+      return {
+        ...state,
+        user: null,
+        isAuthenticated: false,
+        isAuthLoading: false,
+        error: ''
       }
     }
   ),

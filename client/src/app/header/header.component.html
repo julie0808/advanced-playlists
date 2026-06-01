@@ -14,15 +14,15 @@
       class="playlist-container"
       *ngIf="playlist$ | async as playlistList">
         <p class="playlist-container--title">Playlists: </p>
-        <p-dropdown 
-          [options]="playlistList" 
+        <p-select
+          [options]="playlistList"
           [(ngModel)]="currentPlaylist"
           dataKey="id"
-          (onChange)="onPlaylistChange()"
+          (ngModelChange)="onPlaylistChange()"
           placeholder="Choose a playlist"
-          autoWidth="false"
           class="playlist-container--dropdown"
-          optionLabel="title"></p-dropdown>
+          optionLabel="title">
+        </p-select>
     </div>
     <p *ngIf="user">Logged as {{ user.name }}</p>
   </div>

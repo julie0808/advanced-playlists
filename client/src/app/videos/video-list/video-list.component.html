@@ -51,22 +51,17 @@
           </div>
           <div class="video-info">
           
-            <p class="video-info--title">
+            <div class="video-info--title">
               <p-rating 
-              class="video-info--rating"
-              [readonly]="true"
-              [stars]="3"
-              [(ngModel)]="video.rating"
-              >
-              <ng-template pTemplate="onicon">
-                <i class="pi pi-star-fill"></i>
-              </ng-template>
-              <ng-template pTemplate="officon">
-                <i class="pi pi-star"></i>
-              </ng-template>
-            </p-rating>
-              {{ video.title }}
-            </p>
+                class="video-info--rating"
+                [readonly]="true"
+                [stars]="3"
+                [(ngModel)]="video.rating"
+                iconOnClass="pi pi-star-fill"
+                iconOffClass="pi pi-star"
+              ></p-rating>
+              <p>{{ video.title }}</p>
+            </div>
             <p class="video-info--artist">
               <ng-container *ngFor="let artist of video.artists; index as artisti">
                 {{ artist.title }}<span *ngIf="artisti < video.artists.length - 1">, </span>

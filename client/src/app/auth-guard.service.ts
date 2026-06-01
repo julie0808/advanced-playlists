@@ -1,25 +1,36 @@
-import { SocialAuthService, SocialUser } from "@abacritt/angularx-social-login";
+import { GoogleLoginProvider, SocialAuthService, SocialUser } from "@abacritt/angularx-social-login";
 import { Injectable } from "@angular/core";
 import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from "@angular/router";
-import { map, Observable, tap } from "rxjs";
+import { Observable, of, switchMap } from "rxjs";
+import { Store } from "@ngrx/store";
+import * as fromShared from './shared/state';
+import { AuthPageActions } from "./shared/state/actions";
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthGuardService  {
+export class AuthGuardService {
 
-  constructor(private router: Router,
-              private socialAuthService: SocialAuthService) {
+  constructor(
+    private router: Router,
+    private socialAuthService: SocialAuthService,
+    private store: Store
+  ) {
   }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
-    return this.socialAuthService.authState.pipe(
-      map((socialUser: SocialUser) => !!socialUser),
-      tap((isLoggedIn: boolean) => {
-        if (!isLoggedIn) {
-          console.log('user not logged in!');
-          //this.router.navigate(['login']);
+    // Trigger auth initialization on first guard check
+    this.store.dispatch(AuthPageActions.initializeAuth());
+    
+    return this.store.select(fromShared.getIsAuthenticated).pipe(
+      switchMap(isAuthenticated => {
+        
+        if (isAuthenticated) {
+          return of(true);
         }
+
+        this.router.navigate(['/login']);
+        return of(false);
       })
     );
   }

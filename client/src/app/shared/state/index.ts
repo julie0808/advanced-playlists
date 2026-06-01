@@ -53,3 +53,19 @@ export const getCurrentPlaylist = createSelector(
     }
   }
 )
+
+// Auth selectors
+export const getIsAuthenticated = createSelector(
+  getSharedFeatureState,
+  state => state.isAuthenticated
+)
+
+export const getUser = createSelector(
+  getSharedFeatureState,
+  state => state.user
+)
+
+export const getAuthLoading = createSelector(
+  getSharedFeatureState,
+  state => state.isAuthLoading
+)

@@ -1,6 +1,10 @@
 ## corretion post upgrade Angular
-- style manquant au dropdown de playlist (migration primeng?)
-
+- couleur des étoiles de rating active
+- index.html devrait juste avoir app-root
+- warning google log in
+- login page visual
+- finish transition to standalone of all components
+- affichage titre et artiste pas UX friendly
 
 
 ## non breaking BUGS

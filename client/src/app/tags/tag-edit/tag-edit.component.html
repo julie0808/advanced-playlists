@@ -19,12 +19,12 @@
 
         <div class="form-field" *ngIf="tagGroupChoices$ | async as tagGroupChoices">
           <label for="color">Group : </label>
-          <p-dropdown 
+          <p-select 
             [options]="tagGroupChoices" 
             formControlName="parent_tag_id" 
             optionValue="id"
             placeholder="Select Item"
-            optionLabel="title"></p-dropdown>
+            optionLabel="title"></p-select>
         </div>
         <div 
           class="form-field" 
