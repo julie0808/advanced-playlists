@@ -2,7 +2,6 @@
 - index.html devrait juste avoir app-root
 - warning google log in
 - login page visual
-- angular cli seems outdated
 
 
 ## trucs à ajouter au todos post migration 
@@ -35,6 +34,7 @@ ng update angular/core@17 (1 major version at a time)
 ng update rxjs to match version
 EXAMPLE ng update @ngrx/store@19 @ngrx/effects@19 @ngrx/entity@19 @ngrx/store-devtools@19
 npm install primeng@^19 primeicons@latest @primeuix/themes@latest --save
+update aussi youtube-player to fit version
 
 ng version (pour voir version de angular)
 node -v (vérifier version de node)
