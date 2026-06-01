@@ -8,10 +8,15 @@
     margin-bottom: 20px;
   }
 
+  .title-input {
+    padding: 8px 10px;
+  }
+
   .action-link {
     color: #fff;
     margin-left: 10px;
     font-size: mixins.em(12);
+    text-decoration: underline;
     cursor: pointer;
   }
 }

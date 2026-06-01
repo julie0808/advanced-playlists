@@ -1,9 +1,7 @@
 ## corretion post upgrade Angular
-- couleur des étoiles de rating active
 - index.html devrait juste avoir app-root
 - warning google log in
 - login page visual
-- finish transition to standalone of all components
 - angular cli seems outdated
 
 
@@ -17,7 +15,7 @@
 
 - trier par 3stars+ 
 ---- pourquoi solar a A.C.E et 3stars+? quelle données conflict?
-
+- plusieurs "none" possile dans le choix de Group dans l'édition d'un tag
 
 
 ## TODOS
@@ -32,8 +30,12 @@ best ngrx practices to consider
 -- https://angularindepth.com/posts/1442/ngrx-bad-practices
 
 ncu -u (view current packages and available updates) - à utiliser si pas de changement de version de plus de 1 version majeure
+
 ng update angular/core@17 (1 major version at a time)
 ng update rxjs to match version
+EXAMPLE ng update @ngrx/store@19 @ngrx/effects@19 @ngrx/entity@19 @ngrx/store-devtools@19
+npm install primeng@^19 primeicons@latest @primeuix/themes@latest --save
+
 ng version (pour voir version de angular)
 node -v (vérifier version de node)
 https://angular.dev/update-guide?v=17.0-18.0&l=1
