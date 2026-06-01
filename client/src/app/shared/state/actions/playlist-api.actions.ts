@@ -1,6 +1,6 @@
 import { createAction, props } from "@ngrx/store";
 
-import { Playlist } from "src/app/playlists/playlist.model";
+import { Playlist } from "../../../playlists/playlist.model";
 
 
 

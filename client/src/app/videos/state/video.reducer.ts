@@ -3,9 +3,8 @@ import { createReducer, on } from "@ngrx/store";
 import { VideoApiActions, VideoPageActions } from "./actions";
 
 import { Video, VideoRating } from "../video.model";
-import { Tag } from "src/app/tags/tag.model";
-import { orderTagsAlphabetically } from "src/app/tags/state/tag-helper-func";
-
+import { Tag } from "../../tags/tag.model";
+import { orderTagsAlphabetically } from "../../tags/state/tag-helper-func";
 
 
 

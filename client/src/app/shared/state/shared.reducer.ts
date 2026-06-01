@@ -3,7 +3,7 @@ import { createReducer, on } from "@ngrx/store";
 import { PlaylistApiActions, PlaylistPageActions, AuthApiActions, AuthPageActions } from "./actions";
 import { SocialUser } from "@abacritt/angularx-social-login";
 
-import { Playlist } from "src/app/playlists/playlist.model";
+import { Playlist } from "../../playlists/playlist.model";
 
 
 

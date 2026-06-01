@@ -4,7 +4,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 
 import { Observable, Subject, of } from 'rxjs';
 
-import { Tag } from 'src/app/tags/tag.model';
+import { Tag } from '../../tags/tag.model';
 import { VideoRating, VideoRatings } from '../video.model';
 
 import { Store } from '@ngrx/store';
@@ -22,7 +22,7 @@ import {
   getSortingSelectedNew, 
   getSortingSelectedRatings, 
   getSortingOldestFirst } from '../state';
-import { getCurrentPlaylistId } from 'src/app/shared/state';
+import { getCurrentPlaylistId } from '../../shared/state';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { CheckboxModule } from 'primeng/checkbox';
 import { SelectModule } from 'primeng/select';

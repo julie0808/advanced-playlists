@@ -125,7 +125,7 @@ export class VideoEffects {
       ),
       mergeMap(([action, videoList]) => {
 
-        const newVideoList = videoList.map(v => {
+        const newVideoList = videoList.map((v: Video) => {
 
           const tagList = v.tags.map(t => {
             return t.id === action.tag.id ? action.tag : t;

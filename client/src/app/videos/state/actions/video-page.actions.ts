@@ -1,7 +1,7 @@
 import { createAction, props } from "@ngrx/store";
 
 import { Video, VideoRating } from "../../video.model";
-import { Tag } from "src/app/tags/tag.model";
+import { Tag } from "../../../tags/tag.model";
 
 
 

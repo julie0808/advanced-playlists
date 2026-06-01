@@ -11,7 +11,7 @@ import { Video, VideoPlayerFormats } from '../video.model';
 import { Store } from '@ngrx/store';
 import { State, getCurrentVideo, getNextVideoId, getPreviousVideoId, getFirstVideoId } from '../state';
 import { VideoPageActions } from "../state/actions";
-import { getCurrentPlaylistId } from 'src/app/shared/state';
+import { getCurrentPlaylistId } from '../../shared/state';
 
 @Component({
   selector: 'app-video-player',

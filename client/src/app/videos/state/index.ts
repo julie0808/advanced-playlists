@@ -2,9 +2,9 @@ import { createFeatureSelector, createSelector } from "@ngrx/store";
 
 import * as AppState from "../../state/app.state";
 
-import { VideoState } from "src/app/videos/state/video.reducer";
+import { VideoState } from "./video.reducer";
 
-import { Video } from "../video.model";
+import { Video, VideoRating } from "../video.model";
 
 
 
@@ -69,7 +69,7 @@ export const getSortedVideos = createSelector(
       // Rating
       if (state.sortingSelectedRatings.length){
         sortedVideos = sortedVideos.filter((video: Video) => {
-          return state.sortingSelectedRatings.some(rating => {
+          return state.sortingSelectedRatings.some((rating: VideoRating) => {
             return rating.rating === video.rating;
           });
         });
@@ -121,7 +121,7 @@ export const getCurrentVideo = createSelector(
   getVideoFeatureState,
   getCurrentVideoId,
   (state, getCurrentVideoId) => {
-    const currentVideo = state.videos.find(v => v.youtubeId === getCurrentVideoId) || new Video();
+    const currentVideo = state.videos.find((v: Video) => v.youtubeId === getCurrentVideoId) || new Video();
     return currentVideo;
   }
 )

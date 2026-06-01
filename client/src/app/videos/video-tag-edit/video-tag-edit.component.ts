@@ -6,13 +6,13 @@ import { ActivatedRoute, Params } from '@angular/router';
 
 import { Tag } from '../../tags/tag.model';
 import { Video, VideoForm } from '../video.model';
-import { Playlist } from 'src/app/playlists/playlist.model';
+import { Playlist } from '../../playlists/playlist.model';
 
 import { Store } from '@ngrx/store';
 import { State, getArtistTags, getOtherTagsForPrimeNg } from '../../tags/state';
 import { VideoPageActions } from '../state/actions';
 import { getCurrentVideoEdited } from '../state';
-import { getCustomPlaylists } from 'src/app/shared/state';
+import { getCustomPlaylists } from '../../shared/state';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { SelectModule } from 'primeng/select';
 import { RatingModule } from 'primeng/rating';

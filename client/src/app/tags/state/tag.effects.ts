@@ -5,7 +5,7 @@ import { of } from "rxjs";
 
 import { TagService } from "../tag.service";
 import { TagApiActions, TagPageActions } from "./actions";
-import { VideoPageActions } from "src/app/videos/state/actions";
+import { VideoPageActions } from "../../videos/state/actions";
 
 import { Store } from '@ngrx/store';
 import { State, getCurrentPlaylistId } from '../../shared/state';

@@ -6,8 +6,8 @@ import { PlaylistApiActions, PlaylistPageActions, AuthPageActions, AuthApiAction
 import { mergeMap, map, catchError, concatMap, switchMap, startWith, tap } from "rxjs/operators";
 
 import { of } from "rxjs";
-import { VideoPageActions } from "src/app/videos/state/actions";
-import { TagPageActions } from "src/app/tags/state/actions";
+import { VideoPageActions } from "../../videos/state/actions";
+import { TagPageActions } from "../../tags/state/actions";
 import { SocialAuthService } from "@abacritt/angularx-social-login";
 
 
