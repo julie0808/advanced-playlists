@@ -1,0 +1,11 @@
+{
+  "name": "fancyt-stable",
+  "private": true,
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  },
+  "scripts": {
+    "start": "npx concurrently \"npm --prefix server run start:dev\" \"npm --prefix client run start\"",
+    "dev": "npm run start"
+  }
+}

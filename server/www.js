@@ -489,6 +489,17 @@ app.get('/', (req, res) => {
   res.send('<a href="api-docs">Go to swagger UI</a>');
 });
 
+// health check for database connectivity
+app.get(`${rootUrl}/health`, async (req, res) => {
+  try {
+    await pool.query('SELECT 1');
+    res.json({ db: 'ok' });
+  } catch (err) {
+    console.error('DB ping failed', err);
+    res.status(500).json({ db: 'down', error: err.message });
+  }
+});
+
 // Listen to the specified port, otherwise 3080
 app.use(
   '/api-docs',
