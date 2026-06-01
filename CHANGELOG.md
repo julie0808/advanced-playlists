@@ -1,14 +1,23 @@
-# WIP Release 2.3.0
+# WIP Release 2.4.0
 
 ## Ajouté
 - WIP Filtre pour voir les vidéos supprimés de Youtube mais présents dans la base de données
 
+
+
+# WIP Release 2.3.0
+
+Version centrée sur la mise à jour du "core" du projet
+
 ## Modifié 
+- Migration de Primeng pour utiliser l'API de configuration et le nouveau système de thème
+- Mise à jour mineures de packages/dépendances du frontend
 - WIP Changé la méthode deprecated de log in one-click de Google
-- WIP Mise à jour de Angular 17 vers Angular 18
-- WIP Migration de Primeng pour utiliser l'API de configuration
-- WIP Mise à jour mineures de packages/dépendances (frontend et backend)
+- WIP Mise à jour de Angular 18 vers Angular 19
+- WIP mise à jour des packages du backend
 - WIP Updater tous les packages et retirer ceux représentant un risque de sécurité
+
+
 
 # Release 2.2.0
 

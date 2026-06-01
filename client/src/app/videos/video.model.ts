@@ -21,7 +21,7 @@ export interface Video {
   //ytPlaylists: {name: string, id: string, dateAdded: string}[]; // in which lists the video is in. might have duplicates
 }
 
-// créer une instance par défaut de vidéo
+// crÃ©er une instance par dÃ©faut de vidÃ©o
 export class Video {
   title = 'Video test'; 
   youtubeId = '12345678910';

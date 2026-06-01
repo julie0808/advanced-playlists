@@ -41,7 +41,7 @@ export class SharedEffects {
       )
   });
 
-  // Pourrait être utile, mais crée un enjeu de performance
+  // Pourrait Ãªtre utile, mais crÃ©e un enjeu de performance
   /*
   loadDefaultPlaylist$ = createEffect( () => {
     return this.actions$.pipe(

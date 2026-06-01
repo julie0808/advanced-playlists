@@ -4,7 +4,13 @@
 - warning google log in
 - login page visual
 - finish transition to standalone of all components
+- angular cli seems outdated
+
+
+## trucs à ajouter au todos post migration 
+- gros lag au début du chargement de l'app
 - affichage titre et artiste pas UX friendly
+
 
 
 ## non breaking BUGS

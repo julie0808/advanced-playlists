@@ -74,7 +74,7 @@ export class HeaderComponent implements OnInit {
       }));
     } else {
       console.log('playlist is custom!');
-      // ici en fait on veut pas faire un if else; on veut que l'effect soit celui qui détermine
+      // ici en fait on veut pas faire un if else; on veut que l'effect soit celui qui dÃ©termine
       // comment aller chercher le data si c'est une custom playlist
     }
   }
