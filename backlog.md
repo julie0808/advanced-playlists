@@ -34,11 +34,11 @@ ncu -u (view current packages and available updates) - à utiliser si pas de chan
 1) ng update angular/core@17 (1 major version at a time) https://angular.dev/update-guide?v=20.0-21.0&l=3
 2) ng update @ngrx/store@21 @ngrx/effects@21 @ngrx/entity@21 @ngrx/store-devtools@21
 3) npm install primeng@^21 primeicons@latest @primeuix/themes@latest --save
-4) update aussi youtube-player to fit version https://www.npmjs.com/package/@angular/youtube-player?activeTab=versions
-EXAMPLE npm install @angular/youtube-player@^20.2.14 --save
-5) vérifier la version de typescript recommande avec l'aide à l'upgrade https://angular.dev/update-guide?v=19.0-20.0&l=3
-6) terminer avec update du social plugin - https://github.com/abacritt/angularx-social-login/releases
-
+4) youtube-player to fit version https://www.npmjs.com/package/@angular/youtube-player?activeTab=versions
+EXAMPLE npm install @angular/youtube-player@^21.2.13 --save
+1) vérifier la version de typescript recommande avec l'aide à l'upgrade https://angular.dev/update-guide?v=19.0-20.0&l=3
+2) terminer avec update du social plugin - https://github.com/abacritt/angularx-social-login/releases npm install @abacritt/angularx-social-login@^2.6.0 --save
+ 
 ng version (pour voir version de angular)
 node -v (vérifier version de node)
 https://angular.dev/update-guide?v=17.0-18.0&l=1
