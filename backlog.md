@@ -36,6 +36,7 @@ EXAMPLE ng update @ngrx/store@20 @ngrx/effects@20 @ngrx/entity@20 @ngrx/store-de
 EXAMPLE npm install primeng@^20 primeicons@latest @primeuix/themes@latest --save
 update aussi youtube-player to fit version https://www.npmjs.com/package/@angular/youtube-player?activeTab=versions
 EXAMPLE npm install @angular/youtube-player@^20.2.14 --save
+vérifier la version de typescript recommande avec l'aide à l'upgrade https://angular.dev/update-guide?v=19.0-20.0&l=3
 
 ng version (pour voir version de angular)
 node -v (vérifier version de node)

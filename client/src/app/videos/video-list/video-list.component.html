@@ -1,99 +1,117 @@
 <!--<div *ngIf="(isLoading$ | async) === true">
-  <i class="pi pi-spin pi-spinner"></i> Video list is loading...
+<i class="pi pi-spin pi-spinner"></i> Video list is loading...
 </div>-->
 
 <section>
-  <div 
-    class="video--total-count"
-    *ngIf="vm$ | async as vm">
-    <div *ngIf="hasPlaylistSelected()">
-      <span 
-        *ngIf="vm.sortedVideos.length !== vm.allVideos.length">
-        Showing {{ vm.sortedVideos.length }} videos of {{ vm.allVideos.length }}
-      </span>
-      <p *ngIf="vm.currentVideoPosition !== 0">
-        Playing video {{ vm.currentVideoPosition }} of {{ vm.sortedVideos.length }}
-      </p>
-      <!-- todo <p>
-        <a href="#" (click)="scrollToCurrentlyPlaying(videoList)">Scroll to currently playing (todo)</a>
-      </p> -->
-    </div>
-    <div *ngIf="!hasPlaylistSelected()">Please choose a playlist to begin.</div>
-  </div>
-
-  <p-scrollPanel #videoList [style]="{width: '100%', height: 'calc(100vh - 190px)'}">
-    <section class="video-list">
-      <ul 
-        *ngIf="vm$ | async as vm">
-        <li 
-          class="video-list--item" 
-          *ngFor="let video of vm.sortedVideos; index as i" 
-          [ngClass]="{'video--active' : video.youtubeId === vm.videoPlaying.youtubeId }">
-          <div 
-            class="video-action--play"
-            *ngIf="video.youtubeId !== vm.videoPlaying.youtubeId"
-            (click)="playVideo(video)">
-            <i class="pi pi-play"></i>
-          </div>
-          <div class="video--counter">{{ i + 1 }}</div>
-          <div class="video-image">
-            <div class="seo-bg">
-              <picture>
-                <source srcset="http://i3.ytimg.com/vi/{{ video.youtubeId }}/maxresdefault.jpg" media="(max-width: 767px)">
-                <img src="{{ video.thumbnailPath }}" alt="#">
-              </picture>	
-            </div>
-            <div class="video-image--info">
-              <!--<p class="video-image--length">{{ video.duration }}</p>-->
-              <p class="video-image--new" *ngIf="video.youtubeStatus !== 'published'">!!!</p>
-              <p class="video-image--new" *ngIf="video.rating === 0 && video.youtubeStatus === 'published'">New</p>
-            </div>
-          </div>
-          <div class="video-info">
-          
-            <div class="video-info--title">
-              <p-rating 
-                class="video-info--rating"
-                [readonly]="true"
-                [stars]="3"
-                [(ngModel)]="video.rating"
-                iconOnClass="pi pi-star-fill"
-                iconOffClass="pi pi-star"
-              ></p-rating>
-              <p>{{ video.title }}</p>
-            </div>
-            <p class="video-info--artist">
-              <ng-container *ngFor="let artist of video.artists; index as artisti">
-                {{ artist.title }}<span *ngIf="artisti < video.artists.length - 1">, </span>
-              </ng-container>
+  @if (vm$ | async; as vm) {
+    <div
+      class="video--total-count"
+      >
+      @if (hasPlaylistSelected()) {
+        <div>
+          @if (vm.sortedVideos.length !== vm.allVideos.length) {
+            <span
+              >
+              Showing {{ vm.sortedVideos.length }} videos of {{ vm.allVideos.length }}
+            </span>
+          }
+          @if (vm.currentVideoPosition !== 0) {
+            <p>
+              Playing video {{ vm.currentVideoPosition }} of {{ vm.sortedVideos.length }}
             </p>
-    
+          }
+          <!-- todo <p>
+          <a href="#" (click)="scrollToCurrentlyPlaying(videoList)">Scroll to currently playing (todo)</a>
+        </p> -->
+      </div>
+    }
+    @if (!hasPlaylistSelected()) {
+      <div>Please choose a playlist to begin.</div>
+    }
+  </div>
+}
+
+<p-scrollPanel #videoList [style]="{width: '100%', height: 'calc(100vh - 190px)'}">
+  <section class="video-list">
+    @if (vm$ | async; as vm) {
+      <ul
+        >
+        @for (video of vm.sortedVideos; track video; let i = $index) {
+          <li
+            class="video-list--item"
+            [ngClass]="{'video--active' : video.youtubeId === vm.videoPlaying.youtubeId }">
+            @if (video.youtubeId !== vm.videoPlaying.youtubeId) {
+              <div
+                class="video-action--play"
+                (click)="playVideo(video)">
+                <i class="pi pi-play"></i>
+              </div>
+            }
+            <div class="video--counter">{{ i + 1 }}</div>
+            <div class="video-image">
+              <div class="seo-bg">
+                <picture>
+                  <source srcset="http://i3.ytimg.com/vi/{{ video.youtubeId }}/maxresdefault.jpg" media="(max-width: 767px)">
+                  <img src="{{ video.thumbnailPath }}" alt="#">
+                </picture>
+              </div>
+              <div class="video-image--info">
+                <!--<p class="video-image--length">{{ video.duration }}</p>-->
+                @if (video.youtubeStatus !== 'published') {
+                  <p class="video-image--new">!!!</p>
+                }
+                @if (video.rating === 0 && video.youtubeStatus === 'published') {
+                  <p class="video-image--new">New</p>
+                }
+              </div>
+            </div>
+            <div class="video-info">
+              <div class="video-info--title">
+                <p-rating
+                  class="video-info--rating"
+                  [readonly]="true"
+                  [stars]="3"
+                  [(ngModel)]="video.rating"
+                  iconOnClass="pi pi-star-fill"
+                  iconOffClass="pi pi-star"
+                ></p-rating>
+                <p>{{ video.title }}</p>
+              </div>
+              <p class="video-info--artist">
+                @for (artist of video.artists; track artist; let artisti = $index) {
+                  {{ artist.title }}@if (artisti < video.artists.length - 1) {
+                  <span>, </span>
+                }
+              }
+            </p>
             <ul class="video-info--tag-list">
-              <ng-container *ngFor="let tag of video.tags">
-                <li 
+              @for (tag of video.tags; track tag) {
+                <li
                   [ngStyle]="{'background': tag.color !== null || tag.color !== '' ? tag.color : '#282f39' }"
                   class="video-tag">
                   <p>{{ tag.title }}</p>
                 </li>
-              </ng-container>
+              }
               <li class="video-tag video-tag--view-all" (click)="editTags(video.youtubeId)"><p>Manage</p></li>
               <!--<li class="video-tag video-tag--delete" (click)="confirmDeletion(video)"><p>Delete</p></li>-->
             </ul>
           </div>
         </li>
-      </ul>
-    </section>
-  </p-scrollPanel>
+      }
+    </ul>
+  }
+</section>
+</p-scrollPanel>
 </section>
 
 <p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
 <p-toast></p-toast>
 
 <!--<p-contextMenu [model]="menuTagOptions">
-  <ul>
-    <li><a (click)="addToIncludedTags()">Show matching</a></li>
-    <li><a (click)="addToExcludedTags()">Filter out</a></li>
-  </ul>
+<ul>
+  <li><a (click)="addToIncludedTags()">Show matching</a></li>
+  <li><a (click)="addToExcludedTags()">Filter out</a></li>
+</ul>
 </p-contextMenu>-->
 
 <!--<p-contextmenu></p-contextmenu>-->
@@ -101,9 +119,9 @@
 <!--
 <p-contextmenu #cm [model]="menuTagOptions">
   <ng-template #item let-item>
-      <a pRipple class="flex items-center p-contextmenu-item-link">
-          <span [class]="item.icon"></span>
-          <span class="ml-2">{{ item.label }}</span>
-      </a>
+    <a pRipple class="flex items-center p-contextmenu-item-link">
+      <span [class]="item.icon"></span>
+      <span class="ml-2">{{ item.label }}</span>
+    </a>
   </ng-template>
 </p-contextmenu>-->

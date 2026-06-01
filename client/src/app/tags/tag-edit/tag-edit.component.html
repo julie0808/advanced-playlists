@@ -1,7 +1,11 @@
 <section class="tag-edit">
   <div>
-    <h2 *ngIf="tag.id !== 0">Edit tag</h2>
-    <h2 *ngIf="tag.id === 0">Add tag</h2>
+    @if (tag.id !== 0) {
+      <h2>Edit tag</h2>
+    }
+    @if (tag.id === 0) {
+      <h2>Add tag</h2>
+    }
     <form [formGroup]="tagForm" (ngSubmit)="updateTag()" class="form" novalidate>
       <fieldset>
         <div class="form-field">
@@ -10,50 +14,67 @@
             type="text"
             id="title"
             class="title-input"
-            pInputText 
+            pInputText
             formControlName="title">
-            <span 
-              *ngIf="!tagForm.get('title')?.valid && tagForm.get('title')?.touched">
-              <span *ngIf="tagForm.get('title')?.errors?.required">This field is required</span>
-            </span>
-        </div>
+            @if (!tagForm.get('title')?.valid && tagForm.get('title')?.touched) {
+              <span
+                >
+                @if (tagForm.get('title')?.errors?.required) {
+                  <span>This field is required</span>
+                }
+              </span>
+            }
+          </div>
 
-        <div class="form-field" *ngIf="tagGroupChoices$ | async as tagGroupChoices">
-          <label for="color">Group : </label>
-          <p-select 
-            [options]="tagGroupChoices" 
-            formControlName="parent_tag_id" 
-            optionValue="id"
-            placeholder="Select Item"
-            optionLabel="title"></p-select>
-        </div>
-        <div 
-          class="form-field" 
-          *ngIf="tagForm.get('parent_tag_id')!.value === 0">
-          <label for="color2">Color code : </label>
-          <p-colorPicker formControlName="color" ngDefaultControl></p-colorPicker>
-          <a *ngIf="tagForm.get('color')!.value !== null && tagForm.get('color')!.value !== ''" (click)="removeColor()" class="action-link">Remove color</a>
-        </div>
-        <div class="form-field">
-          <label for="title">Description :</label>
-          <textarea 
-            rows="5" 
-            pTextarea
-            formControlName="description">
-          </textarea>
-        </div>
-        <span 
-            *ngIf="!tagForm.valid && tagForm.touched"
+          @if (tagGroupChoices$ | async; as tagGroupChoices) {
+            <div class="form-field">
+              <label for="color">Group : </label>
+              <p-select
+                [options]="tagGroupChoices"
+                formControlName="parent_tag_id"
+                optionValue="id"
+                placeholder="Select Item"
+              optionLabel="title"></p-select>
+            </div>
+          }
+          @if (tagForm.get('parent_tag_id')!.value === 0) {
+            <div
+              class="form-field"
+              >
+              <label for="color2">Color code : </label>
+              <p-colorPicker formControlName="color" ngDefaultControl></p-colorPicker>
+              @if (tagForm.get('color')!.value !== null && tagForm.get('color')!.value !== '') {
+                <a (click)="removeColor()" class="action-link">Remove color</a>
+              }
+            </div>
+          }
+          <div class="form-field">
+            <label for="title">Description :</label>
+            <textarea
+              rows="5"
+              pTextarea
+              formControlName="description">
+            </textarea>
+          </div>
+          @if (!tagForm.valid && tagForm.touched) {
+            <span
             >The form contains errors</span>
-      </fieldset>
-      <div class="form-action">
-        <button *ngIf="tag.id !== 0" class="btn-look" type="submit">Save</button>
-        <button *ngIf="tag.id !== 0" class="btn-look btn-warning" (click)="confirmDeletion()" type="button">Delete</button>
-        <button *ngIf="tag.id === 0" class="btn-look" (click)="addTag()" type="button">Add</button>
-      </div>
-    </form>
-  </div>
-</section>
+          }
+        </fieldset>
+        <div class="form-action">
+          @if (tag.id !== 0) {
+            <button class="btn-look" type="submit">Save</button>
+          }
+          @if (tag.id !== 0) {
+            <button class="btn-look btn-warning" (click)="confirmDeletion()" type="button">Delete</button>
+          }
+          @if (tag.id === 0) {
+            <button class="btn-look" (click)="addTag()" type="button">Add</button>
+          }
+        </div>
+      </form>
+    </div>
+  </section>
 
-<p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
-<p-toast></p-toast>
+  <p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+  <p-toast></p-toast>

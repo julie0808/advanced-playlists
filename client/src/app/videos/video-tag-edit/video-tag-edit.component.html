@@ -1,33 +1,39 @@
 <div class="video-manager--tag-list">
-  <h3 *ngIf="video$ | async as video">Edit assigned tags for {{ video.title }}</h3>
+  @if (video$ | async; as video) {
+    <h3>Edit assigned tags for {{ video.title }}</h3>
+  }
 
   <form [formGroup]="videoTagForm" (ngSubmit)="updateVideo()" class="form" novalidate>
     <fieldset>
-      <div class="form-field" *ngIf="artistTagList$ | async as artistTagList">
-        <label for="artistTagList">Artists :</label>
-        <p-multiSelect 
-          [options]="artistTagList"
-          formControlName="artists"
-          dataKey="id"
-          optionLabel="title"
-          placeholder="Select artists"
-          display="chip">   
-        </p-multiSelect>
-      </div>
-      <div class="form-field" *ngIf="tagList$ | async as tagList">
-        <label for="tagIds">Tags :</label>
-        <p-multiSelect 
-          [options]="tagList" 
-          formControlName="tags"
-          dataKey="id"
-          [group]="true"
-          optionLabel="title"
-          optionGroupLabel="title"
-          optionGroupChildren="lst_children_tag"
-          placeholder="Select tags"
-          display="chip">   
-        </p-multiSelect>
-      </div>
+      @if (artistTagList$ | async; as artistTagList) {
+        <div class="form-field">
+          <label for="artistTagList">Artists :</label>
+          <p-multiSelect
+            [options]="artistTagList"
+            formControlName="artists"
+            dataKey="id"
+            optionLabel="title"
+            placeholder="Select artists"
+            display="chip">
+          </p-multiSelect>
+        </div>
+      }
+      @if (tagList$ | async; as tagList) {
+        <div class="form-field">
+          <label for="tagIds">Tags :</label>
+          <p-multiSelect
+            [options]="tagList"
+            formControlName="tags"
+            dataKey="id"
+            [group]="true"
+            optionLabel="title"
+            optionGroupLabel="title"
+            optionGroupChildren="lst_children_tag"
+            placeholder="Select tags"
+            display="chip">
+          </p-multiSelect>
+        </div>
+      }
       <div class="form-field">
         <label>Rating :</label>
         <p-rating
@@ -37,20 +43,23 @@
           iconOffClass="pi pi-star"
         ></p-rating>
       </div>
-      <div class="form-field" *ngIf="customPlaylists$ | async as customPlaylistList">
-        <label for="tagIds">Custom playlists :</label>
-        <p-multiSelect 
-          [options]="customPlaylistList" 
-          formControlName="customPlaylists"
-          dataKey="id"
-          optionLabel="title"
-          placeholder="Select playlists"
-          display="chip">   
-        </p-multiSelect>
-      </div>
-      <span 
-          *ngIf="!videoTagForm.valid && videoTagForm.touched"
-          >The form contains errors</span>
+      @if (customPlaylists$ | async; as customPlaylistList) {
+        <div class="form-field">
+          <label for="tagIds">Custom playlists :</label>
+          <p-multiSelect
+            [options]="customPlaylistList"
+            formControlName="customPlaylists"
+            dataKey="id"
+            optionLabel="title"
+            placeholder="Select playlists"
+            display="chip">
+          </p-multiSelect>
+        </div>
+      }
+      @if (!videoTagForm.valid && videoTagForm.touched) {
+        <span
+        >The form contains errors</span>
+      }
     </fieldset>
     <div class="form-action">
       <button class="btn-look" type="submit">Save</button>

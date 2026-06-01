@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { GoogleSigninButtonModule, SocialAuthService } from '@abacritt/angularx-social-login';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -8,7 +8,7 @@ import { AuthApiActions } from '../shared/state/actions';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, GoogleSigninButtonModule],
+  imports: [GoogleSigninButtonModule],
   templateUrl: './login.component.html'
 })
 export class LoginComponent {
