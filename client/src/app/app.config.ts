@@ -6,7 +6,7 @@ import { provideHttpClient, withInterceptorsFromDi, HTTP_INTERCEPTORS } from '@a
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import { SocialLoginModule, SocialAuthServiceConfig, GoogleLoginProvider } from '@abacritt/angularx-social-login';
+import { SocialLoginModule, SocialAuthServiceConfig, GoogleLoginProvider, SOCIAL_AUTH_CONFIG } from '@abacritt/angularx-social-login';
 import { primeThemeAuraPreset } from './theme/prime-theme-aura.preset';
 
 import { routes } from './app-routing.module';
@@ -34,7 +34,7 @@ export const appConfig: ApplicationConfig = {
     },
 
     {
-      provide: 'SocialAuthServiceConfig',
+      provide: SOCIAL_AUTH_CONFIG,
       useValue: {
         autoLogin: false,
         providers: [

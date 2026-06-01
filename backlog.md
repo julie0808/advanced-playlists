@@ -31,12 +31,13 @@ best ngrx practices to consider
 
 ncu -u (view current packages and available updates) - à utiliser si pas de changement de version de plus de 1 version majeure
 
-ng update angular/core@17 (1 major version at a time)
-EXAMPLE ng update @ngrx/store@20 @ngrx/effects@20 @ngrx/entity@20 @ngrx/store-devtools@20
-EXAMPLE npm install primeng@^20 primeicons@latest @primeuix/themes@latest --save
-update aussi youtube-player to fit version https://www.npmjs.com/package/@angular/youtube-player?activeTab=versions
+1) ng update angular/core@17 (1 major version at a time) https://angular.dev/update-guide?v=20.0-21.0&l=3
+2) ng update @ngrx/store@21 @ngrx/effects@21 @ngrx/entity@21 @ngrx/store-devtools@21
+3) npm install primeng@^21 primeicons@latest @primeuix/themes@latest --save
+4) update aussi youtube-player to fit version https://www.npmjs.com/package/@angular/youtube-player?activeTab=versions
 EXAMPLE npm install @angular/youtube-player@^20.2.14 --save
-vérifier la version de typescript recommande avec l'aide à l'upgrade https://angular.dev/update-guide?v=19.0-20.0&l=3
+5) vérifier la version de typescript recommande avec l'aide à l'upgrade https://angular.dev/update-guide?v=19.0-20.0&l=3
+6) terminer avec update du social plugin - https://github.com/abacritt/angularx-social-login/releases
 
 ng version (pour voir version de angular)
 node -v (vérifier version de node)
