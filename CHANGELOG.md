@@ -1,44 +1,37 @@
-# WIP Release 2.4.0
+# WIP Release 2.3.0
 
 ## Ajouté
 - WIP Filtre pour voir les vidéos supprimés de Youtube mais présents dans la base de données
-
-
-
-# WIP Release 2.3.0
-
-Version centrée sur la mise à jour du "core" du projet
-
-## Modifié 
-- Migration de Primeng pour utiliser l'API de configuration et le nouveau système de thème
-- Mise à jour mineures de packages/dépendances du frontend
-- Mise à jour des scss pour le standard Dart Sass 3
-- Mise à jour de Angular à la version 21
+- WIP Ajout de playlist par l'utilisateur (ajout à une playlist utilisateur des vidéos de n'importe quelle playlist Youtube existante via lédition du vidéo)
+- WIP choisir l'ordre des vidéo dans playlist customs
+- WIP pouvoir ajouter ou exclure des tags à partir de la liste de vidéos
 - WIP Changé la méthode deprecated de log in one-click de Google
-- WIP mise à jour des packages du backend
 - WIP Updater tous les packages et retirer ceux représentant un risque de sécurité
 
+## Modifié
+- WIP Même si c'est le premier vidéo chargé après le chargement de la playlist, faire jouer le vidéo si manuellement on demande de le jouer.
 
 
 # Release 2.2.0
 
 ## Ajouté
 - WIP - Début de la gestion des playlists - laissé dans le code car trop gros module qui doit être repensé en détail (rendue dans video.effect.ts à décider la façon la plus optimale d'aller chercher les videos sur youtube)
-- WIP Ajout de playlist par l'utilisateur (ajout à une playlist utilisateur des vidéos de n'importe quelle playlist Youtube existante via lédition du vidéo)
-- WIP choisir l'ordre des vidéo dans playlist customs
-- WIP pouvoir ajouter ou exclure des tags à partir de la liste de vidéos
-  
+
 - Ajouté fonctionnalité de base pour rendre aléatoire la liste de lecture
 - La boite de video peut être déplacé par cliquer-glisser
-- Ajouté fonctionnalité pour exlure un tag
+- Ajouté fonctionnalité pour exclure un tag
 - Le tag pour les styles de musique est maintenant commun à toutes les playlists. Une playlist peut être mise à "partagée" via la base de données avec le champ "is_shared"
 
 ## Modifié
 - L'affichage du video en court est ajusté pour être mis en évidence
 - Il n'y a plus de playlist qui se charge par défaut avec l'application
 - Si aucune playlist n'est sélectionnée, la barre des filtre et les informations de la liste de vidéo sont cachées.
-- WIP Même si c'est le premier vidéo chargé après le chargement de la playlist, faire jouer le vidéo si manuellement on demande de le jouer.
 - Récupérer les tags liés à un vidéo récupère tous les tags, indépendant de la playlist sélectionnée
+- Migration de Primeng pour utiliser l'API de configuration et le nouveau système de thème
+- Mise à jour mineures de packages/dépendances du frontend
+- Mise à jour des scss pour le standard Dart Sass 3
+- Mise à jour de Angular à la version 21
+- Mise à jour des packages du backend
 
 
 

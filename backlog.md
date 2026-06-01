@@ -41,7 +41,7 @@ EXAMPLE npm install @angular/youtube-player@^21.2.13 --save
 2) terminer avec update du social plugin - https://github.com/abacritt/angularx-social-login/releases npm install @abacritt/angularx-social-login@^2.6.0 --save
 
 BACKEND UPDATED
-npm outdated. commencer par upgrdaer au "wanted", puis Latest, finissant par "express"
+npm outdated. commencer par upgrdaer au "wanted", puis Latest, finissant par "express" 
  
 ng version (pour voir version de angular)
 node -v (vérifier version de node)
