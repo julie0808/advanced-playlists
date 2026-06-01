@@ -14,7 +14,7 @@ Version centrée sur la mise à jour du "core" du projet
 - Mise à jour mineures de packages/dépendances du frontend
 - Mise à jour des scss pour le standard Dart Sass 3
 - WIP Changé la méthode deprecated de log in one-click de Google
-- WIP Mise à jour de Angular 18 vers Angular 19
+- WIP Mise à jour de Angular 19 vers Angular 20
 - WIP mise à jour des packages du backend
 - WIP Updater tous les packages et retirer ceux représentant un risque de sécurité
 

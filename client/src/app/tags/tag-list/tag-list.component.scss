@@ -8,20 +8,25 @@
 
   .p-accordionheader {
     padding-top: 0;
-    padding-right: 0;
+    padding-left: 0;
     padding-bottom: 0;
-  }
-
-  .p-accordionpanel:not(.p-disabled).p-accordionpanel-active > .p-accordionheader {
-    justify-content: flex-end;
   }
 
   .p-accordioncontent-content {
     padding: 0;
   }
 
+  p-accordion-content[data-p-active="true"] p-scrollPanel {
+    height: 200px;
+  }
+
+  p-accordion-content:not([data-p-active="true"]) p-scrollPanel {
+    height: 0;
+    overflow: hidden;
+  }
+
   .no-elements {
-    padding-top: 16px;
+    padding: 16px;
   }
 
   .tag-label {

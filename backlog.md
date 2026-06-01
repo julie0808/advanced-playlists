@@ -1,7 +1,8 @@
 ## corretion post upgrade Angular
 - index.html devrait juste avoir app-root
-- warning google log in
+- warning google log in abacrit update?
 - login page visual
+- est-ce que le shared de primeng est encore utilisé?
 
 
 ## trucs à ajouter au todos post migration 
@@ -31,10 +32,10 @@ best ngrx practices to consider
 ncu -u (view current packages and available updates) - à utiliser si pas de changement de version de plus de 1 version majeure
 
 ng update angular/core@17 (1 major version at a time)
-ng update rxjs to match version
-EXAMPLE ng update @ngrx/store@19 @ngrx/effects@19 @ngrx/entity@19 @ngrx/store-devtools@19
-npm install primeng@^19 primeicons@latest @primeuix/themes@latest --save
-update aussi youtube-player to fit version
+EXAMPLE ng update @ngrx/store@20 @ngrx/effects@20 @ngrx/entity@20 @ngrx/store-devtools@20
+EXAMPLE npm install primeng@^20 primeicons@latest @primeuix/themes@latest --save
+update aussi youtube-player to fit version https://www.npmjs.com/package/@angular/youtube-player?activeTab=versions
+EXAMPLE npm install @angular/youtube-player@^20.2.14 --save
 
 ng version (pour voir version de angular)
 node -v (vérifier version de node)
