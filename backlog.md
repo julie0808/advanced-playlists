@@ -3,6 +3,7 @@
 - warning google log in abacrit update?
 - login page visual
 - est-ce que le shared de primeng est encore utilisé?
+- changelog is a mess
 
 
 ## trucs à ajouter au todos post migration 
@@ -38,6 +39,9 @@ ncu -u (view current packages and available updates) - à utiliser si pas de chan
 EXAMPLE npm install @angular/youtube-player@^21.2.13 --save
 1) vérifier la version de typescript recommande avec l'aide à l'upgrade https://angular.dev/update-guide?v=19.0-20.0&l=3
 2) terminer avec update du social plugin - https://github.com/abacritt/angularx-social-login/releases npm install @abacritt/angularx-social-login@^2.6.0 --save
+
+BACKEND UPDATED
+npm outdated. commencer par upgrdaer au "wanted", puis Latest, finissant par "express"
  
 ng version (pour voir version de angular)
 node -v (vérifier version de node)
