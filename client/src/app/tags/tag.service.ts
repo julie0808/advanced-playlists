@@ -69,7 +69,7 @@ export class TagService {
 
     return this.http.put<Tag>(this.apiRootURL, body, { headers: this.headers })
       .pipe(
-        map(() => tag),
+        map(tagReceived => ({ ...tag, ...tagReceived })),
         catchError(err => this.errorService.handleError(err))
       )
   }

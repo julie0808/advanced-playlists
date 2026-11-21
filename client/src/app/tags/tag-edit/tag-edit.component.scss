@@ -12,6 +12,17 @@
     padding: 8px 10px;
   }
 
+  .form-field--checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    label {
+      padding: 0;
+      cursor: pointer;
+    }
+  }
+
   .action-link {
     color: #fff;
     margin-left: 10px;

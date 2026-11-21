@@ -55,7 +55,7 @@ export class VideoEffects {
             const mergedDataVideo: Video = {
               ...video, 
               ...dataFromDatabase.find(i=> i.youtubeId === video.youtubeId)
-            }        
+            }
 
             const findInDB = dataFromDatabase.find( videoInDB => {
               const findVideo = videoInDB.youtubeId === video.youtubeId || false;
@@ -76,8 +76,6 @@ export class VideoEffects {
         mergeMap( data => {
           const [finalList, newVideoList] = data;
 
-          // save to database new videos
-          // there is a possibility of bug if over 50 videos
           const actionResultat = this.videoService.updateNewVideos(newVideoList)
             .pipe(
               map(() => {

@@ -1,0 +1,12 @@
+.video-manager--tag-list {
+  .form-field--checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    label {
+      padding: 0;
+      cursor: pointer;
+    }
+  }
+}

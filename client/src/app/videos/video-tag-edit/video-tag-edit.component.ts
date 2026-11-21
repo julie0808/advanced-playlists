@@ -5,7 +5,7 @@ import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Params } from '@angular/router';
 
 import { Tag } from '../../tags/tag.model';
-import { Video, VideoForm } from '../video.model';
+import { Video, VideoForm, VideoRatings } from '../video.model';
 import { Playlist } from '../../playlists/playlist.model';
 
 import { Store } from '@ngrx/store';
@@ -37,7 +37,8 @@ export class VideoTagEditComponent implements OnInit, OnDestroy {
   videoTagForm: VideoForm = this.fb.group({
     artists: this.fb.control( [] as Tag[]),
     tags: this.fb.control( [] as Tag[]),
-    rating: this.fb.control(1),
+    rating: this.fb.control(0),
+    needsReview: this.fb.control(true),
     customPlaylists: this.fb.control( [] as Playlist[]),
   });
 
@@ -69,7 +70,8 @@ export class VideoTagEditComponent implements OnInit, OnDestroy {
       this.videoTagForm.patchValue({
         artists:  video?.artists || [],
         tags:  video?.tags || [],
-        rating: video.rating,
+        rating: video.rating.ratingValue || 0,
+        needsReview: video.needsReview,
         customPlaylists: video.customPlaylists
       })
     });
@@ -83,7 +85,8 @@ export class VideoTagEditComponent implements OnInit, OnDestroy {
         ...this.currentlyEditedVideo,
         artists: this.videoTagForm.get('artists')?.value!,
         tags: this.videoTagForm.get('tags')?.value!,
-        rating: this.videoTagForm.get('rating')?.value!,
+        rating: VideoRatings[this.videoTagForm.get('rating')?.value!],
+        needsReview: this.videoTagForm.get('needsReview')?.value!,
         customPlaylists: this.videoTagForm.get('customPlaylists')?.value!,
       }
 

@@ -66,7 +66,7 @@ export class TagEffects {
       concatMap(action => {
         return this.tagService.updateTag(action.tag).pipe(
           map(tag => {
-            return TagApiActions.updateTagSuccess({ tag: action.tag });
+            return TagApiActions.updateTagSuccess({ tag });
           }),
           catchError(error => {
             throw new Error(error);

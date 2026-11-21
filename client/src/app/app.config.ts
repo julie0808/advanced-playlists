@@ -1,23 +1,25 @@
 import { ApplicationConfig, importProvidersFrom, isDevMode } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { providePrimeNG } from 'primeng/config';
 import { provideHttpClient, withInterceptorsFromDi, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import { SocialLoginModule, SocialAuthServiceConfig, GoogleLoginProvider, SOCIAL_AUTH_CONFIG } from '@abacritt/angularx-social-login';
+import { SocialLoginModule, SocialAuthServiceConfig, GoogleLoginProvider, SOCIAL_AUTH_CONFIG, GoogleInitOptions } from '@abacritt/angularx-social-login';
 import { primeThemeAuraPreset } from './theme/prime-theme-aura.preset';
 
 import { routes } from './app-routing.module';
-import { SharedModule } from './shared/shared.module';
 import { CacheInterceptor } from './shared/cache.interceptor';
 import { sharedReducer } from './shared/state/shared.reducer';
 import { SharedEffects } from './shared/state/shared.effect';
 
+const googleLoginOptions: GoogleInitOptions = {
+  oneTapEnabled: false, // default is true
+};
+
+
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideAnimationsAsync(),
 
     providePrimeNG({
       theme: { preset: primeThemeAuraPreset }
@@ -41,7 +43,8 @@ export const appConfig: ApplicationConfig = {
           {
             id: GoogleLoginProvider.PROVIDER_ID,
             provider: new GoogleLoginProvider(
-              '218803000758-6pdba5ettd4i0ii4ovl0k89fgo3l6oq5.apps.googleusercontent.com'
+              '218803000758-6pdba5ettd4i0ii4ovl0k89fgo3l6oq5.apps.googleusercontent.com',
+              googleLoginOptions
             )
           }
         ],
@@ -57,8 +60,7 @@ export const appConfig: ApplicationConfig = {
       StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: !isDevMode() }),
       StoreModule.forFeature('shared', sharedReducer),
       EffectsModule.forFeature([SharedEffects]),
-      SocialLoginModule,
-      SharedModule
+      SocialLoginModule
     )
   ]
 };

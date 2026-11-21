@@ -2,7 +2,16 @@ import { Tag } from "../tag.model";
 
 export const updateTagFromList = (tags: Tag[], tag: Tag) => {
   const cleanArray = removeTagFromList(tags, tag.id);
-  const finalArray = addTagToList(cleanArray, tag);
+  const updatedTag = tag.parent_tag_id === 0 && tag.lst_children_tag
+    ? {
+        ...tag,
+        lst_children_tag: tag.lst_children_tag.map(child => ({
+          ...child,
+          is_shared: tag.is_shared
+        }))
+      }
+    : tag;
+  const finalArray = addTagToList(cleanArray, updatedTag);
 
   return finalArray;
 }
@@ -110,7 +119,7 @@ export const orderTagsAlphabeticallyWithChildren = (tags: Tag[]) => {
 export const sortTagsForPrimeNg = (tags: Tag[]) => {
   // PrimeNG needs to have tags grouped. 
   // can't have "stand-alone" tag AND grouped ones
-  const onlyNonArtistTags = tags.filter(tag => tag.id !== 55);
+  const onlyNonArtistTags = tags.filter(tag => tag.unique_code !== 'artist');
   
   const nonArtistTagOtherList = onlyNonArtistTags.filter(tag => {
     const nbChildren = tag.lst_children_tag ? tag.lst_children_tag?.length : 0;

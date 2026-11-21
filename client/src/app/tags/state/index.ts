@@ -69,7 +69,7 @@ export const getExcludedTagsForPrimeNg = createSelector(
 export const getArtistTags = createSelector(
   getTagFeatureState,
   state => {
-    const artistGroup = state.tags.find((tag: Tag) => tag.id === 55) || new Tag();
+    const artistGroup = state.tags.find((tag: Tag) => tag.unique_code === 'artist') || new Tag();
     let formattedTags: Tag[] = [];
 
     if (artistGroup.id !== 0) {

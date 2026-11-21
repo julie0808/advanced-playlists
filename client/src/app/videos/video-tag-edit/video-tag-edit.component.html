@@ -36,12 +36,22 @@
       }
       <div class="form-field">
         <label>Rating :</label>
+
+        <!-- while this is the correct formControlName, this field should receive a number to display the nnumber of stars
+        which is in rating.ratingValue -->
         <p-rating
           [stars]="3"
           formControlName="rating"
           iconOnClass="pi pi-star-fill"
           iconOffClass="pi pi-star"
         ></p-rating>
+      </div>
+      <div class="form-field form-field--checkbox">
+        <input
+          type="checkbox"
+          id="needsReview"
+          formControlName="needsReview">
+        <label for="needsReview">Needs review</label>
       </div>
       @if (customPlaylists$ | async; as customPlaylistList) {
         <div class="form-field">

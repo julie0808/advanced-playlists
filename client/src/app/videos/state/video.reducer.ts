@@ -15,7 +15,7 @@ export interface VideoState {
   sortingIncludedTags: Tag[];
   sortingExcludedTags: Tag[];
   sortingSelectedRatings: VideoRating[];
-  sortingSelectedNew: boolean;
+  sortingNeedsReview: boolean;
   sortingOldestFirst: boolean;
   settingRepeatOn: boolean;
   error: string;
@@ -28,7 +28,7 @@ const initialState: VideoState = {
   sortingIncludedTags: [],
   sortingExcludedTags: [],
   sortingSelectedRatings: [],
-  sortingSelectedNew: false,
+  sortingNeedsReview: false,
   sortingOldestFirst: false,
   settingRepeatOn: false,
   error: ''
@@ -76,11 +76,11 @@ export const videoReducer = createReducer<VideoState>(
     }
   ),
   on(
-    VideoPageActions.setSortingSelectedNew,
+    VideoPageActions.setSortingNeedsReview,
     (state, action): VideoState => {
       return {
         ...state,
-        sortingSelectedNew: action.isNew
+        sortingNeedsReview: action.needsReview
       }
     }
   ),
@@ -208,7 +208,7 @@ export const videoReducer = createReducer<VideoState>(
         sortingIncludedTags: [],
         sortingExcludedTags: [],
         sortingSelectedRatings: [],
-        sortingSelectedNew: false
+        sortingNeedsReview: false
       }
     }
   )

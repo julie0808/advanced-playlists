@@ -4,8 +4,8 @@ import * as AppState from "../../state/app.state";
 
 import { VideoState } from "./video.reducer";
 
-import { Video, VideoRating } from "../video.model";
-
+import { Video, VideoRating, VideoRatings } from "../video.model";
+import { Tag } from "../../tags/tag.model";
 
 
 export interface State extends AppState.State {
@@ -59,10 +59,9 @@ export const getSortedVideos = createSelector(
 
     if(sortedVideos.length){
 
-      // New tags
-      if (state.sortingSelectedNew === true) {
+      if (state.sortingNeedsReview) {
         sortedVideos = sortedVideos.filter((video: Video) => {
-          return video.rating === 0;
+          return video.needsReview;
         });
       }
 
@@ -70,7 +69,7 @@ export const getSortedVideos = createSelector(
       if (state.sortingSelectedRatings.length){
         sortedVideos = sortedVideos.filter((video: Video) => {
           return state.sortingSelectedRatings.some((rating: VideoRating) => {
-            return rating.rating === video.rating;
+            return rating === video.rating;
           });
         });
       }
@@ -204,9 +203,27 @@ export const getCurrentVideoPosition = createSelector(
 
 /*********** SORTING AND FILTERS ***************/
 
-export const getSortingIncludedTags = createSelector(
+export const getSortingFullIncludedTags = createSelector(
   getVideoFeatureState,
   state => state.sortingIncludedTags
+)
+
+export const getSortingIncludedTags = createSelector(
+  getVideoFeatureState,
+  state => {
+    const allTags: Tag[] = state.sortingIncludedTags;
+    const includedTags: Tag[] = allTags.filter(t => t.parent_unique_code !== 'artist');
+    return includedTags;
+  }
+)
+
+export const getSortingIncludedArtistTags = createSelector(
+  getVideoFeatureState,
+  state => {
+    const allTags: Tag[] = state.sortingIncludedTags;
+    const includedArtistTags: Tag[] = allTags.filter(t => t.parent_unique_code === 'artist');
+    return includedArtistTags;
+  }
 )
 
 export const getSortingExcludedTags = createSelector(
@@ -219,9 +236,9 @@ export const getSortingSelectedRatings = createSelector(
   state => state.sortingSelectedRatings
 )
 
-export const getSortingSelectedNew = createSelector(
+export const getSortingNeedsReview = createSelector(
   getVideoFeatureState,
-  state => state.sortingSelectedNew
+  state => state.sortingNeedsReview
 )
 
 export const getSortingOldestFirst = createSelector(

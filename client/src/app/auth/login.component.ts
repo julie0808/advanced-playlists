@@ -9,7 +9,8 @@ import { AuthApiActions } from '../shared/state/actions';
   selector: 'app-login',
   standalone: true,
   imports: [GoogleSigninButtonModule],
-  templateUrl: './login.component.html'
+  templateUrl: './login.component.html',
+  styleUrls: ['login.component.scss'],
 })
 export class LoginComponent {
   constructor(

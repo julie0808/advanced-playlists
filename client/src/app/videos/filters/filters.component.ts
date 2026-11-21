@@ -17,9 +17,11 @@ import {
 } from '../../tags/state';
 import { VideoPageActions } from '../state/actions';
 import { 
+  getSortingFullIncludedTags,
   getSortingIncludedTags, 
   getSortingExcludedTags, 
-  getSortingSelectedNew, 
+  getSortingIncludedArtistTags,
+  getSortingNeedsReview, 
   getSortingSelectedRatings, 
   getSortingOldestFirst } from '../state';
 import { getCurrentPlaylistId } from '../../shared/state';
@@ -38,10 +40,12 @@ import { RatingModule } from 'primeng/rating';
 })
 export class FiltersComponent implements OnInit {
 
+  includedFullTagList: Tag[] = [];
   includedTagList: Tag[] = [];
   excludedTagList: Tag[] = [];
-  selectedRating: VideoRating[] = [];
-  showOnlyNew: boolean = false;
+  includedArtistTagList: Tag[] = [];
+  selectedRatings: VideoRating[] = [];
+  showNeedsReview: boolean = false;
   orderOldestFirst: boolean = false;
   ratingList: VideoRating[] = VideoRatings;
   currentPlaylistId: string = '';
@@ -64,12 +68,17 @@ export class FiltersComponent implements OnInit {
     this.includedTagList$ = this.store.select(getSortingIncludedTags);
     this.excludedTagList$ = this.store.select(getSortingExcludedTags);
     this.tagList$ = this.store.select(getOtherTagsForPrimeNg); 
-    this.tagListForInclude$ = this.store.select(getIncludedTagsForPrimeNg);
-    this.tagListForExclude$ = this.store.select(getExcludedTagsForPrimeNg);
+    this.tagListForInclude$ = this.store.select(getIncludedTagsForPrimeNg);//dafuq
+    this.tagListForExclude$ = this.store.select(getExcludedTagsForPrimeNg);//dafuqnpm 
+
+    this.store.select(getSortingFullIncludedTags)
+      .subscribe(includedFullTagList => {
+        this.includedFullTagList = includedFullTagList;
+      });
 
     this.store.select(getSortingIncludedTags)
       .subscribe(includedTagList => {
-        this.includedTagList = includedTagList;        
+        this.includedTagList = includedTagList; 
       });
 
     this.store.select(getSortingExcludedTags)
@@ -77,14 +86,20 @@ export class FiltersComponent implements OnInit {
         this.excludedTagList = excludedTagList;        
       });
 
-    this.store.select(getSortingSelectedRatings)
-      .subscribe(rating => {
-        this.selectedRating = rating;        
+    this.store.select(getSortingIncludedArtistTags)
+      .subscribe(includedArtistTagList => {
+        this.includedArtistTagList = includedArtistTagList; 
+        console.log(this.includedArtistTagList);
       });
 
-    this.store.select(getSortingSelectedNew)
-      .subscribe(showNew => {
-        this.showOnlyNew = showNew;        
+    this.store.select(getSortingSelectedRatings)
+      .subscribe(rating => {
+        this.selectedRatings = rating;        
+      });
+
+    this.store.select(getSortingNeedsReview)
+      .subscribe(needsReview => {
+        this.showNeedsReview = needsReview;        
       });
 
     this.store.select(getSortingOldestFirst)
@@ -103,26 +118,58 @@ export class FiltersComponent implements OnInit {
   }
 
   sortByTag(){
+    this.includedFullTagList = [...this.includedTagList, ...this.includedArtistTagList];
+
     this.store.dispatch(VideoPageActions.setSortingIncludedTags({ 
-      tags: this.includedTagList, 
+      tags: this.includedFullTagList, 
       excludedTags: this.excludedTagList })
     );
   }
 
   sortByRating(){
-    this.store.dispatch(VideoPageActions.setSortingSelectedRatings({ ratings: this.selectedRating }));
+    this.store.dispatch(VideoPageActions.setSortingSelectedRatings({ ratings: this.selectedRatings }));
   }
 
-  sortByNewOnly(){
-    this.store.dispatch(VideoPageActions.setSortingSelectedNew({ isNew: this.showOnlyNew }));
+  filterNeedsReview(){
+    this.store.dispatch(VideoPageActions.setSortingNeedsReview({ needsReview: this.showNeedsReview }));
   }
 
   orderByOldestFirst(){
     this.store.dispatch(VideoPageActions.setSortingOldestFirst({ isOldestFirst: this.orderOldestFirst }));
   }
 
+  showNumberofTagSelected(){
+    const nbSelected: number = this.includedTagList.length;
+    let selectionText = '';
+    if ( nbSelected > 0 ){
+      selectionText = nbSelected > 1 ? `${nbSelected} tags selected` : '1 tag selected';
+    }
+
+    return selectionText;
+  }
+
+  showNumberofExcludedTagSelected(){
+    const nbSelected: number = this.excludedTagList.length;
+    let selectionText = '';
+    if ( nbSelected > 0 ){
+      selectionText = nbSelected > 1 ? `${nbSelected} tags excluded` : '1 tag excluded';
+    }
+    
+    return selectionText;
+  }
+
+  showNumberofArtistSelected(){
+    const nbSelected: number = this.includedArtistTagList.length;
+    let selectionText = '';
+    if ( nbSelected > 0 ){
+      selectionText = nbSelected > 1 ? `${nbSelected} artist selected` : '1 artist selected';
+    }
+    
+    return selectionText;
+  }
+
   removeSortByRating(){
-    this.selectedRating = [];
+    this.selectedRatings = [];
     this.sortByRating();
   }
 

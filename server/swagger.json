@@ -138,22 +138,30 @@
     "/video/update": {
       "post": {
         "tags": ["Videos"],
-        "summary": "Store initial title of all videos",
+        "summary": "Insert a batch of new videos (maximum 250)",
         "parameters": [
           {
-            "name": "informations",
+            "name": "videos",
             "in": "body",
-            "description": "Video informations",
+            "description": "Video records to insert",
             "schema": {
-              "$ref": "#/definitions/Video"
+              "$ref": "#/definitions/VideoBatch"
             }
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
+          "201": {
+            "description": "Videos inserted or already present",
             "schema": {
-              "$ref": "#/definitions/Video"
+              "type": "object",
+              "properties": {
+                "received": {
+                  "type": "integer"
+                },
+                "inserted": {
+                  "type": "integer"
+                }
+              }
             }
           }
         }
@@ -229,11 +237,20 @@
         "color": {
           "type": "string"
         },
+        "unique_code": {
+          "type": "string"
+        },
+        "parent_unique_code": {
+          "type": "string"
+        },
         "description": {
           "type": "string"
         },
         "parent_tag_id": {
           "type": "integer"
+        },
+        "is_shared": {
+          "type": "boolean"
         },
         "lst_children_tag": {
           "type": "array",
@@ -267,6 +284,7 @@
           "uniqueItems": true
         },
         "rating": {"type": "number"},
+        "needsReview": {"type": "boolean"},
         "title": {"type": "string"},
         "length": {"type": "string"},
         "dateModified": {"type": "string"},
@@ -275,6 +293,32 @@
         },
         "artist": {"type": "string"},
         "publishedBy": {"type": "string"}
+      }
+    },
+    "VideoBatch": {
+      "type": "array",
+      "maxItems": 250,
+      "items": {
+        "$ref": "#/definitions/VideoForInsert"
+      }
+    },
+    "VideoForInsert": {
+      "type": "object",
+      "required": [
+        "youtubeId",
+        "title",
+        "uniqueYoutubeId"
+      ],
+      "properties": {
+        "youtubeId": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "uniqueYoutubeId": {
+          "type": "string"
+        }
       }
     }
   }

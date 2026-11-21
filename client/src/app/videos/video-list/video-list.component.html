@@ -58,11 +58,12 @@
               <div class="video-image--info">
                 <!--<p class="video-image--length">{{ video.duration }}</p>-->
                 @if (video.youtubeStatus !== 'published') {
-                  <p class="video-image--new">!!!</p>
+                  <p class="video-image--status">!!!</p>
                 }
-                @if (video.rating === 0 && video.youtubeStatus === 'published') {
-                  <p class="video-image--new">New</p>
+                @if (video.needsReview && video.youtubeStatus === 'published') {
+                  <p class="video-image--status">Needs review</p>
                 }
+                
               </div>
             </div>
             <div class="video-info">
@@ -71,7 +72,7 @@
                   class="video-info--rating"
                   [readonly]="true"
                   [stars]="3"
-                  [(ngModel)]="video.rating"
+                  [(ngModel)]="video.rating.ratingValue"
                   iconOnClass="pi pi-star-fill"
                   iconOffClass="pi pi-star"
                 ></p-rating>

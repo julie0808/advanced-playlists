@@ -1,18 +1,18 @@
 import { Injectable } from "@angular/core";
-import { Observable } from 'rxjs';
-import { catchError, map, tap, expand, takeWhile, reduce } from "rxjs/operators";
+import { from, Observable, of } from 'rxjs';
+import { catchError, concatMap, map, tap, expand, takeWhile, reduce, toArray } from "rxjs/operators";
 import { HttpClient, HttpHeaders, HttpParams, HttpContext } from '@angular/common/http';
 import { CACHEABLE } from "../shared/cache.interceptor";
 import { ErrorService } from "../shared/error/error/error-service";
 
-import { Video } from "./video.model";
+import { Video, VideoRating, VideoRatings } from "./video.model";
 
 
 @Injectable({providedIn: 'root'})
 export class VideoService {
 
-  testMode: boolean = false; // va charger une seule page de l'api
-  testModeMaxItems: number = 25; // max 50, car on va chercher une seule page 
+  testMode: boolean = true; // va charger une seule page de l'api
+  testModeMaxItems: number = 10; // max 50, car on va chercher une seule page 
 
   nextPageToken: string = '';
   totalVideoInPlaylist: number = 0;
@@ -65,7 +65,7 @@ export class VideoService {
 
   getVideosFromDatabase(playlistId: string): Observable<Video[]> {
 
-    return this.http.get<Video[]>(`${this.apiRootURL}`, {
+    return this.http.get<any[]>(`${this.apiRootURL}`, {
       context: new HttpContext().set(CACHEABLE, true),
       params: {
         'playlist_id' : playlistId 
@@ -78,9 +78,10 @@ export class VideoService {
               ...v,
               tags: v.tags ? v.tags : [],
               artists: v.artists ? v.artists : [],
-              customPlaylists: v.customPlaylists ? v.customPlaylists : []
-            };
-          })
+              customPlaylists: v.customPlaylists ? v.customPlaylists : [],
+              rating: v.rating != 0 ? VideoRatings[v.rating] : VideoRatings[0]
+            } as Video;
+          }) as Video[]
         }),
         catchError(err => this.errorService.handleError(err))
       );
@@ -148,15 +149,31 @@ export class VideoService {
   }
 
   updateNewVideos(videos: Video[]): Observable<Video[]> {
-    const body = JSON.stringify(videos);
+    const batchSize = 250;
+    const batches: Pick<Video, 'youtubeId' | 'title' | 'uniqueYoutubeId'>[][] = [];
 
-    return this.http.post<Video[]>(`${this.apiRootURL}/update`, body, {
-      headers: this.headers
-    })
-    .pipe(
-        map(() => videos),
-        catchError(err => this.errorService.handleError(err))
-      )
+    for (let index = 0; index < videos.length; index += batchSize) {
+      batches.push(videos.slice(index, index + batchSize).map(video => ({
+        youtubeId: video.youtubeId,
+        title: video.title,
+        uniqueYoutubeId: video.uniqueYoutubeId
+      })));
+    }
+
+    if (batches.length === 0) {
+      return of(videos);
+    }
+
+    return from(batches).pipe(
+      concatMap(batch => this.http.post(
+        `${this.apiRootURL}/update`,
+        JSON.stringify(batch),
+        { headers: this.headers }
+      )),
+      toArray(),
+      map(() => videos),
+      catchError(err => this.errorService.handleError(err))
+    );
   }
 
   updateVideo(video: Video, playlistId: string): Observable<Video> {

@@ -12,7 +12,8 @@ export interface Video {
   thumbnailPath: string;
   dateModified: string; // for any change to tags. should be a valid date format. correspond to date it was modified by ME in this app
   tags: Tag[];
-  rating: number;
+  rating: VideoRating;
+  needsReview: boolean;
   artists: Tag[]; 
   publishedBy: string; // original Channel name on which it was published
   datePublished: Date; // date the video was uploaded to youtube
@@ -30,7 +31,8 @@ export class Video {
   thumbnailPath = '';
   dateModified = ''; 
   tags = [] as Tag[];
-  rating = 0;
+  rating = VideoRatings[0];
+  needsReview = true;
   artists = [] as Tag[];
   publishedBy = '';
   datePublished = new Date();
@@ -42,6 +44,7 @@ export interface VideoForm extends FormGroup<{
   artists: FormControl<Tag[]>;
   tags: FormControl<Tag[]>;
   rating: FormControl<number>;
+  needsReview: FormControl<boolean>;
   customPlaylists: FormControl<Playlist[]>;
 }> {}
  
@@ -54,12 +57,13 @@ export enum VideoPlayerFormats {
 }
 
 export interface VideoRating {
-  rating: number;
+  ratingValue: number;
   description: string; 
 }
 
 export const VideoRatings: VideoRating[] = [
-  { rating: 1, description: "It exists" },
-  { rating: 2, description: "Repeat worthy" },
-  { rating: 3, description: "Unskippable" }
+  { ratingValue: 0, description: "Not rated yet" },
+  { ratingValue: 1, description: "It exists" },
+  { ratingValue: 2, description: "Repeat worthy" },
+  { ratingValue: 3, description: "Unskippable" }
 ]

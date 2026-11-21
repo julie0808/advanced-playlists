@@ -10,6 +10,8 @@ export interface Tag {
   nb_associated_videos: number;
   playlist_id: string;
   is_shared: boolean;
+  unique_code?: string | null;
+  parent_unique_code?: string | null;
 }
 
 export class Tag {
@@ -29,4 +31,5 @@ export interface TagForm extends FormGroup<{
   color: FormControl<string>;
   description: FormControl<string>;
   parent_tag_id: FormControl<number>;
+  is_shared: FormControl<boolean>;
 }> {}

@@ -1,112 +1,81 @@
-## corretion post upgrade Angular
-- index.html devrait juste avoir app-root
-- warning google log in abacrit update?
-- login page visual
-- est-ce que le shared de primeng est encore utilis�?
-- changelog is a mess
-
-
-## trucs � ajouter au todos post migration 
-- gros lag au d�but du chargement de l'app
-- affichage titre et artiste pas UX friendly
+## Current train of thought
 
 
 
-## non breaking BUGS
-
-- trier par 3stars+ 
----- pourquoi solar a A.C.E et 3stars+? quelle donn�es conflict?
-- plusieurs "none" possile dans le choix de Group dans l'�dition d'un tag
 
 
-## TODOS
+## GENERAL PLANNING 
 
 ### comment ajouter et publier un tag git :
 git tag -a v1.3.0 -m "Filtre pour artiste et choix de playlist"
 git push origin v1.3.0
-Got to github in Tags section and "Create release"
+Get to github in Tags section and "Create release"
 
-best ngrx practices to consider 
--- https://medium.com/@m3po22/stop-using-ngrx-effects-for-that-a6ccfe186399
--- https://angularindepth.com/posts/1442/ngrx-bad-practices
-
-ncu -u (view current packages and available updates) - � utiliser si pas de changement de version de plus de 1 version majeure
+ncu -u (view current packages and available updates) - ï¿½ utiliser si pas de changement de version de plus de 1 version majeure
 
 1) ng update angular/core@17 (1 major version at a time) https://angular.dev/update-guide?v=20.0-21.0&l=3
 2) ng update @ngrx/store@21 @ngrx/effects@21 @ngrx/entity@21 @ngrx/store-devtools@21
 3) npm install primeng@^21 primeicons@latest @primeuix/themes@latest --save
 4) youtube-player to fit version https://www.npmjs.com/package/@angular/youtube-player?activeTab=versions
 EXAMPLE npm install @angular/youtube-player@^21.2.13 --save
-1) v�rifier la version de typescript recommande avec l'aide � l'upgrade https://angular.dev/update-guide?v=19.0-20.0&l=3
+1) vï¿½rifier la version de typescript recommande avec l'aide ï¿½ l'upgrade https://angular.dev/update-guide?v=19.0-20.0&l=3
 2) terminer avec update du social plugin - https://github.com/abacritt/angularx-social-login/releases npm install @abacritt/angularx-social-login@^2.6.0 --save
 
 BACKEND UPDATED
-npm outdated. commencer par upgrdaer au "wanted", puis Latest, finissant par "express" 
+npm outdated. commencer par upgrdaer au "wanted", puis Latest, finissant par le package "express" 
  
 ng version (pour voir version de angular)
-node -v (v�rifier version de node)
-https://angular.dev/update-guide?v=17.0-18.0&l=1
+node -v (vï¿½rifier version de node)
 
 
 
-*****cl� �trang�re de play_video � faire
+
+
 
 
 FOCUS
-- maintenant que la playlist n'est plus consid�r� pour aller chercher les tags (update 2.2.0), cela pourrait �tre probl�matique si un youtube_id est dans plusieurs playlist youtube diff�rente; est-ce que les tags devraient �tre li� au unique_youtube_id � la place? cela va aussi affecter l'affichage des libell�s dans video-list.html en ne consid�rant plus les playlist_id
-- repenser UX des filtres/tri
-- 1 d�mystifier 3stats+, unique, coup de coeur..
-- ? mises � jour https://github.com/julie0808/advanced-playlists/security/dependabot ?
-- 3 angular 18
-- 1 r�viser readme
-- BUG dropdown playlist zindex weird
+- maintenant que la playlist n'est plus considï¿½rï¿½ pour aller chercher les tags (update 2.2.0), cela pourrait ï¿½tre problï¿½matique si un youtube_id est dans plusieurs playlist youtube diffï¿½rente; est-ce que les tags devraient ï¿½tre liï¿½ au unique_youtube_id ï¿½ la place? cela va aussi affecter l'affichage des libellï¿½s dans video-list.html en ne considï¿½rant plus les playlist_id
+- why though? DEBT - www.js 393 - enregsitrer le ID des playlist pour les vidï¿½os. le but de cette table ï¿½tait de garder le titre original des vidï¿½os, il faudrait ajuster ï¿½a aussi
+- HOTFIX show only new VERSUS no rated
 
-- 5 FEATURE - exlure des tags (ex : dance performance, live...)
-- 8 FEATURE avoir sous-playlist avec ordre custom (ex: bts story line)
-- 2 why though? DEBT - www.js 393 - enregsitrer le ID des playlist pour les vid�os. le but de cette table �tait de garder le titre original des vid�os, il faudrait ajuster �a aussi
-- 2 FEATURE option pour jouer de fa�on al�atoire
-- wut? HOTFIX this.tag dans tag-edit � revoir
-- 2 HOTFIX video edit : utiliser le array au lieu des 3 �toiles pour la cote
-** Commencer � penser pour le probl�me de latence de grosse playlist. software rotty at this point
 
+
+QUICK WINS
+- FEATURE mettre un commentaire ï¿½ un video (ex : video dentrainement)
+- FEATURE voir la durï¿½e des vidï¿½os
+- HOTFIX index.html devrait juste avoir app-root
+- HOTFIX changer de playlist dans le tag editeur ne retire pas l'ancienne liste si rien de nouveau est trouvï¿½
+- HOTFIX *****clï¿½ ï¿½trangï¿½re de play_video ï¿½ faire
 
 
 
 ### lineup
-- FEATURE recherche par mot cl�
+- FEATURE recherche par mot clï¿½
 - FEATURE les artistes sont cross playlists
-- FEATURE �diter un tag en ayant le player, mais que �a continue o� on en �tant quand on retourne dans la liste de vid�o (pas reset au vid�o #1)
-- FEATURE pas loader les videos par d�faut...me laisser choisir la playlist
-- FEATURE mettre un commentaire � un video (ex : video dentrainement)
-- FEATURE Raccourci pour scroller au vid�o actuellement lu dans videoList
-- FEATURE avoir une loading bar pr�cise? possible avec interceptor? autres options avec le store? async?
-
-- HOTFIX - playlist dropdown width
-- DEBT - subscribing to value to filters.. should I send observable to action ngrx?
-- HOTFIX - redirect routing to videos not working
-
-- �crire dans la docu les instructions pour installer la bd (tech.md)
+- FEATURE Raccourci pour scroller au vidï¿½o actuellement lu dans videoList
+- FEATURE AI avoir une loading bar prï¿½cise? possible avec interceptor? autres options avec le store? async?
+- ï¿½crire dans la docu les instructions pour installer la bd (tech.md)
+- DEBT HOTFIX Commencer ï¿½ penser pour le problï¿½me de latence de grosse playlist. software rotty at this point
 
 
 ### Backlog
-- FEATURE changer primeng pour Material
 - FEATURE "offline mode" tous les tags de toutes les playlists (ex: get all the flirty stuff de toutes les playlists)
-- FEATURE HOTFIX avoir le loading pr�sent quand on sort / unsort + r�gler autre bogue de quand il n'apparait pas
-- FEATURE fonction pour flaguer les vid�os � ne pas montrer (Maze of memories doublons?, age restricted...)
-- FEATURE trier par... video non affich� (unavailable, non published...). mais ne pas les montrer par d�faut dans la liste
-- FEATURE REFACTOR faire les /edit avec le routing "popup"
-- FEATURE terminer la fonctionnalit� d�tectant les duplications
-- FEATURE enregistrer un groupe de filtre pour s�lection rapide
-- FEATURE voir la dur�e des vid�os
-- FEATURE supprimer un video de la playlist - rendu � faire la suppresion de ma BD. api youtube test�, mais semble quil me faut une autre authentification dans lapp pour y acc�der
+- FEATURE fonction pour flaguer les vidï¿½os ï¿½ ne pas montrer de faï¿½on permanente (Maze of memories doublons?, age restricted...)
+- FEATURE trier par... video non affichï¿½ (unavailable, non published...). mais ne pas les montrer par dï¿½faut dans la liste
+- FEATURE terminer la fonctionnalitï¿½ dï¿½tectant les duplications
+- FEATURE enregistrer un groupe de filtre pour sï¿½lection rapide
+- FEATURE supprimer un video de la playlist - rendu ï¿½ faire la suppresion de ma BD. api youtube testï¿½, mais semble quil me faut une autre authentification dans lapp pour y accï¿½der
 - FEATURE error handling avec interface et +
-- FEATURE h�berger l'app en local pour acc�s de mon t�l�phone
+- FEATURE hï¿½berger l'app en local pour accï¿½s de mon tï¿½lï¿½phone
+- FEATURE pouvoir ajouter ou exclure des tags ï¿½ partir d'un vidï¿½o de la liste de vidï¿½os
 
-- HOTFIX tester ce qui arrive si je supprime un tag parent qui a des parents, ou donne un parent � un tag qui a des enfants
-- HOTFIX updateNewVideos() -> probl�matique si + de 50 vid�os
-- DEBT REFACTOR Latence en g�n�ral. 850 vid�os... probl�me avec les observable ou normal? possibilit� de lazy load?
-- HOTFIX les @extends fonctionnent pas comme pr�vu avec l'encapsulation
-- HOTFIX v�rifier tous les TODO TECHNICAL DEBT
-- HOTFIX? show only new VERSUS no stars? keep the new taga or merge with ratings?
-- HOTFIX devrait pas avoir le visual d'accord�on si pas d'enfant?s
-
+- HOTFIX ï¿½diter un tag en ayant le player, mais que ï¿½a continue oï¿½ on en ï¿½tant quand on retourne dans la liste de vidï¿½o (pas reset au vidï¿½o #1)
+- HOTFIX tester ce qui arrive si je supprime un tag parent qui a des parents, ou donne un parent ï¿½ un tag qui a des enfants
+- HOTFIX updateNewVideos() -> problï¿½matique si + de 50 vidï¿½os
+- HOTFIX affichage titre et artiste pas UX friendly
+- HOTFIX Mï¿½me si c'est le premier vidï¿½o chargï¿½ aprï¿½s le chargement de la playlist, faire jouer le vidï¿½o si manuellement on demande de le jouer.
+- HOTFIX pourquoi solar a A.C.E et 3stars+? quelle donnï¿½es conflict?
+- HOTFIX plusieurs "none" possible dans le choix de Group dans l'ï¿½dition d'un tag
+- HOTFIX repenser UX des filtres/tri
+- HOTFIX - redirect routing to videos not working
+ 

@@ -56,6 +56,15 @@
               formControlName="description">
             </textarea>
           </div>
+          @if (tagForm.get('parent_tag_id')!.value === 0) {
+            <div class="form-field form-field--checkbox">
+              <input
+                type="checkbox"
+                id="is_shared"
+                formControlName="is_shared">
+              <label for="is_shared">Share this group across playlists</label>
+            </div>
+          }
           @if (!tagForm.valid && tagForm.touched) {
             <span
             >The form contains errors</span>

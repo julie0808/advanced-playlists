@@ -51,9 +51,9 @@ export const setSortingSelectedRatings = createAction(
   props<{ ratings: VideoRating[] }>() 
 );
 
-export const setSortingSelectedNew = createAction(
-  '[Video] Set selected show new for video sorting',
-  props<{ isNew: boolean }>() 
+export const setSortingNeedsReview = createAction(
+  '[Video] Set needs-review filter',
+  props<{ needsReview: boolean }>() 
 );
 
 export const setSortingOldestFirst = createAction(

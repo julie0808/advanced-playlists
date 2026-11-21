@@ -6,18 +6,17 @@
       @if (tagListForInclude$ | async; as tagList) {
         <div class="filter-sort filter-sort--tags">
           <p-multiSelect
-            [options]="tagList"
-            [(ngModel)]="includedTagList"
+             [options]="tagList"
+             [(ngModel)]="includedTagList"
             (onChange)="sortByTag()"
             [group]="true"
             dataKey="id"
-            optionLabel="title"
+             optionLabel="title"
             optionGroupLabel="title"
             optionGroupChildren="lst_children_tag"
-            placeholder="Sort tags">
+             placeholder="Sort by tag">
             <ng-template pTemplate="selectedItems">
-              Sort by tag
-              <!-- custom "chips" codés -->
+              {{ showNumberofTagSelected() }}
             </ng-template>
           </p-multiSelect>
         </div>
@@ -33,10 +32,10 @@
             optionLabel="title"
             optionGroupLabel="title"
             optionGroupChildren="lst_children_tag"
-            placeholder="Sort tags">
+            placeholder="Exclude by tag">
             <ng-template pTemplate="selectedItems">
-              Exclude by tag
-              <!-- custom "chips" codés -->
+              {{ showNumberofExcludedTagSelected() }}
+              <!-- custom visual with chips coded -->
             </ng-template>
           </p-multiSelect>
         </div>
@@ -45,14 +44,14 @@
         <div class="filter-sort filter-sort--artists">
           <p-multiSelect
             [options]="artistTagList"
-            [(ngModel)]="includedTagList"
+            [(ngModel)]="includedArtistTagList"
             (onChange)="sortByTag()"
             dataKey="id"
             optionLabel="title"
-            placeholder="Sort tags">
+            placeholder="Sort by artist">
             <ng-template pTemplate="selectedItems">
-              Sort by artist
-              <!-- custom "chips" codés -->
+              {{ showNumberofArtistSelected() }}
+              <!-- custom visual with chips coded -->
             </ng-template>
           </p-multiSelect>
         </div>
@@ -60,22 +59,22 @@
       <div class="filter-sort filter-sort--rating">
         <p-multiSelect
           [options]="ratingList"
-          [(ngModel)]="selectedRating"
+          [(ngModel)]="selectedRatings"
           (onChange)="sortByRating()"
-          dataKey="rating"
+          dataKey="ratingValue"
           optionLabel="description"
           placeholder="Sort by rating">
         </p-multiSelect>
       </div>
-      <div class="filter-sort filter-sort--new">
+      <div class="filter-sort filter-sort--needs-review">
         <p-checkbox
-          name="filterByNew"
+          name="filterByNeedsReview"
           [binary]="true"
-          inputId="filterByNew"
-          (onChange)="sortByNewOnly()"
-          [(ngModel)]="showOnlyNew">
+          inputId="filterByNeedsReview"
+          (onChange)="filterNeedsReview()"
+          [(ngModel)]="showNeedsReview">
         </p-checkbox>
-        <label for="filterByNew">Show only new</label>
+        <label for="filterByNeedsReview">Show Needs review</label>
       </div>
       <div class="filter-sort filter-sort--oldest-first">
         <p-checkbox

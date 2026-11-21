@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { SharedModule } from '../shared/shared.module';
 
 import { PlaylistsComponent } from './playlists.component';
 
@@ -12,7 +11,6 @@ import { SharedEffects } from '../shared/state/shared.effect';
 
 @NgModule({
   imports: [
-    SharedModule,
     RouterModule.forChild([
       {
         path: '',

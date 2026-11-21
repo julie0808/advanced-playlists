@@ -43,38 +43,59 @@ app.use(bodyParser.json());
 ///////////////////////////////////
 
 app.post(`${rootUrl}/tags`, (req, res) => {
-  const {id, parent_tag_id, title, color, description, playlist_id} = req.body;
+  const {parent_tag_id, title, color, description, playlist_id} = req.body;
+  const requestedIsShared = req.body.is_shared === undefined ? false : req.body.is_shared;
+
+  if (typeof requestedIsShared !== 'boolean') {
+    return res.status(400).json({ error: 'is_shared must be a boolean.' });
+  }
+
  ;(async () => {
    const client = await pool.connect();
+   let transactionStarted = false;
    try {
-     let results = await client.query(
+     await client.query('BEGIN');
+     transactionStarted = true;
+
+     let isShared = requestedIsShared;
+     if (parent_tag_id !== 0) {
+       const parentResult = await client.query(
+         `SELECT is_shared
+          FROM tag
+          WHERE tag_id = $1 AND parent_tag_id = 0
+          FOR SHARE`,
+         [parent_tag_id]
+       );
+
+       if (parentResult.rowCount === 0) {
+         await client.query('ROLLBACK');
+         transactionStarted = false;
+         return res.status(400).json({ error: 'The selected parent must be a tag group.' });
+       }
+
+       isShared = parentResult.rows[0].is_shared;
+     }
+
+     const { rows } = await client.query(
        `INSERT INTO tag (
            title,
            parent_tag_id,
            color,
            description,
-           playlist_id
-       ) VALUES ($1, $2, $3, $4, $5)
-       RETURNING tag_id`,
-       [title, parent_tag_id, color, description, playlist_id]);
-     if (results.rowCount === 0) { 
-       results = { 
-         title,
-         parent_tag_id,
-         color,
-         description,
-         playlist_id
-       };
+           playlist_id,
+           is_shared
+       ) VALUES ($1, $2, $3, $4, $5, $6)
+       RETURNING tag_id as id, title, parent_tag_id, color, description, playlist_id, is_shared`,
+       [title, parent_tag_id, color, description, playlist_id, isShared]);
+
+     await client.query('COMMIT');
+     transactionStarted = false;
+     res.status(201).json(rows[0]);
+   } catch (err) {
+     if (transactionStarted) {
+       await client.query('ROLLBACK');
      }
-     const newTag = {
-       title: title,
-       parent_tag_id: parent_tag_id,
-       color: color,
-       description: description,
-       playlist_id: playlist_id,
-       id: results.rows[0].tag_id
-     };
-     res.status(201).json(newTag);
+     throw err;
    } finally {
      client.release();
    }
@@ -88,13 +109,29 @@ app.post(`${rootUrl}/tags`, (req, res) => {
 
 app.get(`${rootUrl}/tags`, (req, res) => {
   const {playlist_id} = req.query;
-  
+  const childPlaylistFilter = playlist_id === 'none'
+    ? ''
+    : ` AND (tt.playlist_id = ($1) OR tt.is_shared OR t.is_shared)`;
+  const rootPlaylistFilter = playlist_id === 'none'
+    ? ''
+    : ` AND (
+        t.playlist_id = ($1)
+        OR t.is_shared
+        OR EXISTS (
+          SELECT 1
+          FROM tag visible_child
+          WHERE visible_child.parent_tag_id = t.tag_id
+            AND (visible_child.playlist_id = ($1) OR visible_child.is_shared)
+        )
+      )`;
+
   ;(async () => {
 
     qry = `
     SELECT 
       t.tag_id as id, 
       t.title, 
+      t.unique_code,
       t.color,
       parent_tag_id, 
       ( SELECT jsonb_agg(json_ressource)
@@ -102,29 +139,27 @@ app.get(`${rootUrl}/tags`, (req, res) => {
           SELECT
             tt.tag_id as id, 
             tt.title, 
+            tt.unique_code,
+            t.unique_code as parent_unique_code,
             t.color, -- parent's color
             tt.parent_tag_id, 
             null as lst_children_tag,
             tt.description,
             tt.playlist_id,
+            tt.is_shared,
             'unchanged' as status
           FROM 		  tag tt
-          WHERE 		tt.parent_tag_id = t.tag_id
+          WHERE 		tt.parent_tag_id = t.tag_id${childPlaylistFilter}
           ORDER BY  tt.title
         ) json_ressource
       ) as lst_children_tag,
       t.description,
       t.playlist_id,
+      t.is_shared,
       'unchanged' as status
     FROM    tag t
-    WHERE   t.parent_tag_id = 0
+    WHERE   t.parent_tag_id = 0${rootPlaylistFilter}
     `;
-
-    // not yet coded and saved in database
-    // what is not coded actually?
-    if (playlist_id !== 'none'){
-      qry += ` AND (t.playlist_id = ($1) OR t.is_shared) `;
-    }
 
     qry += `ORDER BY t.title `;
 
@@ -142,28 +177,74 @@ app.get(`${rootUrl}/tags`, (req, res) => {
 });
 
 app.put(`${rootUrl}/tags`, (req, res) => {
-  const {id, title, parent_tag_id, color, description} = req.body;
+  const {id, title, parent_tag_id, color, description, is_shared} = req.body;
+
+  if (is_shared !== undefined && typeof is_shared !== 'boolean') {
+    return res.status(400).json({ error: 'is_shared must be a boolean.' });
+  }
+
  ;(async () => {
    const client = await pool.connect();
+   let transactionStarted = false;
    try {
-    let results = await client.query(
+    await client.query('BEGIN');
+    transactionStarted = true;
+
+    let isShared = is_shared;
+    if (parent_tag_id !== 0) {
+      const parentResult = await client.query(
+        `SELECT is_shared
+         FROM tag
+         WHERE tag_id = $1 AND parent_tag_id = 0
+         FOR SHARE`,
+        [parent_tag_id]
+      );
+
+      if (parentResult.rowCount === 0) {
+        await client.query('ROLLBACK');
+        transactionStarted = false;
+        return res.status(400).json({ error: 'The selected parent must be a tag group.' });
+      }
+
+      isShared = parentResult.rows[0].is_shared;
+    }
+
+    const updateResult = await client.query(
        `UPDATE tag
         SET 
           title = ($1),
           parent_tag_id = ($2),
           color = ($3),
-          description = ($4)
-       WHERE tag_id = ($5) `,
-       [title, parent_tag_id, color, description, id]);
-     if (results.rowCount === 0) { 
-       results = { 
-         title,
-         id,
-         parent_tag_id,
-         color
-       };
+          description = ($4),
+          is_shared = COALESCE($5, is_shared)
+       WHERE tag_id = ($6)
+       RETURNING tag_id as id, title, parent_tag_id, color, description, playlist_id, is_shared`,
+       [title, parent_tag_id, color, description, isShared ?? null, id]);
+
+    if (updateResult.rowCount === 0) {
+      await client.query('ROLLBACK');
+      transactionStarted = false;
+      return res.status(404).json({ error: 'Tag not found.' });
+    }
+
+    const updatedTag = updateResult.rows[0];
+    if (updatedTag.parent_tag_id === 0) {
+      await client.query(
+        `UPDATE tag
+         SET is_shared = $1
+         WHERE parent_tag_id = $2`,
+        [updatedTag.is_shared, updatedTag.id]
+      );
+    }
+
+    await client.query('COMMIT');
+    transactionStarted = false;
+    res.status(200).json(updatedTag);
+   } catch (err) {
+     if (transactionStarted) {
+       await client.query('ROLLBACK');
      }
-     res.status(201).json(results);
+     throw err;
    } finally {
      client.release();
    }
@@ -237,56 +318,56 @@ app.get(`${rootUrl}/playlist/`, (req, res) => {
 //// VIDEO ////////////////////////
 ///////////////////////////////////
 
-// for now, simply store the initial title of the video as fetched on
-// youtube, so if it's deleted, we can retrace it
-app.post(`${rootUrl}/video/update`, (req, res) => {
+app.post(`${rootUrl}/video/update`, async (req, res) => {
   const videos = req.body;
-  ;(async () => {
-    const client = await pool.connect();
-    try {  
+  const maxBatchSize = 250;
 
-      const rows = 'todo';
+  if (!Array.isArray(videos) || videos.length === 0) {
+    return res.status(400).json({ error: 'Request body must be a non-empty array of videos.' });
+  }
 
-      // TECHNICAL DEBT TODO batchinsert
-      for (var k in videos){
-        const field_youtubeId = videos[k].youtubeId;
-        const field_title = videos[k].title;
-        const field_uniqueYoutubeId = videos[k].uniqueYoutubeId;
+  if (videos.length > maxBatchSize) {
+    return res.status(400).json({ error: `A batch can contain at most ${maxBatchSize} videos.` });
+  }
 
-        if (videos.hasOwnProperty(k)) {
+  const invalidVideoIndex = videos.findIndex(video =>
+    !video ||
+    typeof video !== 'object' ||
+    Array.isArray(video) ||
+    typeof video.youtubeId !== 'string' ||
+    typeof video.title !== 'string' ||
+    typeof video.uniqueYoutubeId !== 'string'
+  );
 
-          let insertQry = `INSERT INTO video 
-                      (youtube_id, title, unique_youtube_id, youtube_active) 
-                      VALUES ($1, $2, $3, true)
-                      ON CONFLICT DO NOTHING`;
+  if (invalidVideoIndex !== -1) {
+    return res.status(400).json({
+      error: `Video at index ${invalidVideoIndex} must include string youtubeId, title, and uniqueYoutubeId fields.`
+    });
+  }
 
-          await client.query(insertQry, [
-            field_youtubeId,
-            field_title,
-            field_uniqueYoutubeId]);
+  const parameters = [];
+  const valueGroups = videos.map((video, index) => {
+    const firstParameter = index * 3 + 1;
+    parameters.push(video.youtubeId, video.title, video.uniqueYoutubeId);
+    return `($${firstParameter}, $${firstParameter + 1}, $${firstParameter + 2}, true, true)`;
+  });
 
-          // if I need to update which videos are active on Youtube
-          // first, set manually in db youtube_active to false, then
-          // in video-service, this.updateNewVideos(videos)
-          // ERROR PAYLOAD TOO LARGE
-          /*let updateYoutubeActive = `
-            UPDATE video SET youtube_active = true 
-            WHERE youtube_id = ($1)`
+  try {
+    const result = await pool.query(
+      `INSERT INTO video (youtube_id, title, unique_youtube_id, youtube_active, needs_review)
+       VALUES ${valueGroups.join(', ')}
+       ON CONFLICT DO NOTHING`,
+      parameters
+    );
 
-          await client.query(updateYoutubeActive, [field_youtubeId]);*/
-          
-        
-        }
-      }
-
-      res.status(201).json(rows);
-    } finally {
-      client.release();
-    }
-  })().catch(err => {
-    console.log('err', err);
-    res.json(err.stack)
-  })
+    return res.status(201).json({
+      received: videos.length,
+      inserted: result.rowCount
+    });
+  } catch (error) {
+    console.error('Failed to batch update videos:', error);
+    return res.status(500).json({ error: 'Failed to batch update videos.' });
+  }
 });
 
 app.put(`${rootUrl}/video/tags/update/:id`, (req, res) => {
@@ -298,6 +379,11 @@ app.put(`${rootUrl}/video/tags/update/:id`, (req, res) => {
   const videoAllTags = videoTags.concat(videoArtists);
   const playlist_id = req.body.playlistId;
   const unique_youtube_id = req.body.uniqueYoutubeId;
+  const needsReview = videoInfo.needsReview;
+
+  if (needsReview !== undefined && typeof needsReview !== 'boolean') {
+    return res.status(400).json({ error: 'needsReview must be a boolean.' });
+  }
 
   ;(async () => {
     const client = await pool.connect();
@@ -352,13 +438,14 @@ app.put(`${rootUrl}/video/tags/update/:id`, (req, res) => {
 
       // 3) finish with video info
 
-      const videoInfoRating = videoInfo.rating;
+      const videoInfoRating = videoInfo.rating.ratingValue;
       let resultsCustomInfo = await client.query(
         `UPDATE video
           SET 
-            rating = ($1)
-        WHERE youtube_id = ($2) `,
-        [videoInfoRating, id]);
+            rating = ($1),
+            needs_review = COALESCE($2, needs_review)
+        WHERE youtube_id = ($3) `,
+        [videoInfoRating, needsReview ?? null, id]);
       if (resultsCustomInfo.rowCount === 0) { 
         resultsCustomInfo = { 
           videoInfoRating,
@@ -382,6 +469,7 @@ app.get(`${rootUrl}/video`, (req, res) => {
     req = `
       SELECT 
         v.rating,
+        v.needs_review as "needsReview",
         v.title,
         v.youtube_id as "youtubeId", 
 
@@ -391,13 +479,20 @@ app.get(`${rootUrl}/video`, (req, res) => {
               -- map to Tag model
               t.tag_id as id,
               t.title,
+              t.unique_code,
+              (SELECT parent.unique_code FROM tag parent WHERE parent.tag_id = t.parent_tag_id) as parent_unique_code,
               t.parent_tag_id,
               t.color,
               t.playlist_id
               FROM 		video_tag vt_agg
               LEFT JOIN 	tag t ON t.tag_id = vt_agg.tag_id
             WHERE 		vt_agg.youtube_id = v.youtube_id
-              AND     t.parent_tag_id <> 55
+              AND     NOT EXISTS (
+                SELECT 1
+                FROM tag artist_group
+                WHERE artist_group.unique_code = 'artist'
+                  AND artist_group.tag_id = t.parent_tag_id
+              )
           ) json_ressource
         ) as tags,
 
@@ -407,13 +502,20 @@ app.get(`${rootUrl}/video`, (req, res) => {
               -- map to Tag model
               t.tag_id as id,
               t.title,
+              t.unique_code,
+              (SELECT parent.unique_code FROM tag parent WHERE parent.tag_id = t.parent_tag_id) as parent_unique_code,
               t.parent_tag_id,
               t.color,
               t.playlist_id
               FROM 		video_tag vt_agg
               LEFT JOIN 	tag t ON t.tag_id = vt_agg.tag_id
             WHERE 		vt_agg.youtube_id = v.youtube_id
-              AND     t.parent_tag_id = 55
+              AND     EXISTS (
+                SELECT 1
+                FROM tag artist_group
+                WHERE artist_group.unique_code = 'artist'
+                  AND artist_group.tag_id = t.parent_tag_id
+              )
               AND     t.playlist_id = ($1)
           ) json_ressource
         ) as artists,
@@ -435,8 +537,8 @@ app.get(`${rootUrl}/video`, (req, res) => {
       WHERE   1 = 1
     `;
 
-    // Le ID de la playlist d'origine n'est pas enregistré. 
-    // dette technique, car on load plus de vidéos que nécessaire
+    // Le ID de la playlist d'origine n'est pas enregistrï¿½. 
+    // dette technique, car on load plus de vidï¿½os que nï¿½cessaire
     /*if (playlist_id !== 'none'){
       req += ` AND playlist_id = ($1) `;
     }*/

@@ -36,7 +36,8 @@ export class TagEditComponent implements OnInit, OnDestroy {
     title: this.fb.control('', Validators.required),
     color: this.fb.control('#777777'),
     description: this.fb.control(''),
-    parent_tag_id: this.fb.control(0)
+    parent_tag_id: this.fb.control(0),
+    is_shared: this.fb.control(false)
   });
 
   private errorMessageSubject = new Subject<string>();
@@ -94,7 +95,8 @@ export class TagEditComponent implements OnInit, OnDestroy {
       title: tag.title,
       color: tag.color,
       description: tag.description,
-      parent_tag_id: tag.parent_tag_id
+      parent_tag_id: tag.parent_tag_id,
+      is_shared: tag.is_shared ?? false
     })
   }
 
@@ -105,6 +107,7 @@ export class TagEditComponent implements OnInit, OnDestroy {
     newTag.description = this.tagForm.value['description']!;
     newTag.parent_tag_id = this.tagForm.value['parent_tag_id']!;
     newTag.playlist_id = this.currentPlaylistId;
+    newTag.is_shared = this.tagForm.value['is_shared']!;
 
     this.store.dispatch(TagPageActions.createTag({ tag: newTag }));
     this.resetPage();

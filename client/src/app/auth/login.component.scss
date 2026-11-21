@@ -1,0 +1,19 @@
+@use 'mixins';
+
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+
+  h1 {
+    margin-bottom: mixins.em(6);
+    font-size: mixins.em(60);
+  }
+
+  .login-action {
+    margin: mixins.em(40) 0;
+  }
+}
+
