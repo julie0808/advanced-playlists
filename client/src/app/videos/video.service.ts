@@ -7,11 +7,41 @@ import { ErrorService } from "../shared/error/error/error-service";
 
 import { Video, VideoRating, VideoRatings } from "./video.model";
 
+interface YoutubeVideoDetailsResponse {
+  items: {
+    id: string;
+    contentDetails?: {
+      duration?: string;
+    };
+  }[];
+}
+
+function formatYoutubeDuration(duration: string): string {
+  const parts = /^P(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(?:\.\d+)?)S)?)?$/.exec(duration);
+  if (!parts) {
+    return '';
+  }
+
+  const totalSeconds = Math.floor(
+    Number(parts[1] || 0) * 86400
+    + Number(parts[2] || 0) * 3600
+    + Number(parts[3] || 0) * 60
+    + Number(parts[4] || 0)
+  );
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  return hours > 0
+    ? `${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+    : `${minutes}:${String(seconds).padStart(2, '0')}`;
+}
+
 
 @Injectable({providedIn: 'root'})
 export class VideoService {
 
-  testMode: boolean = true; // va charger une seule page de l'api
+  testMode: boolean = false; // va charger une seule page de l'api
   testModeMaxItems: number = 10; // max 50, car on va chercher une seule page 
 
   nextPageToken: string = '';
@@ -79,6 +109,7 @@ export class VideoService {
               tags: v.tags ? v.tags : [],
               artists: v.artists ? v.artists : [],
               customPlaylists: v.customPlaylists ? v.customPlaylists : [],
+              note: v.note ?? '',
               rating: v.rating != 0 ? VideoRatings[v.rating] : VideoRatings[0]
             } as Video;
           }) as Video[]
@@ -116,6 +147,28 @@ export class VideoService {
           // filter out unavailable to play videos until we have other options to manage them
           return videos.filter((video: Video) => video.youtubeStatus !== 'private' && video.youtubeStatus !== 'unavailable');
         }),
+        concatMap((videos: Video[]) => {
+          const videoIds = [...new Set(videos.map((video: Video) => video.youtubeId))];
+          if (videoIds.length === 0) {
+            return of(videos);
+          }
+
+          return this.getVideoDetail(videoIds).pipe(
+            map(details => {
+              const durations = new Map<string, string>();
+              for (const item of details.items) {
+                if (item.contentDetails?.duration) {
+                  durations.set(item.id, formatYoutubeDuration(item.contentDetails.duration));
+                }
+              }
+
+              return videos.map((video: Video) => ({
+                ...video,
+                duration: durations.get(video.youtubeId) ?? ''
+              }));
+            })
+          );
+        }),
         catchError(err => this.errorService.handleError(err))
       )
   }
@@ -140,12 +193,12 @@ export class VideoService {
     return mappedVideo;
   } 
 
-  getVideoDetail(videoListIds: string[]): Observable<any> {
-    return this.http.get<any>(this.youtubeApiUrl + '/videos', {params: {
+  getVideoDetail(videoListIds: string[]): Observable<YoutubeVideoDetailsResponse> {
+    return this.http.get<YoutubeVideoDetailsResponse>(this.youtubeApiUrl + '/videos', {params: {
       'key': this.youtubeApiKey,
       'part': 'contentDetails',
-      'id': videoListIds
-    }})      
+      'id': videoListIds.join(',')
+    }, context: new HttpContext().set(CACHEABLE, true)})
   }
 
   updateNewVideos(videos: Video[]): Observable<Video[]> {

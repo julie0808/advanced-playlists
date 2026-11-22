@@ -20,6 +20,10 @@
   textarea {
     resize: none;
     width: 100%;
+    box-sizing: border-box;
+    padding: 8px;
+    background-color: var(--p-form-field-background, var(--color-Main1));
+    color: var(--p-form-field-color, #fff);
   }
 
 }

@@ -15,7 +15,8 @@ CREATE TABLE IF NOT EXISTS video (
     unique_youtube_id  TEXT NOT NULL UNIQUE,
     youtube_active     BOOLEAN NOT NULL DEFAULT TRUE,
     rating             INTEGER NOT NULL DEFAULT 0,
-    needs_review       BOOLEAN NOT NULL DEFAULT TRUE
+    needs_review       BOOLEAN NOT NULL DEFAULT TRUE,
+    note               TEXT
 );
 
 ALTER TABLE video ADD COLUMN IF NOT EXISTS needs_review BOOLEAN;

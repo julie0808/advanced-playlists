@@ -1,18 +1,20 @@
 # WIP Release 2.3.0
 
-Objectif : Playlists custom
+À partir de cette mise à jour, la plupart des améliorations sont codées par GitHub Copilot.
 
 ## Ajouté
-- WIP Filtre pour voir les vidéos supprimés de Youtube mais présents dans la base de données
-- WIP Ajout de playlist par l'utilisateur (ajout à une playlist utilisateur des vidéos de n'importe quelle playlist Youtube existante via lédition du vidéo)
-- WIP choisir l'ordre des vidéo dans playlist customs
+- Ajout de gestion d'erreur minimale au requêtes SQL
+- Ajout d'une animation de chargement pendant le chargement de la liste de vidéos
+- Ajout d'un bouton pour défiler au vidéo actuellement joué dans la liste de vidéos
+- Ajout de la durée d'un vidéo dans son résumé
+- Ajout d'un champ de note pour un vidéo
 
 ## Modifié
-- Utilisation de l'IA pour optimiser les requêtes SQL
-- Utilisation de l'IA pour créer un plan d'amélioration du code du frontend
+- Optimisation de la vitesse de chargement des vidéos
 
 
-# WIP Release 2.2.1
+
+# Release 2.2.1
 
 ## Modifié
 - Peaufinement de la page de connexion

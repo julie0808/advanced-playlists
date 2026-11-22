@@ -66,6 +66,14 @@
           </p-multiSelect>
         </div>
       }
+      <div class="form-field">
+        <label for="videoNote">Note:</label>
+        <textarea
+          id="videoNote"
+          rows="5"
+          formControlName="note">
+        </textarea>
+      </div>
       @if (!videoTagForm.valid && videoTagForm.touched) {
         <span
         >The form contains errors</span>

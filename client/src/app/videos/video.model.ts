@@ -8,7 +8,8 @@ export interface Video {
   title: string; 
   youtubeId: string;
   uniqueYoutubeId: string; // identifiant unique d'un item dans une playlist
-  duration: string; // should be valid time format. // not included in "playlistItems" / snippet, view https://developers.google.com/youtube/v3/docs/videos/list
+  duration: string; // formatted video length; fetched from videos.list contentDetails
+  note: string;
   thumbnailPath: string;
   dateModified: string; // for any change to tags. should be a valid date format. correspond to date it was modified by ME in this app
   tags: Tag[];
@@ -28,6 +29,7 @@ export class Video {
   youtubeId = '12345678910';
   uniqueYoutubeId = '';
   duration = ''; 
+  note = '';
   thumbnailPath = '';
   dateModified = ''; 
   tags = [] as Tag[];
@@ -46,6 +48,7 @@ export interface VideoForm extends FormGroup<{
   rating: FormControl<number>;
   needsReview: FormControl<boolean>;
   customPlaylists: FormControl<Playlist[]>;
+  note: FormControl<string>;
 }> {}
  
 export enum VideoPlayerFormats {

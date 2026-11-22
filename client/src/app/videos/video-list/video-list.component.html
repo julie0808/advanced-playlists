@@ -1,7 +1,3 @@
-<!--<div *ngIf="(isLoading$ | async) === true">
-<i class="pi pi-spin pi-spinner"></i> Video list is loading...
-</div>-->
-
 <section>
   @if (vm$ | async; as vm) {
     <div
@@ -18,11 +14,17 @@
           @if (vm.currentVideoPosition !== 0) {
             <p>
               Playing video {{ vm.currentVideoPosition }} of {{ vm.sortedVideos.length }}
+              @if (!isCurrentlyPlayingVisible && (videosLoading$ | async) !== true) {
+                <button
+                  type="button"
+                  class="video-list--scroll-link"
+                  (click)="scrollToCurrentlyPlaying()"
+                  [disabled]="videosLoading$ | async">
+                  Go to video
+                </button>
+              }
             </p>
           }
-          <!-- todo <p>
-          <a href="#" (click)="scrollToCurrentlyPlaying(videoList)">Scroll to currently playing (todo)</a>
-        </p> -->
       </div>
     }
     @if (!hasPlaylistSelected()) {
@@ -33,7 +35,12 @@
 
 <p-scrollPanel #videoList [style]="{width: '100%', height: 'calc(100vh - 190px)'}">
   <section class="video-list">
-    @if (vm$ | async; as vm) {
+    @if (videosLoading$ | async) {
+      <div class="video-list--loading" role="status" aria-live="polite">
+        <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
+        <span>Loading videos...</span>
+      </div>
+    } @else if (vm$ | async; as vm) {
       <ul
         >
         @for (video of vm.sortedVideos; track video; let i = $index) {
@@ -56,7 +63,9 @@
                 </picture>
               </div>
               <div class="video-image--info">
-                <!--<p class="video-image--length">{{ video.duration }}</p>-->
+                @if (video.duration) {
+                  <p class="video-image--length">{{ video.duration }}</p>
+                }
                 @if (video.youtubeStatus !== 'published') {
                   <p class="video-image--status">!!!</p>
                 }

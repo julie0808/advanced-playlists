@@ -18,6 +18,7 @@ export interface VideoState {
   sortingNeedsReview: boolean;
   sortingOldestFirst: boolean;
   settingRepeatOn: boolean;
+  isLoading: boolean;
   error: string;
 }
 
@@ -31,6 +32,7 @@ const initialState: VideoState = {
   sortingNeedsReview: false,
   sortingOldestFirst: false,
   settingRepeatOn: false,
+  isLoading: false,
   error: ''
 }
 
@@ -47,6 +49,17 @@ export const videoReducer = createReducer<VideoState>(
       }
     }
   ),
+  on(VideoPageActions.loadVideos,
+    (state): VideoState => {
+      return {
+        ...state,
+        isLoading: true,
+        error: ''
+      }
+    }
+  ),
+
+
   on(
     VideoPageActions.setCurrentVideoEditedId,
     (state, action): VideoState => {
@@ -112,6 +125,7 @@ export const videoReducer = createReducer<VideoState>(
       return {
         ...state,
         videos: action.videos,
+        isLoading: false,
         error: ''
       }
     }
@@ -121,6 +135,7 @@ export const videoReducer = createReducer<VideoState>(
       return {
         ...state,
         videos: [],
+        isLoading: false,
         error: action.error
       }
     }

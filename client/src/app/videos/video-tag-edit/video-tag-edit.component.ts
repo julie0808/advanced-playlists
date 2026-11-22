@@ -40,6 +40,7 @@ export class VideoTagEditComponent implements OnInit, OnDestroy {
     rating: this.fb.control(0),
     needsReview: this.fb.control(true),
     customPlaylists: this.fb.control( [] as Playlist[]),
+    note: this.fb.control(''),
   });
 
   private errorMessageSubject = new Subject<string>();
@@ -72,7 +73,8 @@ export class VideoTagEditComponent implements OnInit, OnDestroy {
         tags:  video?.tags || [],
         rating: video.rating.ratingValue || 0,
         needsReview: video.needsReview,
-        customPlaylists: video.customPlaylists
+        customPlaylists: video.customPlaylists,
+        note: video.note ?? ''
       })
     });
 
@@ -88,6 +90,7 @@ export class VideoTagEditComponent implements OnInit, OnDestroy {
         rating: VideoRatings[this.videoTagForm.get('rating')?.value!],
         needsReview: this.videoTagForm.get('needsReview')?.value!,
         customPlaylists: this.videoTagForm.get('customPlaylists')?.value!,
+        note: this.videoTagForm.get('note')?.value!,
       }
 
       this.currentlyEditedVideo = updatedVideo;

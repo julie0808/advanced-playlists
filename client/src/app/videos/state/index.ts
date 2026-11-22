@@ -28,6 +28,11 @@ export const getVideos = createSelector(
   state => state.videos
 )
 
+export const getVideosLoading = createSelector(
+  getVideoFeatureState,
+  state => state.isLoading
+)
+
 export const getCurrentVideoEditedId = createSelector(
   getVideoFeatureState,
   state => state.currentVideoEditedId

@@ -38,56 +38,43 @@ export class VideoEffects {
           ])
           return allData;
         }),
-        mergeMap( data => {
+        map(data => {
           const [dataFromYoutube, dataFromDatabase] = data;
           const newVideosNotInDB: Video[] = [];
+          const videoCountById = new Map<string, number>();
+          const databaseVideosById = new Map<string, Video>();
 
-          const videos = dataFromYoutube.map((video: Video) => {
+          for (const video of dataFromDatabase) {
+            databaseVideosById.set(video.youtubeId, video);
+          }
 
-            const checkForDuplicates = dataFromYoutube.filter(checkForVideo => {
-              return checkForVideo.youtubeId === video.youtubeId;
-            });
-      
-            if( checkForDuplicates.length > 1 ){ 
+          for (const video of dataFromYoutube) {
+            videoCountById.set(
+              video.youtubeId,
+              (videoCountById.get(video.youtubeId) ?? 0) + 1
+            );
+          }
+
+          const videos = dataFromYoutube.map(video => {
+            if ((videoCountById.get(video.youtubeId) ?? 0) > 1) {
               console.warn('Duplicate found: ', video.youtubeId, video.title);
             }
-      
-            const mergedDataVideo: Video = {
-              ...video, 
-              ...dataFromDatabase.find(i=> i.youtubeId === video.youtubeId)
-            }
 
-            const findInDB = dataFromDatabase.find( videoInDB => {
-              const findVideo = videoInDB.youtubeId === video.youtubeId || false;
-              return findVideo;
-            });
-
-            if (!findInDB) {
+            const existingVideo = databaseVideosById.get(video.youtubeId);
+            if (!existingVideo) {
               newVideosNotInDB.push(video);
             }
-        
-            return mergedDataVideo;
+
+            return { ...video, ...existingVideo };
           });
 
-          const allData = forkJoin([of(videos), of(newVideosNotInDB)]);
-          return allData;
-
+          return { videos, newVideosNotInDB };
         }),
-        mergeMap( data => {
-          const [finalList, newVideoList] = data;
-
-          const actionResultat = this.videoService.updateNewVideos(newVideoList)
-            .pipe(
-              map(() => {
-                return VideoApiActions.loadVideosSuccess({ videos: finalList });
-              }),
-              catchError(error => {
-                throw new Error(error);
-              })
-            );
-
-            return actionResultat;
-        }),
+        mergeMap(({ videos, newVideosNotInDB }) =>
+          this.videoService.updateNewVideos(newVideosNotInDB).pipe(
+            map(() => VideoApiActions.loadVideosSuccess({ videos }))
+          )
+        ),
         catchError( error => {
           return of(VideoApiActions.loadVideosFailure({ error }))
         })

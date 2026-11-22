@@ -15,9 +15,38 @@
   font-size: 12px;
 }
 
+.video-list--scroll-link {
+  margin-left: 8px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-Accent1);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.6;
+  }
+}
+
 .video-list {
   padding: 10px;
   padding-right: 25px;
+}
+
+.video-list--loading {
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 14px;
+
+  .pi-spinner {
+    font-size: 24px;
+  }
 }
 
 .video-manager--tag-list {

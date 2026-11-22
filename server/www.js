@@ -15,6 +15,13 @@ const rootUrl = '/api/v1';
 const swaggerUi = require('swagger-ui-express')
 const swaggerDocument = require('./swagger.json');
 
+function sendServerError(res, context, error) {
+  console.error(`${context}:`, error);
+  if (!res.headersSent) {
+    res.status(500).json({ error: 'An unexpected server error occurred.' });
+  }
+}
+
 // Postgres Configuration
 const { Pool } = require('pg');
 const pool = new Pool({
@@ -100,10 +107,7 @@ app.post(`${rootUrl}/tags`, (req, res) => {
      client.release();
    }
   })().catch(err => {
-    res.status(500).json({
-      "code": err.code,
-      "message": err.message
-    });
+    sendServerError(res, 'Failed to create tag', err);
    });
  });
 
@@ -172,7 +176,7 @@ app.get(`${rootUrl}/tags`, (req, res) => {
     }
     
   })().catch(err => {
-    res.json(err.stack)
+    sendServerError(res, 'Failed to retrieve tags', err);
   })
 });
 
@@ -249,10 +253,7 @@ app.put(`${rootUrl}/tags`, (req, res) => {
      client.release();
    }
   })().catch(err => {
-    res.status(500).json({
-      "code": err.code,
-      "message": err.message
-    });
+    sendServerError(res, 'Failed to update tag', err);
    });
  });
 
@@ -282,10 +283,7 @@ app.delete(`${rootUrl}/tags/:id`, (req, res) => {
      client.release();
    }
   })().catch(err => {
-    res.status(500).json({
-      "code": err.code,
-      "message": err.message
-    });
+    sendServerError(res, 'Failed to delete tag', err);
    });
  });
 
@@ -307,7 +305,7 @@ app.get(`${rootUrl}/playlist/`, (req, res) => {
     `)
     res.json(rows);
   })().catch(err => {
-    res.json(err.stack)
+    sendServerError(res, 'Failed to retrieve playlists', err);
   })
 });
 
@@ -365,8 +363,7 @@ app.post(`${rootUrl}/video/update`, async (req, res) => {
       inserted: result.rowCount
     });
   } catch (error) {
-    console.error('Failed to batch update videos:', error);
-    return res.status(500).json({ error: 'Failed to batch update videos.' });
+    sendServerError(res, 'Failed to batch update videos', error);
   }
 });
 
@@ -380,9 +377,13 @@ app.put(`${rootUrl}/video/tags/update/:id`, (req, res) => {
   const playlist_id = req.body.playlistId;
   const unique_youtube_id = req.body.uniqueYoutubeId;
   const needsReview = videoInfo.needsReview;
+  const note = videoInfo.note;
 
   if (needsReview !== undefined && typeof needsReview !== 'boolean') {
     return res.status(400).json({ error: 'needsReview must be a boolean.' });
+  }
+  if (note !== undefined && note !== null && typeof note !== 'string') {
+    return res.status(400).json({ error: 'note must be a string.' });
   }
 
   ;(async () => {
@@ -443,9 +444,10 @@ app.put(`${rootUrl}/video/tags/update/:id`, (req, res) => {
         `UPDATE video
           SET 
             rating = ($1),
-            needs_review = COALESCE($2, needs_review)
-        WHERE youtube_id = ($3) `,
-        [videoInfoRating, needsReview ?? null, id]);
+            needs_review = COALESCE($2, needs_review),
+            note = COALESCE($3, note)
+        WHERE youtube_id = ($4) `,
+        [videoInfoRating, needsReview ?? null, note ?? null, id]);
       if (resultsCustomInfo.rowCount === 0) { 
         resultsCustomInfo = { 
           videoInfoRating,
@@ -458,7 +460,7 @@ app.put(`${rootUrl}/video/tags/update/:id`, (req, res) => {
       client.release();
     }
   })().catch(err => {
-    res.json(err.stack)
+    sendServerError(res, 'Failed to update video tags', err);
   })
 });
 
@@ -470,6 +472,7 @@ app.get(`${rootUrl}/video`, (req, res) => {
       SELECT 
         v.rating,
         v.needs_review as "needsReview",
+        v.note,
         v.title,
         v.youtube_id as "youtubeId", 
 
@@ -546,7 +549,7 @@ app.get(`${rootUrl}/video`, (req, res) => {
     const { rows } = await pool.query(req, [playlist_id]);
     res.json(rows);
   })().catch(err => {
-    res.json(err.stack)
+    sendServerError(res, 'Failed to retrieve videos', err);
   })
 });
 
@@ -569,10 +572,7 @@ app.delete(`${rootUrl}/video/:id`, (req, res) => {
      client.release();
    }
   })().catch(err => {
-    res.status(500).json({
-      "code": err.code,
-      "message": err.message
-    });
+    sendServerError(res, 'Failed to delete video', err);
    });
  });
 
@@ -597,8 +597,8 @@ app.get(`${rootUrl}/health`, async (req, res) => {
     await pool.query('SELECT 1');
     res.json({ db: 'ok' });
   } catch (err) {
-    console.error('DB ping failed', err);
-    res.status(500).json({ db: 'down', error: err.message });
+    console.error('Database health check failed:', err);
+    res.status(500).json({ db: 'down', error: 'Database unavailable.' });
   }
 });
 
